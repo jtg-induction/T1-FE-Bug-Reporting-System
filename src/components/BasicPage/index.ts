@@ -1,0 +1,1 @@
+export { BasicPage } from './BasicPage';
