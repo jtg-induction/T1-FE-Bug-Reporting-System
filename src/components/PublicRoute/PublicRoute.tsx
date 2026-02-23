@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react';
 
 import { useAuth } from 'context/useAuth';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
-import { PROTECTED_ROUTE_CONFIG } from './ProtectedRoute.config';
-import { RefreshResponse } from './ProtectedRoute.types';
+import { PUBLIC_ROUTE_CONFIG } from './PublicRoute.config';
+import { RefreshResponse } from './PublicRoute.types';
 
-export const ProtectedRoute = () => {
+export const PublicRoute = () => {
     const { accessToken, setAccessToken } = useAuth();
-    const { pathname } = useLocation();
-
     const [isChecking, setIsChecking] = useState(true);
 
     useEffect(() => {
@@ -18,9 +16,10 @@ export const ProtectedRoute = () => {
                 setIsChecking(false);
                 return;
             }
+
             try {
                 const response = await fetch(
-                    PROTECTED_ROUTE_CONFIG.endpoints.refresh,
+                    PUBLIC_ROUTE_CONFIG.endpoints.refresh,
                     {
                         method: 'POST',
                         credentials: 'include',
@@ -29,15 +28,9 @@ export const ProtectedRoute = () => {
 
                 if (response.ok) {
                     const data = (await response.json()) as RefreshResponse;
-
                     setAccessToken(data.access);
                 }
-            } catch (error) {
-                // eslint-disable-next-line no-console
-                console.error(
-                    PROTECTED_ROUTE_CONFIG.messages.refreshError,
-                    error,
-                );
+            } catch {
             } finally {
                 setIsChecking(false);
             }
@@ -47,11 +40,11 @@ export const ProtectedRoute = () => {
     }, [accessToken, setAccessToken]);
 
     if (isChecking) {
-        return <div>{PROTECTED_ROUTE_CONFIG.messages.loading}</div>;
+        return <div>{PUBLIC_ROUTE_CONFIG.messages.loading}</div>;
     }
 
-    if (!accessToken) {
-        return <Navigate to={PROTECTED_ROUTE_CONFIG.routes.login} replace />;
+    if (accessToken) {
+        return <Navigate to={PUBLIC_ROUTE_CONFIG.routes.home} replace />;
     }
 
     return <Outlet />;

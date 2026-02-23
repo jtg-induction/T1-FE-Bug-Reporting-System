@@ -1,62 +1,52 @@
-import { createContext, useContext } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 
-// import { useNavigate } from 'react-router-dom';
+interface AuthContextType {
+    accessToken: string | null;
+    login: (token: string) => void;
+    logout: () => Promise<void>;
+    setAccessToken: (token: string | null) => void;
+}
 
-// type LoginType = {
-//     email: string;
-//     password: string;
-//     remember_me?: boolean | undefined;
-// };
-
-// interface ProviderProps {
-// user: string | null;
-// token: string;
-// login(data: LoginType): void;
-// logout(): void;
-// }
-
-const AuthContext = createContext({
-    // user: null,
-    // token: '',
-    // login: () => {},
-    // logout: () => {},
+const AuthContext = createContext<AuthContextType>({
+    accessToken: null,
+    login: () => {},
+    logout: async () => {},
+    setAccessToken: () => {},
 });
 
-// const randomAlphaNumeric = (length: number) => {
-//     let s = '';
-//     Array.from({ length }).some(() => {
-//         s += Math.random().toString(36).slice(2);
-//         return s.length >= length;
-//     });
-//     return s.slice(0, length);
-// };
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+    const [accessToken, setAccessToken] = useState<string | null>(null);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => (
-    // const storedInfo = localStorage.getItem('user')
-    //     ? JSON.parse(localStorage.getItem('user') || '{}')
-    //     : null;
-    // const [user, setUser] = useState<string | null>(storedInfo?.email);
-    // const [token, setToken] = useState(storedInfo?.token || '');
-    // const navigate = useNavigate();
+    const login = (token: string) => {
+        setAccessToken(token);
+    };
 
-    // const login = (data: LoginType) => {
-    //     const t = randomAlphaNumeric(50);
-    //     setTimeout(() => {
-    //         const obj = { ...data, token: t };
-    //         setUser(data.email);
-    //         setToken(t);
-    //         localStorage.setItem('user', JSON.stringify(obj));
-    //         navigate('/');
-    //     }, 1000);
-    // };
+    const logout = async () => {
+        setAccessToken(null);
 
-    // const logout = () => {
-    //     setUser(null);
-    //     setToken('');
-    //     localStorage.removeItem('user');
-    // };
+        try {
+            await fetch('http://127.0.0.1:8000/api/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error('Logout request failed', error);
+        }
+    };
 
-    <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>
-);
+    return (
+        <AuthContext.Provider
+            value={{
+                accessToken,
+                login,
+                logout,
+                setAccessToken,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
+};
 
 export const useAuth = () => useContext(AuthContext);

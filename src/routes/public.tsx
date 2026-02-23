@@ -1,7 +1,16 @@
-import { publicPaths } from 'constant/paths';
+import { LoginPage, SignupCompletePage, SignupRequestPage } from '@pages';
+
 export const publicRoutes = [
     {
-        path: publicPaths.login,
-        element: <>LOGIN</>,
+        path: '/login',
+        element: <LoginPage />,
+    },
+    {
+        path: '/signup/request',
+        element: <SignupRequestPage />,
+    },
+    {
+        path: '/signup/complete',
+        element: <SignupCompletePage />,
     },
 ];

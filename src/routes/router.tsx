@@ -2,7 +2,7 @@ import { AuthProvider } from 'context/useAuth';
 import { Layout } from 'layout';
 import { createBrowserRouter } from 'react-router-dom';
 
-import { ProtectedRoute } from '@components/ProtectedRoute';
+import { ProtectedRoute, PublicRoute } from '@components';
 import { ErrorPage } from '@pages/ErrorPage';
 import { NotFoundPage } from '@pages/NotFoundPage';
 
@@ -17,7 +17,10 @@ export const router = createBrowserRouter([
         ),
         errorElement: <ErrorPage />,
         children: [
-            ...publicRoutes,
+            {
+                element: <PublicRoute />,
+                children: [...publicRoutes],
+            },
             {
                 element: <ProtectedRoute />,
                 children: [...privateRoutes],

@@ -1,0 +1,58 @@
+{
+    "routes": [
+        {
+            "method": "POST",
+            "path": "/api/auth/login",
+            "status": 200,
+            "response": {
+                "access_token": "mock-access-token-123",
+                "user": {
+                    "id": "u-101",
+                    "email": "admin@example.com",
+                    "first_name": "Jane",
+                    "last_name": "Doe",
+                    "designation": 3
+                }
+            }
+        },
+        {
+            "method": "POST",
+            "path": "/api/auth/refresh",
+            "status": 200,
+            "response": {
+                "access_token": "mock-fresh-token-456",
+                "user": {
+                    "id": "u-101",
+                    "email": "admin@example.com",
+                    "first_name": "Jane",
+                    "last_name": "Doe",
+                    "designation": 3
+                }
+            }
+        },
+        {
+            "method": "POST",
+            "path": "/api/send-invite",
+            "status": 500,
+            "response": {
+                "message": "Failed to send invite. Email may already exist."
+            }
+        },
+        {
+            "method": "GET",
+            "path": "/api/verify-invite",
+            "status": 200,
+            "response": {
+                "valid": true
+            }
+        },
+        {
+            "method": "POST",
+            "path": "/api/auth/register",
+            "status": 200,
+            "response": {
+                "message": "Registration successful"
+            }
+        }
+    ]
+}
