@@ -41,6 +41,6 @@ export const SIGNUP_COMPLETE = {
     },
     routes: {
         requestInvite: '/signup/request',
-        loginSuccess: '/login?registered=true',
+        loginSuccess: '/',
     },
 };

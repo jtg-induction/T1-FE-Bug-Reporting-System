@@ -1,6 +1,6 @@
 export const PROTECTED_ROUTE_CONFIG = {
     endpoints: {
-        refresh: '/api/refresh/',
+        refresh: 'http://localhost:8000/api/refresh/',
     },
     messages: {
         loading: 'Loading session...',

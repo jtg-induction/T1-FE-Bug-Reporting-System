@@ -56,7 +56,6 @@ export const SignupCompletePage = () => {
         if (token && email) {
             verifyToken(token, email);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token, email]);
 
     let derivedTokenStatus: TokenStatus = 'loading';
@@ -159,7 +158,7 @@ export const SignupCompletePage = () => {
                 confirm_password: formData.confirmPassword,
             };
 
-            void registerUser(token, submitData as any);
+            void registerUser(token, submitData);
         }
     };
 
