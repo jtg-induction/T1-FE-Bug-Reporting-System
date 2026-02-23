@@ -1,1 +1,1 @@
-export { BasicPage } from './BasicPage';
+export { BasicPage } from "./BasicPage";

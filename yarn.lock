@@ -1035,7 +1035,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/types@npm:7.4.11, @mui/types@npm:^7.2.21":
+"@mui/types@npm:^7.2.21":
   version: 7.4.11
   resolution: "@mui/types@npm:7.4.11"
   dependencies:
@@ -2889,7 +2889,6 @@ __metadata:
     "@emotion/styled": "npm:11.14.1"
     "@eslint/js": "npm:9.39.1"
     "@mui/material": "npm:6.4.1"
-    "@mui/types": "npm:7.4.11"
     "@types/eslint-plugin-jsx-a11y": "npm:6"
     "@types/node": "npm:24.10.1"
     "@types/react": "npm:19.2.7"
@@ -2908,8 +2907,8 @@ __metadata:
     prettier: "npm:3.4.2"
     react: "npm:19.2.0"
     react-dom: "npm:19.2.0"
-    react-error-boundary: "npm:^6.1.1"
-    react-router-dom: "npm:^7.13.0"
+    react-error-boundary: "npm:6.1.1"
+    react-router-dom: "npm:7.13.0"
     sharp: "npm:0.33.5"
     terser: "npm:5.37.0"
     typescript: "npm:5.9.3"
@@ -4462,7 +4461,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-error-boundary@npm:^6.1.1":
+"react-error-boundary@npm:6.1.1":
   version: 6.1.1
   resolution: "react-error-boundary@npm:6.1.1"
   peerDependencies:
@@ -4492,7 +4491,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:^7.13.0":
+"react-router-dom@npm:7.13.0":
   version: 7.13.0
   resolution: "react-router-dom@npm:7.13.0"
   dependencies:

@@ -1,8 +1,8 @@
-import { Overview } from '@pages';
+import { Overview } from "@pages";
 
 export const publicRoutes = [
-    {
-        path: '/',
-        element: <Overview />,
-    },
+  {
+    path: "/",
+    element: <Overview />,
+  },
 ];

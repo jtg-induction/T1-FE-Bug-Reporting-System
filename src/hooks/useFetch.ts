@@ -1,66 +1,66 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 type UseFetchProps = {
-    baseUrl: string;
-    endPoint: string;
+  baseUrl: string;
+  endPoint: string;
 };
 
 type CommonFetch = {
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-    input?: { [index: string]: string | number };
-    routeParams?: { [index: string]: number };
-    searchParams?: Record<string, string>;
+  method: "GET" | "POST" | "PUT" | "DELETE";
+  input?: { [index: string]: string | number };
+  routeParams?: { [index: string]: number };
+  searchParams?: Record<string, string>;
 };
 
 export function useFetch<T>({ baseUrl, endPoint }: UseFetchProps) {
-    const [isLoading, setIsLoading] = useState(false);
-    const [data, setData] = useState<T | null>(null);
-    const [error, setError] = useState<unknown>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState<T | null>(null);
+  const [error, setError] = useState<unknown>();
 
-    const commonFetch = async ({
-        input,
+  const commonFetch = async ({
+    input,
+    method,
+    routeParams,
+    searchParams,
+  }: CommonFetch) => {
+    try {
+      setIsLoading(true);
+      const url = new URL(baseUrl);
+
+      if (routeParams) {
+        let endpointWithValues = "";
+        const endPointArray = endPoint.split("/");
+
+        endPointArray.map((part) => {
+          endpointWithValues += "/";
+          if (part.charAt(0) === ":") {
+            endpointWithValues += routeParams[part.slice(1)];
+          } else {
+            endpointWithValues += part;
+          }
+        });
+        url.pathname = endpointWithValues.slice(1);
+      } else {
+        url.pathname = endPoint;
+      }
+
+      if (searchParams) {
+        url.search = new URLSearchParams(searchParams).toString();
+      }
+
+      const response = await fetch(url, {
         method,
-        routeParams,
-        searchParams,
-    }: CommonFetch) => {
-        try {
-            setIsLoading(true);
-            const url = new URL(baseUrl);
+        body: JSON.stringify(input),
+      });
 
-            if (routeParams) {
-                let endpointWithValues = '';
-                const endPointArray = endPoint.split('/');
+      const resData = (await response.json()) as T;
+      setData(resData);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-                endPointArray.map((part) => {
-                    endpointWithValues += '/';
-                    if (part.charAt(0) === ':') {
-                        endpointWithValues += routeParams[part.slice(1)];
-                    } else {
-                        endpointWithValues += part;
-                    }
-                });
-                url.pathname = endpointWithValues.slice(1);
-            } else {
-                url.pathname = endPoint;
-            }
-
-            if (searchParams) {
-                url.search = new URLSearchParams(searchParams).toString();
-            }
-
-            const response = await fetch(url, {
-                method,
-                body: JSON.stringify(input),
-            });
-
-            const resData = (await response.json()) as T;
-            setIsLoading(false);
-            setData(resData);
-        } catch (err) {
-            setIsLoading(false);
-            setError(err);
-        }
-    };
-
-    return { isLoading, commonFetch, data, error };
+  return { isLoading, commonFetch, data, error };
 }

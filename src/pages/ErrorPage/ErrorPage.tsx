@@ -1,29 +1,22 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-import { BasicPage } from '@components';
+import { BasicPage } from "@components";
+
+import { ERROR_PAGE_DATA } from "./ErrorPage.config";
 export const ErrorPage = () => {
-    const navigate = useNavigate();
-    const handleButton = () => void navigate('/');
+  const navigate = useNavigate();
+  const handleButton = () => void navigate("/");
 
-    return (
-        <>
-            <BasicPage
-                src="/assets/businessWoman.png"
-                alt="Business Woman"
-                text={text}
-                subtext={subtext}
-                handleButton={handleButton}
-                buttonText={buttonText}
-            />
-        </>
-    );
-};
-
-const text = <>Something has gone seriously wrong</>;
-const subtext = (
+  return (
     <>
-        It&apos;s always time for a coffee break. We should be back by the time
-        you finish your coffee.
+      <BasicPage
+        src={ERROR_PAGE_DATA.src}
+        alt="Business Woman"
+        text={ERROR_PAGE_DATA.text}
+        subtext={ERROR_PAGE_DATA.subtext}
+        handleButton={handleButton}
+        buttonText={ERROR_PAGE_DATA.buttonText}
+      />
     </>
-);
-const buttonText = <>Go back Home</>;
+  );
+};

@@ -1,24 +1,9 @@
-import { Button, Toolbar } from '@mui/material';
+import { Toolbar } from "@mui/material";
 
-import { StyledAppBar } from './Header.styled';
+import { StyledAppBar } from "./Header.styles";
 
-export const Header = ({
-    sidebarOpen,
-    toggleSidebar,
-}: {
-    sidebarOpen: boolean;
-    toggleSidebar: () => void;
-}) => (
-    <StyledAppBar
-        sx={(theme) => ({
-            paddingLeft: sidebarOpen ? `${theme.componentWidth.drawer}px` : 0,
-        })}
-        elevation={1}
-    >
-        <Toolbar>
-            <Button onClick={toggleSidebar} sx={{ color: 'black' }}>
-                SB
-            </Button>
-        </Toolbar>
-    </StyledAppBar>
+export const Header = () => (
+  <StyledAppBar elevation={1}>
+    <Toolbar>HEADER</Toolbar>
+  </StyledAppBar>
 );
