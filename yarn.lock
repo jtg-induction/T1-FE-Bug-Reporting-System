@@ -3095,7 +3095,10 @@ __metadata:
     "@mui/icons-material": "npm:6.4.1"
     "@mui/material": "npm:6.4.1"
     "@mui/types": "npm:7.4.11"
+<<<<<<< HEAD
     "@reduxjs/toolkit": "npm:^2.11.2"
+=======
+>>>>>>> 1ec5f6a (FS_02: User Profile Setup)
     "@types/eslint-plugin-jsx-a11y": "npm:6"
     "@types/node": "npm:24.10.1"
     "@types/react": "npm:19.2.7"
