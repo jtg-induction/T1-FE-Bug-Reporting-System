@@ -1,19 +1,23 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { RouterProvider } from 'routes';
+import { Provider } from "react-redux";
+import { RouterProvider } from "routes";
 
 import { CssBaseline } from '@mui/material';
 
 import { ThemeProvider } from '@emotion/react';
 
-import { theme } from './theme';
+import { store } from "./redux/store";
+import { theme } from "./theme";
 
-createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <RouterProvider />
-        </ThemeProvider>
-    </StrictMode>,
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <RouterProvider />
+      </ThemeProvider>
+    </Provider>
+  </StrictMode>,
 );

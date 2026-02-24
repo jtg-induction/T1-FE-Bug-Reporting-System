@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { useSignupInvite } from "apiService/requests";
+import { useSendVerifyLinkMutation } from "redux/apiSlice";
 
 import { Alert, Stack, Typography } from "@mui/material";
 
@@ -22,11 +22,12 @@ export const SignupRequestPage = () => {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
 
-  const { sendInvite, isLoading, data, error } = useSignupInvite();
+  const [sendVerifyLink, { isLoading, isSuccess, error }] =
+    useSendVerifyLinkMutation();
 
-  const isSent = Boolean(data && !error);
+  const isSent = isSuccess;
 
-  const handleSendInvite = (e?: React.MouseEvent<HTMLElement>): void => {
+  const handleSendInvite = async (e?: React.MouseEvent<HTMLElement>) => {
     if (e) {
       e.preventDefault();
     }
@@ -34,10 +35,9 @@ export const SignupRequestPage = () => {
     const validationError = validateEmail(email);
     if (validationError) {
       setEmailError(validationError);
-      return;
+    } else {
+      await sendVerifyLink({ email: email }).unwrap();
     }
-
-    void sendInvite(email);
   };
 
   if (isSent) {

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { useCompleteRegistration, useVerifyInvite } from "apiService/requests";
+import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSignupMutation, useVerifyLinkMutation } from "redux/apiSlice";
+import { setCredentials } from "redux/features/authSlice";
 
 import {
   Alert,
@@ -34,26 +36,22 @@ export const SignupCompletePage = () => {
   const email = searchParams.get("email");
   const navigate = useNavigate();
 
-  const {
-    verifyToken,
-    isLoading: isVerifying,
-    data: verifyData,
-    error: verifyError,
-  } = useVerifyInvite();
+  const [
+    verifyLink,
+    { isLoading: isVerifying, error: verifyError, data: verifyData },
+  ] = useVerifyLinkMutation();
 
-  const {
-    registerUser,
-    isLoading: isRegistering,
-    data: registerData,
-    error: registerError,
-  } = useCompleteRegistration();
+  const [signup, { isLoading: isRegistering, error: registerError }] =
+    useSignupMutation();
+
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (token && email) {
-      verifyToken(token, email);
+      verifyLink({ token: token, email: email }).unwrap();
     }
   }, [token, email]);
 
@@ -63,12 +61,6 @@ export const SignupCompletePage = () => {
   } else if (verifyData) {
     derivedTokenStatus = "valid";
   }
-
-  useEffect(() => {
-    if (registerData) {
-      navigate(SIGNUP_COMPLETE.routes.loginSuccess);
-    }
-  }, [registerData, navigate]);
 
   const handleChange =
     (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,7 +128,7 @@ export const SignupCompletePage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e?: React.SyntheticEvent): void => {
+  const handleSubmit = async (e?: React.SyntheticEvent) => {
     if (e) {
       e.preventDefault();
     }
@@ -156,12 +148,14 @@ export const SignupCompletePage = () => {
         password: formData.password,
         confirm_password: formData.confirmPassword,
       };
-
-      void registerUser(token, submitData);
+      submitData["token"] = token;
+      const data = await signup(submitData).unwrap();
+      dispatch(setCredentials(data));
+      navigate("/");
     }
   };
 
-  if (derivedTokenStatus === "loading" || isVerifying) {
+  if (isVerifying) {
     return (
       <CenteredContainer>
         <CircularProgress color="error" />

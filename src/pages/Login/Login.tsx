@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { useLogin } from "apiService/requests";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useLoginMutation } from "redux/apiSlice";
+import { setCredentials } from "redux/features/authSlice";
 
 import { Alert, Stack } from "@mui/material";
 
@@ -12,28 +14,19 @@ import {
   PasswordTextField,
   validateEmail,
 } from "@components";
-import { useAuth } from "@context/useAuth";
 
 import { LOGIN_PAGE_CONFIG } from "./Login.config";
 
 export const LoginPage = () => {
+  const [login, { isLoading, error: apiError }] = useLoginMutation();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
-
-  const { loginUser, isLoading, data, error: apiError } = useLogin();
-  const { login } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (data && data.access) {
-      login(data.access);
-      navigate("/");
-    }
-  }, [data, login, navigate]);
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setLocalError(null);
     setEmailError("");
 
@@ -46,12 +39,29 @@ export const LoginPage = () => {
       setLocalError(LOGIN_PAGE_CONFIG.messages.passwordRequired);
       return;
     }
-    loginUser(email, password);
+
+    const result = await login({ email: email, password: password }).unwrap();
+
+    if (result) {
+      dispatch(
+        setCredentials({
+          access: result.access,
+          user: result.user,
+        }),
+      );
+      navigate("/");
+    }
   };
 
   const displayError =
     localError ||
-    (apiError instanceof Error ? apiError.message : (apiError as string));
+    (apiError && "status" in apiError && "data" in apiError
+      ? apiError.data &&
+        typeof apiError.data === "object" &&
+        "message" in apiError.data
+        ? (apiError.data.message as string)
+        : undefined
+      : undefined);
 
   return (
     <FormBackground>

@@ -1,14 +1,14 @@
 {
-    "name": "mock-server-2",
-    "routes": [
-        {
-            "method": "GET",
-            "path": "/",
-            "status": 200,
-            "delay": 0,
-            "response": {
-                "message": "Hello World"
-            }
-        }
-    ]
+  "name": "mock-server-2",
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/",
+      "status": 200,
+      "delay": 0,
+      "response": {
+        "message": "Hello World"
+      }
+    }
+  ]
 }

@@ -1,7 +1,9 @@
 export const publicPaths = {
-    login: '/login',
+  login: "/login",
+  requestRegister: "/signup/request",
+  completeRegister: "/signup/complete",
 };
 
 export const privatePaths = {
-    dashboard: '/',
+  dashboard: "/",
 };

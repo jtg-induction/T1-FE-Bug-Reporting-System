@@ -1,8 +1,7 @@
 export {
-    COLORS,
-    HTML_FONT_SIZE,
-    SCALING_FACTOR,
-    BOXSHADOW,
-    COMPONENTWIDTH,
-} from './theme';
-export { API_ENDPOINTS } from './apiPathConstants';
+  COLORS,
+  HTML_FONT_SIZE,
+  SCALING_FACTOR,
+  BOXSHADOW,
+  COMPONENTWIDTH,
+} from "./theme";

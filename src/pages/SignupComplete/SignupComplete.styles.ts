@@ -1,58 +1,58 @@
-import { ErrorOutline } from '@mui/icons-material';
-import { Box, Button, styled } from '@mui/material';
+import { ErrorOutline } from "@mui/icons-material";
+import { Box, Button, styled } from "@mui/material";
 
 export const CenteredContainer = styled(Box)(
-    ({
-        theme: {
-            typography: { pxToRem },
-        },
-    }) => ({
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        padding: pxToRem(32),
-    }),
+  ({
+    theme: {
+      typography: { pxToRem },
+    },
+  }) => ({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "100vh",
+    padding: pxToRem(32),
+  }),
 );
 
 export const InvalidLinkContainer = styled(Box)(
-    ({
-        theme: {
-            typography: { pxToRem },
-        },
-    }) => ({
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        textAlign: 'center',
-        padding: pxToRem(32),
-        maxWidth: pxToRem(400),
-        margin: '0 auto',
-    }),
+  ({
+    theme: {
+      typography: { pxToRem },
+    },
+  }) => ({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "100vh",
+    textAlign: "center",
+    padding: pxToRem(32),
+    maxWidth: pxToRem(400),
+    margin: "0 auto",
+  }),
 );
 
 export const InvalidIcon = styled(ErrorOutline)(
-    ({
-        theme: {
-            palette,
-            typography: { pxToRem },
-        },
-    }) => ({
-        fontSize: pxToRem(60),
-        color: palette.error.main,
-        marginBottom: pxToRem(16),
-    }),
+  ({
+    theme: {
+      palette,
+      typography: { pxToRem },
+    },
+  }) => ({
+    fontSize: pxToRem(60),
+    color: palette.error.main,
+    marginBottom: pxToRem(16),
+  }),
 );
 
 export const ActionButton = styled(Button)(
-    ({
-        theme: {
-            typography: { pxToRem },
-        },
-    }) => ({
-        marginTop: pxToRem(24),
-    }),
+  ({
+    theme: {
+      typography: { pxToRem },
+    },
+  }) => ({
+    marginTop: pxToRem(24),
+  }),
 );
