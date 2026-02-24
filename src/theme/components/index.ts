@@ -1,8 +1,8 @@
-import type { Components } from "@mui/material/styles";
+import type { Components } from '@mui/material/styles';
 
 // Local Font files
-import InterRegularTTF from "@assets/fonts/inter/Inter-Variable-Font.ttf";
-import InterRegularWOFF2 from "@assets/fonts/inter/Inter-Variable-Font.woff2";
+import InterRegularTTF from '@assets/fonts/inter/Inter-Variable-Font.ttf';
+import InterRegularWOFF2 from '@assets/fonts/inter/Inter-Variable-Font.woff2';
 
 // TODO: Add necessary font face declarations here
 const fontFaceDeclarations = `
@@ -46,12 +46,12 @@ const fontFaceDeclarations = `
     `;
 
 export const components: Components = {
-  MuiCssBaseline: {
-    styleOverrides: {
-      fontFaceDeclarations,
-      html: {
-        fontSize: "62.5%",
-      },
+    MuiCssBaseline: {
+        styleOverrides: {
+            fontFaceDeclarations,
+            html: {
+                fontSize: '62.5%',
+            },
+        },
     },
-  },
 };

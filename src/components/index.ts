@@ -1,2 +1,2 @@
-export { BasicPage } from "./BasicPage";
-export { ProtectedRoute } from "./ProtectedRoute";
+export { BasicPage } from './BasicPage';
+export { ProtectedRoute } from './ProtectedRoute';

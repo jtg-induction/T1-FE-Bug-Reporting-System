@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext } from 'react';
 
 // import { useNavigate } from 'react-router-dom';
 
@@ -16,10 +16,10 @@ import { createContext, useContext } from "react";
 // }
 
 const AuthContext = createContext({
-  // user: null,
-  // token: '',
-  // login: () => {},
-  // logout: () => {},
+    // user: null,
+    // token: '',
+    // login: () => {},
+    // logout: () => {},
 });
 
 // const randomAlphaNumeric = (length: number) => {
@@ -32,31 +32,31 @@ const AuthContext = createContext({
 // };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => (
-  // const storedInfo = localStorage.getItem('user')
-  //     ? JSON.parse(localStorage.getItem('user') || '{}')
-  //     : null;
-  // const [user, setUser] = useState<string | null>(storedInfo?.email);
-  // const [token, setToken] = useState(storedInfo?.token || '');
-  // const navigate = useNavigate();
+    // const storedInfo = localStorage.getItem('user')
+    //     ? JSON.parse(localStorage.getItem('user') || '{}')
+    //     : null;
+    // const [user, setUser] = useState<string | null>(storedInfo?.email);
+    // const [token, setToken] = useState(storedInfo?.token || '');
+    // const navigate = useNavigate();
 
-  // const login = (data: LoginType) => {
-  //     const t = randomAlphaNumeric(50);
-  //     setTimeout(() => {
-  //         const obj = { ...data, token: t };
-  //         setUser(data.email);
-  //         setToken(t);
-  //         localStorage.setItem('user', JSON.stringify(obj));
-  //         navigate('/');
-  //     }, 1000);
-  // };
+    // const login = (data: LoginType) => {
+    //     const t = randomAlphaNumeric(50);
+    //     setTimeout(() => {
+    //         const obj = { ...data, token: t };
+    //         setUser(data.email);
+    //         setToken(t);
+    //         localStorage.setItem('user', JSON.stringify(obj));
+    //         navigate('/');
+    //     }, 1000);
+    // };
 
-  // const logout = () => {
-  //     setUser(null);
-  //     setToken('');
-  //     localStorage.removeItem('user');
-  // };
+    // const logout = () => {
+    //     setUser(null);
+    //     setToken('');
+    //     localStorage.removeItem('user');
+    // };
 
-  <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>
 );
 
 export const useAuth = () => useContext(AuthContext);

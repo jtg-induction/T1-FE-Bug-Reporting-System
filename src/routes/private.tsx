@@ -1,6 +1,6 @@
 export const privateRoutes = [
-  {
-    path: "/dashboard",
-    element: <div>PRIVATE</div>,
-  },
+    {
+        path: '/dashboard',
+        element: <div>PRIVATE</div>,
+    },
 ];
