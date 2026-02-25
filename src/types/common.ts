@@ -42,6 +42,16 @@ export interface UpdateUserData {
     designation: string | number;
 }
 
+export interface UserProfileData {
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    date_of_birth: string;
+    designation: string | number;
+    is_owner: boolean;
+}
+
 export interface ApiResponse<T> {
     status: number;
     data: T;

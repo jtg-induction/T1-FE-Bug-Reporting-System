@@ -5,6 +5,8 @@ import {
     LoginSignupRefreshResponse,
     UserData,
     UpdateUserData,
+    UserData,
+    UserProfileData,
     UserRegistrationData,
 } from 'types/common';
 
@@ -118,7 +120,7 @@ export const apiSlice = createApi({
             { userId: string; updateData: UpdateUserData }
         >({
             query: ({ updateData, userId }) => ({
-                url: API_PATHS.USERS + `${userId}/`,
+                url: `${API_PATHS.USERS}/${userId}/`,
                 method: 'PUT',
                 body: updateData,
             }),
