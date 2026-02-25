@@ -17,13 +17,10 @@ export default defineConfig(({ mode }): UserConfig => {
                 commonConfig.plugins,
                 /* Image optimization for production build */
                 ViteImageOptimizer({
-                    test: /\.(jpe?g)$/i,
+                    test: /\.(webp)$/i,
                     includePublic: false,
                     logStats: true,
-                    jpg: {
-                        quality: 90,
-                    },
-                    jpeg: {
+                    webp: {
                         quality: 90,
                     },
                 }),

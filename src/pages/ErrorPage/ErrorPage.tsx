@@ -8,15 +8,13 @@ export const ErrorPage = () => {
     const handleButton = () => void navigate('/');
 
     return (
-        <>
-            <BasicPage
-                src={ERROR_PAGE_DATA.src}
-                alt="Business Woman"
-                text={ERROR_PAGE_DATA.text}
-                subtext={ERROR_PAGE_DATA.subtext}
-                handleButton={handleButton}
-                buttonText={ERROR_PAGE_DATA.buttonText}
-            />
-        </>
+        <BasicPage
+            src={ERROR_PAGE_DATA.src}
+            alt="Business Woman"
+            text={ERROR_PAGE_DATA.text}
+            subtext={ERROR_PAGE_DATA.subtext}
+            handleButton={handleButton}
+            buttonText={ERROR_PAGE_DATA.buttonText}
+        />
     );
 };

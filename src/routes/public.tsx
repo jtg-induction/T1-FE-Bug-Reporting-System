@@ -1,8 +1,7 @@
-import { Overview } from '@pages';
-
+import { publicPaths } from 'constant/paths';
 export const publicRoutes = [
     {
-        path: '/',
-        element: <Overview />,
+        path: publicPaths.login,
+        element: <>LOGIN</>,
     },
 ];
