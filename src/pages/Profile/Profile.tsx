@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import { useParams } from 'react-router-dom';
-import { useGetUserQuery, useUpdateUserMutation } from 'redux/apiSlice';
-import { UserProfileData } from 'types/common';
+import { Navigate, useParams } from 'react-router-dom';
+import {
+    useGetMeQuery,
+    useGetUserQuery,
+    useUpdateUserMutation,
+} from 'redux/apiSlice';
+import { UserData, UserProfileData } from 'types/common';
 
 import { Cancel, Done, Edit } from '@mui/icons-material';
 import {
@@ -26,9 +30,12 @@ import { INITIAL_USER_DATA } from './Profile.config';
 import { StyledSection } from './Profile.style';
 
 export const Profile = () => {
+    const { data: currentUser } = useGetMeQuery();
     const { userId } = useParams<{ userId: string }>();
     const [updateUser, { isLoading: isUpdatingUser }] = useUpdateUserMutation();
-    const { data, isSuccess } = useGetUserQuery(userId);
+    const { data, isSuccess, error } = useGetUserQuery(userId, {
+        skip: userId == currentUser?.id,
+    });
 
     const handleChange =
         (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,13 +116,16 @@ export const Profile = () => {
         }
     };
 
-    const [formData, setFormData] =
-        useState<UserProfileData>(INITIAL_USER_DATA);
+    const [formData, setFormData] = useState<UserData | UserProfileData>(
+        INITIAL_USER_DATA,
+    );
     useEffect(() => {
-        if (data) {
+        if (currentUser && userId == currentUser.id) {
+            setFormData(currentUser);
+        } else if (data) {
             setFormData(data);
         }
-    }, [data]);
+    }, [data, currentUser]);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [editStatus, setEditStatus] = useState(false);
     const [inputVariant, setVariant] = useState<TextFieldVariants>('filled');
@@ -131,38 +141,46 @@ export const Profile = () => {
         setSnackbarOpen(false);
     };
 
+    if (error) {
+        return <Navigate to="/profile" />;
+    }
+
     return (
         <>
-            <Stack
-                direction="row"
-                alignItems="center"
-                padding={4}
-                justifyContent="space-between"
-            >
-                <Typography>Welcome User</Typography>
-                {data && data.is_owner && (
-                    <Box>
-                        {!editStatus ? (
-                            <Button
-                                sx={{ minWidth: 0, padding: 0 }}
-                                onClick={handleEdit}
-                                color="inherit"
-                            >
-                                <Edit />
-                            </Button>
-                        ) : (
-                            <Button onClick={handleCancel} color="inherit">
-                                <Cancel />
-                            </Button>
-                        )}
-                        {editStatus && (
-                            <Button onClick={handleComplete} color="inherit">
-                                <Done />
-                            </Button>
-                        )}
-                    </Box>
-                )}
-            </Stack>
+            {(data && data.is_owner) ||
+                (currentUser && currentUser.id == userId && (
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        padding={4}
+                        justifyContent="space-between"
+                    >
+                        <Typography>Welcome User</Typography>
+                        <Box>
+                            {!editStatus ? (
+                                <Button
+                                    sx={{ minWidth: 0, padding: 0 }}
+                                    onClick={handleEdit}
+                                    color="inherit"
+                                >
+                                    <Edit />
+                                </Button>
+                            ) : (
+                                <Button onClick={handleCancel} color="inherit">
+                                    <Cancel />
+                                </Button>
+                            )}
+                            {editStatus && (
+                                <Button
+                                    onClick={handleComplete}
+                                    color="inherit"
+                                >
+                                    <Done />
+                                </Button>
+                            )}
+                        </Box>
+                    </Stack>
+                ))}
             <StyledSection>
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
                     <TextField
@@ -268,6 +286,11 @@ export const Profile = () => {
                         label="Email ID"
                         type="text"
                         variant="filled"
+                        slotProps={{
+                            input: {
+                                readOnly: true,
+                            },
+                        }}
                         value={formData.email}
                         onChange={handleChange('email')}
                         error={Boolean(errors.email)}

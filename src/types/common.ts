@@ -8,7 +8,7 @@ export interface UserData {
     designation: string | number;
 }
 
-export interface UserRegistrationData extends UserData {
+export interface UserRegistrationData extends Omit<UserData, 'id'> {
     jiraID: string;
     jira_access_token: string;
     password: string;

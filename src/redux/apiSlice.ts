@@ -108,9 +108,9 @@ export const apiSlice = createApi({
             }),
         }),
 
-        getUser: builder.query<UserData, void>({
-            query: () => ({
-                url: API_PATHS.ME,
+        getUser: builder.query<UserProfileData, string>({
+            query: (userId) => ({
+                url: `${API_PATHS.USERS}/${userId}/`,
                 method: 'GET',
             }),
         }),
