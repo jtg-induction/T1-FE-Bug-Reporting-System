@@ -6,7 +6,6 @@ export const privateRoutes = [
         path: PRIVATE_PATHS.DASHBOARD,
         element: <Overview />,
     },
-
     {
         path: '/profile/:userId',
         element: <Profile />,

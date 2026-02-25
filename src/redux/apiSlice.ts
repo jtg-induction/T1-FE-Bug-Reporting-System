@@ -4,6 +4,7 @@ import {
     LoginData,
     LoginSignupRefreshResponse,
     UserData,
+    UpdateUserData,
     UserRegistrationData,
 } from 'types/common';
 
@@ -104,6 +105,24 @@ export const apiSlice = createApi({
                 body: data,
             }),
         }),
+
+        getUser: builder.query<UserData, void>({
+            query: () => ({
+                url: API_PATHS.ME,
+                method: 'GET',
+            }),
+        }),
+
+        updateUser: builder.mutation<
+            UserData,
+            { userId: string; updateData: UpdateUserData }
+        >({
+            query: ({ updateData, userId }) => ({
+                url: API_PATHS.USERS + `${userId}/`,
+                method: 'PUT',
+                body: updateData,
+            }),
+        }),
     }),
 });
 
@@ -113,4 +132,6 @@ export const {
     useLogoutUserMutation,
     useSignupMutation,
     useGenerateEmailLinkMutation,
+    useGetUserQuery,
+    useUpdateUserMutation,
 } = apiSlice;

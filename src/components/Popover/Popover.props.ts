@@ -1,6 +1,6 @@
-import { UserProfileProps } from "apiService/request.types";
+import { UserData } from "types/common";
 export interface PopoverContentProps {
-  user: UserProfileProps;
+  user: UserData;
   handleClose: () => void;
 }
 

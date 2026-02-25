@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { useGetUser, useUpdateUser } from "apiService/requests";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useGetUserQuery, useUpdateUserMutation } from "redux/apiSlice";
+import { UserData } from "types/common";
 
 import { Cancel, Done, Edit } from "@mui/icons-material";
 import {
@@ -25,16 +26,9 @@ import { INITIAL_USER_DATA } from "./Profile.config";
 import { StyledSection } from "./Profile.style";
 
 export const Profile = () => {
-  const { getUser, isLoading: isLoadingUser, data } = useGetUser();
-  const { updateUser, isLoading: isUpdatingUser } = useUpdateUser();
   const { userId } = useParams();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!userId || userId === "undefined") navigate("/login");
-    else {
-      getUser(userId);
-    }
-  }, []);
+  const [updateUser, { isLoading: isUpdatingUser }] = useUpdateUserMutation();
+  const { data, isLoading: isLoadingUser, isSuccess } = useGetUserQuery(userId);
 
   const handleChange =
     (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +45,7 @@ export const Profile = () => {
 
   const handleCancel = () => {
     setEditStatus(false);
-    if (data) setFormData(data);
+    if (isSuccess && data) setFormData(data);
     setVariant("filled");
   };
 
@@ -107,12 +101,12 @@ export const Profile = () => {
       setEditStatus(false);
       setVariant("filled");
 
-      if (userId) void updateUser(submitData, userId);
+      if (userId) updateUser({ updateData: submitData, userId: userId });
       setSnackbarOpen(true);
     }
   };
 
-  const [formData, setFormData] = useState(
+  const [formData, setFormData] = useState<UserData>(
     isLoadingUser ? INITIAL_USER_DATA : data ? data : INITIAL_USER_DATA,
   );
   const [errors, setErrors] = useState<Record<string, string>>({});

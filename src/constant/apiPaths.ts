@@ -6,6 +6,7 @@ export const API_PATHS = {
     ME: '/users/',
     GENERATE_EMAIL_LINK: '/generate-email-link/',
     VERIFY_LINK: '/verify-link/',
+    USERS: '/users/',
 };
 
 export const PUBLIC_MUTATIONS: string[] = [

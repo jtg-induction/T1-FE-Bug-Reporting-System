@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { useGetUserProfile } from "apiService/requests";
 import { NavLink } from "react-router-dom";
+import { useGetMeQuery } from "redux/apiSlice";
 
 import { Box, Button, Stack, Toolbar, Typography } from "@mui/material";
 
@@ -12,11 +12,8 @@ import { PopoverContentProps } from "@components/Popover/Popover.props";
 import { StyledAppBar } from './Header.styles';
 
 export const Header = () => {
-  const { getUserProfile, data: user } = useGetUserProfile();
-  useEffect(() => {
-    getUserProfile();
-  }, []);
-  // const navigate = useNavigate();
+  const { data: user } = useGetMeQuery();
+  // const user = useAppSelector((state: RootState) => state.auth.user)
   const handleProfileClick = () => {
     setAnchorEl(event.currentTarget);
   };
@@ -77,7 +74,7 @@ const PopoverContent = ({ user, handleClose }: PopoverContentProps) => (
     <Button
       variant="contained"
       component={NavLink}
-      to="/profile"
+      to={`/profile/${user.id}`}
       onClick={handleClose}
     >
       View Profile

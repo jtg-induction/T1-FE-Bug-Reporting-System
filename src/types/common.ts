@@ -1,4 +1,5 @@
 export interface UserData {
+    id: string;
     first_name: string;
     last_name: string;
     email: string;
@@ -31,6 +32,14 @@ export interface GenerateEmailLinkData {
 export interface VerifyLinkData {
     email: string;
     token: string;
+}
+
+export interface UpdateUserData {
+    first_name: string;
+    last_name: string;
+    phone: string | null;
+    date_of_birth: string | null;
+    designation: string | number;
 }
 
 export interface ApiResponse<T> {

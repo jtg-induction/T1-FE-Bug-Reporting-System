@@ -1,6 +1,6 @@
-import { UserProps } from "apiService/request.types";
+import { UserData } from "types/common";
 
-export const INITIAL_USER_DATA: UserProps = {
+export const INITIAL_USER_DATA: UserData = {
   first_name: "",
   last_name: "",
   date_of_birth: "",
