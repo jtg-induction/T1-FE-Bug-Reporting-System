@@ -51,9 +51,11 @@ export const SignupCompletePage = () => {
 
     useEffect(() => {
         if (token && email) {
-            verifyLink({ token: token, email: email }).unwrap();
+            void verifyLink({ token, email })
+                .unwrap()
+                .catch(() => {});
         }
-    }, [token, email]);
+    }, [token, email, verifyLink]);
 
     let derivedTokenStatus: TokenStatus = 'loading';
     if (!token || !email || verifyError) {
@@ -107,9 +109,7 @@ export const SignupCompletePage = () => {
         }
 
         if (!formData.jira_access_token.trim()) {
-            newErrors.jiraAccessToken = 'Jira Access Token is required';
-        } else if (!VALIDATION_REGEX.jira.test(formData.jira_access_token)) {
-            newErrors.jiraAccessToken = 'Enter a valid Jira Acess Token';
+            newErrors.jira_access_token = 'Jira Access Token is required';
         }
 
         if (!formData.password) {
@@ -136,23 +136,26 @@ export const SignupCompletePage = () => {
         const isValid = validateForm();
 
         if (isValid && token && email) {
-            const submitData = {
-                first_name: formData.first_name,
-                last_name: formData.last_name,
-                email: email,
-                token: token,
-                date_of_birth: formData.date_of_birth || null,
-                phone: formData.phone || null,
-                designation: formData.designation,
-                jiraID: formData.jiraID,
-                jira_access_token: formData.jira_access_token,
-                password: formData.password,
-                confirm_password: formData.confirmPassword,
-            };
-            submitData['token'] = token;
-            const data = await signup(submitData).unwrap();
-            dispatch(setCredentials(data));
-            navigate('/');
+            try {
+                const submitData = {
+                    first_name: formData.first_name,
+                    last_name: formData.last_name,
+                    email,
+                    token,
+                    date_of_birth: formData.date_of_birth || null,
+                    phone: formData.phone || null,
+                    designation: formData.designation,
+                    jiraID: formData.jiraID,
+                    jira_access_token: formData.jira_access_token,
+                    password: formData.password,
+                    confirm_password: formData.confirmPassword,
+                };
+                const data = await signup(submitData).unwrap();
+                dispatch(setCredentials(data));
+                navigate('/');
+            } catch {
+                // registerError from useSignupMutation will drive the Alert UI
+            }
         }
     };
 
@@ -299,15 +302,15 @@ export const SignupCompletePage = () => {
                         />
                         <TextField
                             fullWidth
-                            id="jira Access Token"
-                            name="jira Access Token"
+                            id="jira_access_token"
+                            name="jira_access_token"
                             label="Jira Access Token"
                             type="text"
                             variant="outlined"
                             value={formData.jira_access_token}
                             onChange={handleChange('jira_access_token')}
-                            error={Boolean(errors.jiraID)}
-                            helperText={errors.jiraID}
+                            error={Boolean(errors.jira_access_token)}
+                            helperText={errors.jira_access_token}
                         />
                     </Stack>
                     <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>

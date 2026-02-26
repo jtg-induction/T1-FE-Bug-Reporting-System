@@ -1,18 +1,17 @@
 {
-  "compilerOptions": {
-    "baseUrl": "./src",
-    "paths": {
-      "@assets/*": ["assets/*"],
-      "@constant": ["constant/index"],
-      "@theme": ["theme/index"],
-      "@components/*": ["components/*"],
-      "@components": ["components/index"],
-      "@context/*": ["context/*"],
-      "@context": ["context/index"],
-      "@containers/*": ["containers/*"],
-      "@containers": ["containers/index"],
-      "@pages/*": ["pages/*"],
-      "@pages": ["pages/index"]
+    "compilerOptions": {
+        "baseUrl": "./src",
+        "paths": {
+            "@assets/*": ["assets/*"],
+            "@constant": ["constant/index"],
+            "@theme": ["theme/index"],
+            "@components/*": ["components/*"],
+            "@components": ["components/index"],
+            "@context/*": ["context/*"],
+            "@containers/*": ["containers/*"],
+            "@containers": ["containers/index"],
+            "@pages/*": ["pages/*"],
+            "@pages": ["pages/index"]
+        }
     }
-  }
 }

@@ -1,119 +1,124 @@
-import { apiPaths } from "constant/apiPaths";
+import { apiPaths } from 'constant/apiPaths';
 import {
-  LoginData,
-  LoginSignupRefreshResponse,
-  SendVerifyLinkData,
-  UserData,
-  UserRegistrationData,
-  VerifyLinkData,
-} from "types/common";
+    LoginData,
+    LoginSignupRefreshResponse,
+    SendVerifyLinkData,
+    UserData,
+    UserRegistrationData,
+    VerifyLinkData,
+} from 'types/common';
 
 import type {
-  BaseQueryFn,
-  FetchArgs,
-  FetchBaseQueryError,
-} from "@reduxjs/toolkit/query";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+    BaseQueryFn,
+    FetchArgs,
+    FetchBaseQueryError,
+} from '@reduxjs/toolkit/query';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { logout, setCredentials } from "./features/authSlice";
-import type { RootState } from "./store";
+import { logout, setCredentials } from './features/authSlice';
+import type { RootState } from './store';
 
-const publicRoutes = ["verifyLink", "signup", "sendVerifyLink"];
+const publicRoutes = ['login', 'verifyLink', 'signup', 'sendVerifyLink'];
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:8000/api",
-  credentials: "include",
-  prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth.access;
+    baseUrl: import.meta.env.VITE_API_BASE_URL as string,
+    credentials: 'include',
+    prepareHeaders: (headers, { getState }) => {
+        const token = (getState() as RootState).auth.access;
 
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
+        if (token) {
+            headers.set('Authorization', `Bearer ${token}`);
+        }
 
-    return headers;
-  },
+        return headers;
+    },
 });
 
 const baseQueryWithReauth: BaseQueryFn<
-  string | FetchArgs,
-  unknown,
-  FetchBaseQueryError
+    string | FetchArgs,
+    unknown,
+    FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-  let result = await baseQuery(args, api, extraOptions);
+    let result = await baseQuery(args, api, extraOptions);
 
-  if (result.error?.status === 401 && !publicRoutes.includes(api.endpoint)) {
-    const refreshResult = await baseQuery(
-      { url: apiPaths.refresh, method: "POST" },
-      api,
-      extraOptions,
-    );
+    if (result.error?.status === 401 && !publicRoutes.includes(api.endpoint)) {
+        const refreshResult = await baseQuery(
+            { url: apiPaths.refresh, method: 'POST' },
+            api,
+            extraOptions,
+        );
 
-    const data = refreshResult.data as LoginSignupRefreshResponse;
-
-    if (refreshResult.data) {
-      api.dispatch(setCredentials(data));
-      result = await baseQuery(args, api, extraOptions);
-    } else {
-      api.dispatch(logout());
+        if (refreshResult.data) {
+            api.dispatch(
+                setCredentials(
+                    refreshResult.data as LoginSignupRefreshResponse,
+                ),
+            );
+            result = await baseQuery(args, api, extraOptions);
+        } else {
+            api.dispatch(logout());
+        }
     }
-  }
 
-  return result;
+    return result;
 };
 
 export const apiSlice = createApi({
-  reducerPath: "api",
-  baseQuery: baseQueryWithReauth,
-  endpoints: (builder) => ({
-    login: builder.mutation<LoginSignupRefreshResponse, LoginData>({
-      query: (credentials) => ({
-        url: apiPaths.login,
-        method: "POST",
-        body: credentials,
-      }),
-    }),
+    reducerPath: 'api',
+    baseQuery: baseQueryWithReauth,
+    endpoints: (builder) => ({
+        login: builder.mutation<LoginSignupRefreshResponse, LoginData>({
+            query: (credentials) => ({
+                url: apiPaths.login,
+                method: 'POST',
+                body: credentials,
+            }),
+        }),
 
-    signup: builder.mutation<LoginSignupRefreshResponse, UserRegistrationData>({
-      query: (data) => ({
-        url: apiPaths.register,
-        method: "POST",
-        body: data,
-      }),
-    }),
+        signup: builder.mutation<
+            LoginSignupRefreshResponse,
+            UserRegistrationData
+        >({
+            query: (data) => ({
+                url: apiPaths.register,
+                method: 'POST',
+                body: data,
+            }),
+        }),
 
-    getMe: builder.query<UserData, void>({
-      query: () => apiPaths.me,
-    }),
+        getMe: builder.query<UserData, void>({
+            query: () => apiPaths.me,
+        }),
 
-    logoutUser: builder.mutation({
-      query: () => ({
-        url: apiPaths.logout,
-        method: "POST",
-      }),
-    }),
+        logoutUser: builder.mutation<void, void>({
+            query: () => ({
+                url: apiPaths.logout,
+                method: 'POST',
+            }),
+        }),
 
-    sendVerifyLink: builder.mutation<void, SendVerifyLinkData>({
-      query: (data) => ({
-        url: apiPaths.sendVerifyLink,
-        method: "POST",
-        body: data,
-      }),
-    }),
+        sendVerifyLink: builder.mutation<void, SendVerifyLinkData>({
+            query: (data) => ({
+                url: apiPaths.generateEmailLink,
+                method: 'POST',
+                body: data,
+            }),
+        }),
 
-    verifyLink: builder.mutation<void, VerifyLinkData>({
-      query: (data) => ({
-        url: apiPaths.verifyLink + `?token=${data.token}&email=${data.email}/`,
-        method: "POST",
-      }),
+        verifyLink: builder.mutation<void, VerifyLinkData>({
+            query: (data) => ({
+                url: `${apiPaths.verifyLink}?${new URLSearchParams({ token: data.token, email: data.email }).toString()}`,
+                method: 'POST',
+            }),
+        }),
     }),
-  }),
 });
 
 export const {
-  useLoginMutation,
-  useGetMeQuery,
-  useLogoutUserMutation,
-  useSignupMutation,
-  useSendVerifyLinkMutation,
-  useVerifyLinkMutation,
+    useLoginMutation,
+    useGetMeQuery,
+    useLogoutUserMutation,
+    useSignupMutation,
+    useSendVerifyLinkMutation,
+    useVerifyLinkMutation,
 } = apiSlice;

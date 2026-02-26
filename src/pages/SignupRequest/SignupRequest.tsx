@@ -1,93 +1,95 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { useSendVerifyLinkMutation } from "redux/apiSlice";
+import { useSendVerifyLinkMutation } from 'redux/apiSlice';
 
-import { Alert, Stack, Typography } from "@mui/material";
+import { Alert, Stack, Typography } from '@mui/material';
 
 import {
-  EmailTextField,
-  FormBackground,
-  FormComponent,
-  validateEmail,
-} from "@components";
+    EmailTextField,
+    FormBackground,
+    FormComponent,
+    validateEmail,
+} from '@components';
 
-import { SIGNUP_CONFIG } from "./SignupRequest.config";
+import { SIGNUP_CONFIG } from './SignupRequest.config';
 import {
-  SpamWarningText,
-  SuccessContainer,
-  SuccessIcon,
-} from "./SignupRequest.styles";
+    SpamWarningText,
+    SuccessContainer,
+    SuccessIcon,
+} from './SignupRequest.styles';
 
 export const SignupRequestPage = () => {
-  const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState("");
+    const [email, setEmail] = useState('');
+    const [emailError, setEmailError] = useState('');
 
-  const [sendVerifyLink, { isLoading, isSuccess, error }] =
-    useSendVerifyLinkMutation();
+    const [sendVerifyLink, { isLoading, isSuccess, error }] =
+        useSendVerifyLinkMutation();
 
-  const isSent = isSuccess;
-
-  const handleSendInvite = async (e?: React.MouseEvent<HTMLElement>) => {
-    if (e) {
-      e.preventDefault();
-    }
-
-    const validationError = validateEmail(email);
-    if (validationError) {
-      setEmailError(validationError);
-    } else {
-      await sendVerifyLink({ email: email }).unwrap();
-    }
-  };
-
-  if (isSent) {
-    return (
-      <SuccessContainer>
-        <SuccessIcon />
-
-        <Typography variant="h4" gutterBottom>
-          {SIGNUP_CONFIG.copy.successTitle}
-        </Typography>
-
-        <Typography variant="body1" color="text.secondary">
-          {SIGNUP_CONFIG.copy.successBody}
-        </Typography>
-
-        <SpamWarningText variant="body2">
-          {SIGNUP_CONFIG.copy.spamWarning}
-        </SpamWarningText>
-      </SuccessContainer>
-    );
-  }
-
-  return (
-    <FormBackground>
-      <FormComponent
-        title={SIGNUP_CONFIG.title}
-        buttonText={
-          isLoading ? SIGNUP_CONFIG.status.loading : SIGNUP_CONFIG.status.idle
+    const handleSendInvite = async (e?: React.MouseEvent<HTMLElement>) => {
+        if (e) {
+            e.preventDefault();
         }
-        redirectText={SIGNUP_CONFIG.redirectText}
-        redirectPath={SIGNUP_CONFIG.redirectPath}
-        onClick={handleSendInvite}
-      >
-        <Stack spacing={3} width="100%">
-          {error ? (
-            <Alert severity="error">
-              {typeof error === "string"
-                ? error
-                : SIGNUP_CONFIG.copy.errorDefault}
-            </Alert>
-          ) : null}
 
-          <EmailTextField
-            value={email}
-            onChange={setEmail}
-            error={emailError}
-            setError={setEmailError}
-          />
-        </Stack>
-      </FormComponent>
-    </FormBackground>
-  );
+        const validationError = validateEmail(email);
+        if (validationError) {
+            setEmailError(validationError);
+        } else {
+            try {
+                await sendVerifyLink({ email }).unwrap();
+            } catch {}
+        }
+    };
+
+    if (isSuccess) {
+        return (
+            <SuccessContainer>
+                <SuccessIcon />
+
+                <Typography variant="h4" gutterBottom>
+                    {SIGNUP_CONFIG.copy.successTitle}
+                </Typography>
+
+                <Typography variant="body1" color="text.secondary">
+                    {SIGNUP_CONFIG.copy.successBody}
+                </Typography>
+
+                <SpamWarningText variant="body2">
+                    {SIGNUP_CONFIG.copy.spamWarning}
+                </SpamWarningText>
+            </SuccessContainer>
+        );
+    }
+
+    return (
+        <FormBackground>
+            <FormComponent
+                title={SIGNUP_CONFIG.title}
+                buttonText={
+                    isLoading
+                        ? SIGNUP_CONFIG.status.loading
+                        : SIGNUP_CONFIG.status.idle
+                }
+                redirectText={SIGNUP_CONFIG.redirectText}
+                redirectPath={SIGNUP_CONFIG.redirectPath}
+                onClick={handleSendInvite}
+            >
+                <Stack spacing={3} width="100%">
+                    {error ? (
+                        <Alert severity="error">
+                            {typeof error === 'string'
+                                ? error
+                                : SIGNUP_CONFIG.copy.errorDefault}
+                        </Alert>
+                    ) : null}
+
+                    <EmailTextField
+                        value={email}
+                        onChange={setEmail}
+                        error={emailError}
+                        setError={setEmailError}
+                    />
+                </Stack>
+            </FormComponent>
+        </FormBackground>
+    );
 };

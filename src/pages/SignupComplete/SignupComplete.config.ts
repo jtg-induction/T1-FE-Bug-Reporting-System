@@ -1,5 +1,6 @@
-import { SignupFormData } from './SignupComplete.types';
+import { publicPaths } from '@constant';
 
+import { SignupFormData } from './SignupComplete.types';
 export const DESIGNATIONS = [
     { value: 'INTERN', label: 'Intern' },
     { value: 'SD', label: 'SD' },
@@ -41,7 +42,7 @@ export const SIGNUP_COMPLETE = {
             'Registration failed. Please check your details and try again.',
     },
     routes: {
-        requestInvite: '/signup/request',
+        requestInvite: publicPaths.requestRegister,
         loginSuccess: '/',
     },
 };

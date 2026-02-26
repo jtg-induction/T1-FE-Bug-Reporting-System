@@ -1,1 +1,1 @@
-export { EmailTextField, validateEmail } from "./EmailTextField.container";
+export { EmailTextField, validateEmail } from './EmailTextField';

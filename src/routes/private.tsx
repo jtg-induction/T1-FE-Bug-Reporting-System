@@ -1,10 +1,10 @@
-import { privatePaths } from "constant/paths";
+import { privatePaths } from 'constant/paths';
 
-import { Overview } from "@pages";
+import { Overview } from '@pages';
 
 export const privateRoutes = [
-  {
-    path: privatePaths.dashboard,
-    element: <Overview />,
-  },
+    {
+        path: privatePaths.dashboard,
+        element: <Overview />,
+    },
 ];

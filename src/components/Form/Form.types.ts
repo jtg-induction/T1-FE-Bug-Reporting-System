@@ -1,10 +1,12 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
-export interface FormComponentProps {
-  title: string;
-  children: ReactNode;
-  buttonText: string;
-  redirectText?: string;
-  redirectPath?: string;
-  onClick: () => Promise<void>;
+export type FormComponentProps =
+    | (FormComponentPropsBase & { redirectText: string; redirectPath: string })
+    | (FormComponentPropsBase & { redirectText?: never; redirectPath?: never });
+
+interface FormComponentPropsBase {
+    title: string;
+    children: ReactNode;
+    buttonText: string;
+    onClick: () => Promise<void>;
 }
