@@ -7,3 +7,6 @@ export { Popover } from './Popover';
 export { FormField } from './FormField';
 export { Snackbar } from './Snackbar';
 export { PopoverContent } from './PopoverContent';
+export { Table } from './Table';
+export { SectionCard } from './SectionCard';
+export { Dialog } from './Dialog';
