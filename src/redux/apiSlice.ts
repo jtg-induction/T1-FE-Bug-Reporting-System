@@ -1,9 +1,9 @@
 import { apiPaths } from 'constant/apiPaths';
+import { ApiResponse } from 'types/common';
 import {
     LoginData,
     LoginSignupRefreshResponse,
     SendVerifyLinkData,
-    UserData,
     UserRegistrationData,
     VerifyLinkData,
 } from 'types/common';
@@ -25,18 +25,16 @@ const baseQuery = fetchBaseQuery({
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
         const token = (getState() as RootState).auth.access;
-
         if (token) {
             headers.set('Authorization', `Bearer ${token}`);
         }
-
         return headers;
     },
 });
 
 const baseQueryWithReauth: BaseQueryFn<
     string | FetchArgs,
-    unknown,
+    ApiResponse,
     FetchBaseQueryError
 > = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions);
@@ -49,10 +47,9 @@ const baseQueryWithReauth: BaseQueryFn<
         );
 
         if (refreshResult.data) {
+            const authResponse = refreshResult as ApiResponse;
             api.dispatch(
-                setCredentials(
-                    refreshResult.data as LoginSignupRefreshResponse,
-                ),
+                setCredentials(authResponse.data as LoginSignupRefreshResponse),
             );
             result = await baseQuery(args, api, extraOptions);
         } else {
@@ -67,7 +64,7 @@ export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery: baseQueryWithReauth,
     endpoints: (builder) => ({
-        login: builder.mutation<LoginSignupRefreshResponse, LoginData>({
+        login: builder.mutation<ApiResponse, LoginData>({
             query: (credentials) => ({
                 url: apiPaths.login,
                 method: 'POST',
@@ -75,10 +72,7 @@ export const apiSlice = createApi({
             }),
         }),
 
-        signup: builder.mutation<
-            LoginSignupRefreshResponse,
-            UserRegistrationData
-        >({
+        signup: builder.mutation<ApiResponse, UserRegistrationData>({
             query: (data) => ({
                 url: apiPaths.register,
                 method: 'POST',
@@ -86,18 +80,18 @@ export const apiSlice = createApi({
             }),
         }),
 
-        getMe: builder.query<UserData, void>({
+        getMe: builder.query<ApiResponse, void>({
             query: () => apiPaths.me,
         }),
 
-        logoutUser: builder.mutation<void, void>({
+        logoutUser: builder.mutation<ApiResponse, void>({
             query: () => ({
                 url: apiPaths.logout,
                 method: 'POST',
             }),
         }),
 
-        sendVerifyLink: builder.mutation<void, SendVerifyLinkData>({
+        sendVerifyLink: builder.mutation<ApiResponse, SendVerifyLinkData>({
             query: (data) => ({
                 url: apiPaths.generateEmailLink,
                 method: 'POST',
@@ -105,9 +99,12 @@ export const apiSlice = createApi({
             }),
         }),
 
-        verifyLink: builder.mutation<void, VerifyLinkData>({
+        verifyLink: builder.mutation<ApiResponse, VerifyLinkData>({
             query: (data) => ({
-                url: `${apiPaths.verifyLink}?${new URLSearchParams({ token: data.token, email: data.email }).toString()}`,
+                url: `${apiPaths.verifyLink}?${new URLSearchParams({
+                    token: data.token,
+                    email: data.email,
+                }).toString()}`,
                 method: 'POST',
             }),
         }),

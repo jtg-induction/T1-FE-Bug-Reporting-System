@@ -42,12 +42,7 @@ export const LoginPage = () => {
 
         try {
             const result = await login({ email, password }).unwrap();
-            dispatch(
-                setCredentials({
-                    access: result.access,
-                    user: result.user,
-                }),
-            );
+            dispatch(setCredentials(result));
             navigate('/');
         } catch {
             setLocalError('Login failed. Please try again.');

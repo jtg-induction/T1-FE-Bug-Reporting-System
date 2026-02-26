@@ -32,3 +32,26 @@ export interface VerifyLinkData {
     email: string;
     token: string;
 }
+
+export interface ApiResponse {
+    status: number;
+    data: LoginSignupRefreshResponse | UserData | void;
+    message?: string;
+}
+
+export interface PaginationMeta {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+}
+
+export interface PaginatedResponse<T> extends ApiResponse<T[]> {
+    meta: PaginationMeta;
+}
+
+export interface ApiError {
+    message: string;
+    errors?: Record<string, string[]>;
+    code?: string;
+}
