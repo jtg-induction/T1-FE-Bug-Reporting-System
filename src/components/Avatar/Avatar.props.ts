@@ -1,13 +1,13 @@
-import React from "react";
+import React from 'react';
 
 export interface AvatarTooltipContentProps {
-  email: string;
+    email: string;
 }
 
 export interface AvatarProps {
-  name: string;
-  src: string;
-  handleClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  toolTipContent?: React.ReactNode;
-  tooltipPosition?: "bottom";
+    name: string;
+    src: string;
+    handleClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    toolTipContent?: React.ReactNode;
+    tooltipPosition?: 'bottom';
 }

@@ -8,7 +8,7 @@ export interface UserData {
     designation: string | number;
 }
 
-export interface UserRegistrationData extends Omit<UserData, 'id'> {
+export interface UserRegistrationData extends UserData {
     jiraID: string;
     jira_access_token: string;
     password: string;
@@ -54,7 +54,11 @@ export interface UserProfileData {
 
 export interface ApiResponse<T> {
     status: number;
+<<<<<<< HEAD:src/types/common.ts
     data: T;
+=======
+    data: LoginSignupRefreshResponse | UserData | UserProfileData | void;
+>>>>>>> fac95a8 (FS_02:Standardized api response):src/types/common.d.ts
     message?: string;
 }
 

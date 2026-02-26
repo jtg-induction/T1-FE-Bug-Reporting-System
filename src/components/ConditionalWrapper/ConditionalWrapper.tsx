@@ -6,11 +6,11 @@
  * @param children - children that will come inside the conditional component.
  */
 export const ConditionalWrapper = ({
-  condition,
-  wrapper,
-  children,
+    condition,
+    wrapper,
+    children,
 }: {
-  condition: boolean;
-  wrapper: (child: React.ReactElement) => React.ReactElement;
-  children: React.ReactElement;
+    condition: boolean;
+    wrapper: (child: React.ReactElement) => React.ReactElement;
+    children: React.ReactElement;
 }) => (condition ? wrapper(children) : children);
