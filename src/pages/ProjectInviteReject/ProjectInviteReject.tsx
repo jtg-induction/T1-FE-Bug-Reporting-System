@@ -1,0 +1,31 @@
+import { useEffect } from 'react';
+
+import { useNavigate, useParams } from 'react-router-dom';
+import { useRejectInviteMutation } from 'redux/apiSlice';
+
+import { CircularProgress,Stack, Typography } from '@mui/material';
+
+export const RejectInvitePage = () => {
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const [rejectInvite, { isLoading, isSuccess }] = useRejectInviteMutation();
+
+    useEffect(() => {
+        if (id) {
+            rejectInvite(id);
+        }
+    }, [id, rejectInvite]);
+
+    useEffect(() => {
+        if (isSuccess) {
+            navigate('/');
+        }
+    }, [isSuccess, navigate]);
+
+    return (
+        <Stack alignItems="center" justifyContent="center" height="100vh">
+            <CircularProgress color="error" />
+            <Typography>Declining invitation...</Typography>
+        </Stack>
+    );
+};

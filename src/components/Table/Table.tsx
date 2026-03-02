@@ -1,9 +1,9 @@
 import Box from '@mui/material/Box';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, DataGridProps } from '@mui/x-data-grid';
 
 import { TableProps } from './Table.types';
 
-export const Table = ({ loading, rows, columns, pageSize }: TableProps) => (
+export const Table = ({ loading, rows, columns, pageSize, ...props }: TableProps & DataGridProps) => (
     <Box height={400}>
         <DataGrid
             loading={loading}
@@ -17,6 +17,7 @@ export const Table = ({ loading, rows, columns, pageSize }: TableProps) => (
                 },
             }}
             disableRowSelectionOnClick
+            {...props}
         />
     </Box>
 );

@@ -6,3 +6,6 @@ export * from './SignupRequest';
 export * from './SignupComplete';
 export * from './Profile';
 export * from './Projects';
+export * from './ProjectDashboard';
+export * from './ProjectInviteAccept';
+export * from './ProjectInviteReject';

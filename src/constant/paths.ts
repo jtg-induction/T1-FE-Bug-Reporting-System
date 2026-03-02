@@ -9,4 +9,6 @@ export const PRIVATE_PATHS = {
     PROFILE: '/profile',
     PROJECTS: '/projects',
     PROJECT_DASHBOARD: 'projects/:id',
+    PROJECT_ACCEPT_INVITE: '/projects/:id/accept',
+    PROEJCT_REJECT_INVITE: '/project/:id/reject',
 };

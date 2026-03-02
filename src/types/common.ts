@@ -57,7 +57,8 @@ export interface LoginSignupRefreshResponse {
     access: string;
 }
 
-export interface UserRegistrationData extends Omit<UserData, 'id'> {
+export interface UserRegistrationData
+    extends Omit<UserData, 'id' | 'is_owner'> {
     jiraID: string;
     jira_access_token: string;
     password: string;
