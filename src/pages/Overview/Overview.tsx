@@ -86,10 +86,11 @@ export const Overview = () => {
                 description: formData.description,
                 key: formData.key,
                 jira_url: formData.jira_url,
-                status: formData.status || null,
+                status: formData.status,
             };
             await createProject(submitData).unwrap();
             setOpenForm(false);
+            setFormData(INITIAL_FORM_DATA);
         }
     };
 
@@ -97,7 +98,13 @@ export const Overview = () => {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const handleChange =
         (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-            setFormData({ ...formData, [field]: e.target.value });
+            setFormData({
+                ...formData,
+                [field]:
+                    field === 'status'
+                        ? Number(e.target.value)
+                        : e.target.value,
+            });
             if (errors[field]) {
                 setErrors({ ...errors, [field]: '' });
             }
@@ -107,21 +114,21 @@ export const Overview = () => {
         const newErrors: Record<string, string> = {};
 
         if (!formData.title.trim()) {
-            newErrors.title = 'First name is required';
+            newErrors.title = 'Title is required';
         } else if (formData.title.trim().length < 2) {
-            newErrors.title = 'First name cannot be a single character';
+            newErrors.title = 'Title cannot be a single character';
         }
 
         if (!formData.description.trim()) {
-            newErrors.description = 'Last name is required';
+            newErrors.description = 'Description is required';
         } else if (formData.description.trim().length < 2) {
-            newErrors.description = 'Last name cannot be a single character';
+            newErrors.description = 'Description cannot be a single character';
         }
 
         if (!formData.key.trim()) {
-            newErrors.key = 'First name is required';
+            newErrors.key = 'Key is required';
         } else if (formData.key.trim().length < 2) {
-            newErrors.key = 'First name cannot be a single character';
+            newErrors.key = 'Key cannot be a single character';
         }
 
         setErrors(newErrors);
@@ -264,8 +271,8 @@ const DialogContent = ({
                 variant="outlined"
                 value={formData.status}
                 onChange={handleChange('status')}
-                error={Boolean(errors.designation)}
-                helperText={errors.designation}
+                error={Boolean(errors.status)}
+                helperText={errors.status}
             >
                 {PROJECT_STATUS.map((option) => (
                     <MenuItem key={option.value} value={option.value}>

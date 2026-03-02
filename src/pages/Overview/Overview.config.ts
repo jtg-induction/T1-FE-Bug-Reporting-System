@@ -5,7 +5,7 @@ export const INITIAL_FORM_DATA: ProjectCreateData = {
     description: '',
     key: '',
     jira_url: '',
-    status: '',
+    status: 1,
 };
 
 export const VALIDATION_REGEX = {

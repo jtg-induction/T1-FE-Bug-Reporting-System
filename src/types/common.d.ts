@@ -77,7 +77,7 @@ export interface ApiError {
 export interface ProjectCreateData {
     title: string;
     description: string;
-    status: string | null;
+    status: number;
     key: string;
     jira_url: string;
 }
