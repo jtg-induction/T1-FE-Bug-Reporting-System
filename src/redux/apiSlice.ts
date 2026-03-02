@@ -5,7 +5,6 @@ import {
     LoginSignupRefreshResponse,
     SendVerifyLinkData,
     UserRegistrationData,
-    VerifyLinkData,
 } from 'types/common';
 
 import type {
@@ -98,16 +97,6 @@ export const apiSlice = createApi({
                 body: data,
             }),
         }),
-
-        verifyLink: builder.mutation<ApiResponse, VerifyLinkData>({
-            query: (data) => ({
-                url: `${apiPaths.verifyLink}?${new URLSearchParams({
-                    token: data.token,
-                    email: data.email,
-                }).toString()}`,
-                method: 'POST',
-            }),
-        }),
     }),
 });
 
@@ -117,5 +106,4 @@ export const {
     useLogoutUserMutation,
     useSignupMutation,
     useSendVerifyLinkMutation,
-    useVerifyLinkMutation,
 } = apiSlice;

@@ -3,7 +3,7 @@ export const apiPaths = {
     refresh: '/refresh/',
     logout: '/logout/',
     register: '/register/',
-    me: '/users/me/',
+    me: '/users',
     generateEmailLink: '/generate-email-link/',
     verifyLink: '/verify-link/',
 };

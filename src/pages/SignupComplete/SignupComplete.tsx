@@ -1,18 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useDispatch } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useSignupMutation, useVerifyLinkMutation } from 'redux/apiSlice';
+import { useSignupMutation } from 'redux/apiSlice';
 import { setCredentials } from 'redux/features/authSlice';
 
-import {
-    Alert,
-    CircularProgress,
-    MenuItem,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
+import { Alert, MenuItem, Stack, TextField } from '@mui/material';
 
 import { FormBackground, FormComponent, PasswordTextField } from '@components';
 
@@ -22,13 +15,6 @@ import {
     SIGNUP_COMPLETE,
     VALIDATION_REGEX,
 } from './SignupComplete.config';
-import {
-    ActionButton,
-    CenteredContainer,
-    InvalidIcon,
-    InvalidLinkContainer,
-} from './SignupComplete.styles';
-import { TokenStatus } from './SignupComplete.types';
 
 export const SignupCompletePage = () => {
     const [searchParams] = useSearchParams();
@@ -36,33 +22,11 @@ export const SignupCompletePage = () => {
     const email = searchParams.get('email');
     const navigate = useNavigate();
 
-    const [
-        verifyLink,
-        { isLoading: isVerifying, error: verifyError, data: verifyData },
-    ] = useVerifyLinkMutation();
-
     const [signup, { isLoading: isRegistering, error: registerError }] =
         useSignupMutation();
-
     const dispatch = useDispatch();
-
     const [formData, setFormData] = useState(INITIAL_FORM_DATA);
     const [errors, setErrors] = useState<Record<string, string>>({});
-
-    useEffect(() => {
-        if (token && email) {
-            void verifyLink({ token, email })
-                .unwrap()
-                .catch(() => {});
-        }
-    }, [token, email, verifyLink]);
-
-    let derivedTokenStatus: TokenStatus = 'loading';
-    if (!token || !email || verifyError) {
-        derivedTokenStatus = 'invalid';
-    } else if (verifyData) {
-        derivedTokenStatus = 'valid';
-    }
 
     const handleChange =
         (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,8 +68,6 @@ export const SignupCompletePage = () => {
 
         if (!formData.jiraID.trim()) {
             newErrors.jiraID = 'Jira ID is required';
-        } else if (!VALIDATION_REGEX.jira.test(formData.jiraID)) {
-            newErrors.jiraID = 'Enter a valid Jira ID';
         }
 
         if (!formData.jira_access_token.trim()) {
@@ -154,43 +116,10 @@ export const SignupCompletePage = () => {
                 dispatch(setCredentials(data));
                 navigate('/');
             } catch {
-                // registerError from useSignupMutation will drive the Alert UI
+                // registerError from useSignupMutation handles the Alert UI
             }
         }
     };
-
-    if (isVerifying) {
-        return (
-            <CenteredContainer>
-                <CircularProgress color="error" />
-                <Typography color="text.secondary">
-                    {SIGNUP_COMPLETE.messages.loadingText}
-                </Typography>
-            </CenteredContainer>
-        );
-    }
-
-    if (derivedTokenStatus === 'invalid') {
-        return (
-            <InvalidLinkContainer>
-                <InvalidIcon />
-                <Typography variant="h4" gutterBottom>
-                    {SIGNUP_COMPLETE.messages.invalidTitle}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                    {SIGNUP_COMPLETE.messages.invalidBody}
-                </Typography>
-                <ActionButton
-                    variant="contained"
-                    onClick={() => {
-                        void navigate(SIGNUP_COMPLETE.routes.requestInvite);
-                    }}
-                >
-                    {SIGNUP_COMPLETE.messages.invalidButton}
-                </ActionButton>
-            </InvalidLinkContainer>
-        );
-    }
 
     return (
         <FormBackground>
