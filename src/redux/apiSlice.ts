@@ -235,7 +235,7 @@ export const apiSlice = createApi({
         }),
         getArchivedProjects: builder.query<ProjectListResponse[], void>({
             query: () => ({
-                url: 'projects/archived/',
+                url: 'projects?status=archived',
                 method: 'GET',
             }),
             providesTags: ['Projects'],

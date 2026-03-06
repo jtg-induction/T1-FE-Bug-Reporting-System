@@ -8,7 +8,7 @@ import { CircularProgress,Stack, Typography } from '@mui/material';
 export const RejectInvitePage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [rejectInvite, { isLoading, isSuccess }] = useRejectInviteMutation();
+    const [rejectInvite, { isSuccess }] = useRejectInviteMutation();
 
     useEffect(() => {
         if (id) {
