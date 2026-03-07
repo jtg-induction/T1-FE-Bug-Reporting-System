@@ -1,4 +1,4 @@
-import { apiPaths } from 'constant/apiPaths';
+import { apiPaths, publicRoutes } from 'constant/apiPaths';
 import { ApiResponse } from 'types/common';
 import {
     LoginData,
@@ -16,8 +16,6 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { logout, setCredentials } from './features/authSlice';
 import type { RootState } from './store';
-
-const publicRoutes = ['login', 'verifyLink', 'signup', 'sendVerifyLink'];
 
 const baseQuery = fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_BASE_URL as string,

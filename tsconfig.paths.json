@@ -11,7 +11,8 @@
             "@containers/*": ["containers/*"],
             "@containers": ["containers/index"],
             "@pages/*": ["pages/*"],
-            "@pages": ["pages/index"]
+            "@pages": ["pages/index"],
+            "@utils": ["utils/index"]
         }
     }
 }

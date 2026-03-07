@@ -8,12 +8,12 @@ import { setCredentials } from 'redux/features/authSlice';
 import { Alert, MenuItem, Stack, TextField } from '@mui/material';
 
 import { FormBackground, FormComponent, PasswordTextField } from '@components';
+import { privatePaths, validationRegex } from '@constant';
 
 import {
     DESIGNATIONS,
     INITIAL_FORM_DATA,
     SIGNUP_COMPLETE,
-    VALIDATION_REGEX,
 } from './SignupComplete.config';
 
 export const SignupCompletePage = () => {
@@ -58,7 +58,7 @@ export const SignupCompletePage = () => {
             newErrors.last_name = 'Last name cannot be a single character';
         }
 
-        if (formData.phone && !VALIDATION_REGEX.phone.test(formData.phone)) {
+        if (formData.phone && !validationRegex.phone.test(formData.phone)) {
             newErrors.phone = 'Enter a valid phone number';
         }
 
@@ -114,7 +114,7 @@ export const SignupCompletePage = () => {
                 };
                 const data = await signup(submitData).unwrap();
                 dispatch(setCredentials(data));
-                navigate('/');
+                navigate(privatePaths.dashboard);
             } catch {
                 // registerError from useSignupMutation handles the Alert UI
             }

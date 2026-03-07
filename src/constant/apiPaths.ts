@@ -7,3 +7,5 @@ export const apiPaths = {
     generateEmailLink: '/generate-email-link/',
     verifyLink: '/verify-link/',
 };
+
+export const publicRoutes: string[] = ['login', 'signup', 'sendVerifyLink'];

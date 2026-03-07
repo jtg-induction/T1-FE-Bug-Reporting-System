@@ -14,6 +14,8 @@ import {
     PasswordTextField,
     validateEmail,
 } from '@components';
+import { privatePaths } from '@constant';
+import { getErrorMessage } from '@utils';
 
 import { LOGIN_PAGE_CONFIG } from './Login.config';
 
@@ -43,21 +45,14 @@ export const LoginPage = () => {
         try {
             const result = await login({ email, password }).unwrap();
             dispatch(setCredentials(result));
-            navigate('/');
+            navigate(privatePaths.dashboard);
         } catch {
             setLocalError('Login failed. Please try again.');
         }
     };
 
     const displayError =
-        localError ||
-        (apiError && 'status' in apiError && 'data' in apiError
-            ? apiError.data &&
-              typeof apiError.data === 'object' &&
-              'message' in apiError.data
-                ? (apiError.data.message as string)
-                : undefined
-            : undefined);
+        localError || (apiError ? getErrorMessage(apiError) : null);
 
     return (
         <FormBackground>

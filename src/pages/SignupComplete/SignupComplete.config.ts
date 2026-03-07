@@ -21,11 +21,6 @@ export const INITIAL_FORM_DATA: SignupFormData = {
     jira_access_token: '',
 };
 
-export const VALIDATION_REGEX = {
-    phone: /^[0-9]{10,15}$/,
-    jira: /^[a-zA-Z0-9-]+$/,
-};
-
 export const SIGNUP_COMPLETE = {
     title: 'Complete Registration',
     status: {
