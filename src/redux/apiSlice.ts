@@ -1,5 +1,5 @@
 import { apiPaths } from 'constant/apiPaths';
-import { ApiResponse, ProjectMember, UserData } from 'types/common';
+import { ApiResponse, ProjectListData, ProjectMemberData, ProjectMemberResponse, UserData } from 'types/common';
 import {
     LoginData,
     LoginSignupRefreshResponse,
@@ -133,10 +133,10 @@ export const apiSlice = createApi({
             invalidatesTags: ['Projects'],
         }),
 
-        getProjects: builder.query<ProjectListResponse, void>({
-            query: () => ({
+        getProjects: builder.query<ProjectListResponse, ProjectListData>({
+            query: ({limit, offset, ordering, filter}) => ({
                 url: apiPaths.projects,
-                method: 'GET',
+                params: {limit, offset, ordering, ...filter},
             }),
             providesTags: ['Projects'],
         }),
@@ -144,7 +144,6 @@ export const apiSlice = createApi({
         getProject: builder.query<ProjectListResponse, string>({
             query: (projectId) => ({
                 url: `${apiPaths.projects}${projectId}/`,
-                method: 'GET',
             }),
             providesTags: ['Projects'],
         }),
@@ -176,8 +175,11 @@ export const apiSlice = createApi({
             invalidatesTags: ['Projects'],
         }),
 
-        getProjectMembers: builder.query<ProjectMember[], string>({
-            query: (projectId) => `projects/${projectId}/members/`,
+        getProjectMembers: builder.query<ProjectMemberResponse, ProjectMemberData>({
+            query: ({projectId, limit, offset, ordering, filter}) => ({
+                url: `projects/${projectId}/members/`,
+                params: {limit, offset, ordering, ...filter}
+            }),
             providesTags: ['ProjectMembers'],
         }),
 
@@ -233,10 +235,10 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ['ProjectMembers', 'Projects'],
         }),
-        getArchivedProjects: builder.query<ProjectListResponse[], void>({
-            query: () => ({
+        getArchivedProjects: builder.query<ProjectListResponse, ProjectListData>({
+            query: ({limit, offset, ordering, filter}) => ({
                 url: 'projects?status=archived',
-                method: 'GET',
+                params: {limit, offset, ordering, ...filter}
             }),
             providesTags: ['Projects'],
         }),

@@ -1,0 +1,17 @@
+export const operatorMap: Record<string, string> = {
+  "=": "",
+  "!=": "ne",
+  ">": "gt",
+  ">=": "gte",
+  "<": "lt",
+  "<=": "lte",
+  contains: "icontains",
+  doesNotContain: "noticontains",
+  startsWith: "istartswith",
+  endsWith: "iendswith",
+  equals: "",
+  doesNotEqual: "ne",
+  is: "",
+  not: "ne",
+  isAnyOf: "in",
+};

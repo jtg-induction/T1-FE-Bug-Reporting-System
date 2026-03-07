@@ -99,12 +99,30 @@ export interface ProjectCreateResponse {
     id: string;
     title: string;
     description: string;
-    status: string | null;
+    status: number;
     key: string;
     jira_url: string;
     jira_project_id: string;
 }
 
 export interface ProjectListResponse extends ProjectCreateResponse {
-    project_role: number;
+    count: number,
+    next: string | null,
+    previous: string | null,
+    results: ({ project_role: number } & ProjectCreateResponse)[],
+}
+
+export interface ProjectListData {
+    limit: number,
+    offset: number,
+    ordering: string | undefined,
+    filter: Record<string, string> | undefined,
+}
+
+export interface ProjectMemberData {
+    projectId: string,
+    limit: number,
+    offset: number,
+    ordering: string | undefined,
+    filter: Record<string, string> | undefined,
 }

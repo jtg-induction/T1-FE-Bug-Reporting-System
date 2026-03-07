@@ -8,6 +8,7 @@ import {
     useInviteMemberMutation,
     useRevokeMemberMutation,
 } from 'redux/apiSlice';
+import { handleFilterChange, handleSortChange } from 'utils/utils';
 
 import { Add, PersonRemove, SupervisorAccount } from '@mui/icons-material';
 import {
@@ -27,12 +28,12 @@ import { SectionCard } from '@components/SectionCard';
 import { Table } from '@components/Table';
 
 import { MEMBER_ROLES } from './UserTable.config';
-import { ApiError, ProjectMember, User } from './UserTable.types';
+import { ApiError, ProjectMember, ProjectUsersProps, User } from './UserTable.types';
 
-export const ProjectUsers = ({ isAdmin }: { isAdmin: boolean }) => {
-    const { id: projectId } = useParams<{ id: string }>();
+export const ProjectUsers = ({ isAdmin, paginationModel, ordering, filter, setPaginationModel, setFilterModel, setSortModel }: ProjectUsersProps) => {
+    const { id: projectId } = useParams<{ id: string }>();    
     const { data: members, isLoading: isLoadingMembers } =
-        useGetProjectMembersQuery(projectId!);
+        useGetProjectMembersQuery({projectId: projectId, limit: paginationModel.pageSize, offset: paginationModel.pageSize*paginationModel.page, ordering: ordering, filter: filter}, {skip: !projectId});
     const { data: availableUsers } = useGetUsersToInviteQuery(projectId!, {
         skip: !isAdmin,
     });
@@ -83,6 +84,8 @@ export const ProjectUsers = ({ isAdmin }: { isAdmin: boolean }) => {
             field: 'index',
             headerName: 'ID',
             width: 70,
+            filterable: false,
+            sortable: false,
             renderCell: (params) =>
                 params.api.getRowIndexRelativeToVisibleRows(params.id) + 1,
         },
@@ -108,12 +111,25 @@ export const ProjectUsers = ({ isAdmin }: { isAdmin: boolean }) => {
             field: 'designation',
             headerName: 'Designation',
             flex: 1,
+            type: "singleSelect",
+            valueOptions: [
+                {value: "M", label: "Manager"},
+                {value: "TL", label: "Team Lead"},
+                {value: "INTERN", label: "Intern"},
+                {value: "SD", label: "Software Developer"},
+                {value: "SSD", label: "Senior Developer"},
+            ],
             valueGetter: (_, row) => row.member?.designation,
         },
         {
             field: 'role',
             headerName: 'Role',
             flex: 1,
+            type: "singleSelect",
+            valueOptions: [
+                {value: 0, label: "Member"},
+                {value: 1, label: "Admin"}
+            ],
             renderCell: (params) =>
                 MEMBER_ROLES.find((r) => r.value === params.value)?.label,
         },
@@ -122,6 +138,7 @@ export const ProjectUsers = ({ isAdmin }: { isAdmin: boolean }) => {
             headerName: 'Actions',
             width: 120,
             sortable: false,
+            filterable: false,
             renderCell: (params: GridRenderCellParams<ProjectMember>) => {
                 if (!isAdmin) return null;
 
@@ -177,8 +194,13 @@ export const ProjectUsers = ({ isAdmin }: { isAdmin: boolean }) => {
             <SectionCard
                 MainContent={
                     <Table
+                        rowCount={members?.count ?? 0}
+                        paginationModel={paginationModel}
+                        onPaginationModelChange={setPaginationModel}
+                        onFilterModelChange={(newModel) => handleFilterChange(newModel, setFilterModel)}
+                        onSortModelChange={(newModel) => handleSortChange(newModel, setSortModel)}
                         loading={isLoadingMembers}
-                        rows={(members as ProjectMember[]) ?? []}
+                        rows={members?.results ?? []}
                         columns={columns}
                         pageSize={5}
                     />

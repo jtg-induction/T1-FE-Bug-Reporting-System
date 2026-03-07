@@ -46,7 +46,6 @@ import {
 } from './ProjectDashboard.styles';
 import {
     EditDialogActionsProps,
-    MemberData,
     ProjectUpdateFormData,
 } from './ProjectDashboard.types';
 
@@ -54,13 +53,15 @@ export const ProjectDashboard = () => {
     const { id: projectId } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [tabValue, setTabValue] = useState(0);
-
+    const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
+    const [filterModel, setFilterModel] = useState({});
+    const [sortModel, setSortModel] = useState<string>()
     const { data: currentUser } = useGetMeQuery();
     const { data: project, isLoading } = useGetProjectQuery(
         projectId as string,
         { skip: !projectId },
     );
-    const { data: members } = useGetProjectMembersQuery(projectId!, {
+    const { data: members } = useGetProjectMembersQuery({ projectId: projectId, limit: paginationModel.pageSize, offset: paginationModel.pageSize*paginationModel.page, ordering: sortModel, filter: filterModel }, {
         skip: !projectId,
     });
 
@@ -104,15 +105,6 @@ export const ProjectDashboard = () => {
     const isActive = project.status === 1;
     const isOwner = project.owner === currentUser?.id;
 
-    const projectMembers = (members as MemberData[]) || [];
-    const sortedMembers = [...projectMembers]
-        .sort((a, b) => {
-            if (a.role === 1 && b.role === 0) return -1;
-            if (a.role === 0 && b.role === 1) return 1;
-            return 0;
-        })
-        .filter((m) => m.member.id !== currentUser?.id);
-
     const handleUpdate = () => {
         void (async () => {
             try {
@@ -121,7 +113,7 @@ export const ProjectDashboard = () => {
                     updateData: formData,
                 }).unwrap();
                 setOpenEdit(false);
-            } catch {}
+            } catch { }
         })();
     };
 
@@ -139,7 +131,7 @@ export const ProjectDashboard = () => {
                     } else {
                         await unarchiveProject(projectId!).unwrap();
                     }
-                } catch {}
+                } catch { }
             }
         })();
     };
@@ -175,7 +167,7 @@ export const ProjectDashboard = () => {
 
                 setOpenLeaveDialog(false);
                 navigate('/');
-            } catch {}
+            } catch { }
         })();
     };
 
@@ -296,7 +288,7 @@ export const ProjectDashboard = () => {
                 )}
                 {tabValue === 1 && (
                     <StyledTabPanel>
-                        <ProjectUsers isAdmin={isAdmin} />
+                        <ProjectUsers filter={filterModel} ordering={sortModel} paginationModel={paginationModel} setPaginationModel={setPaginationModel} setFilterModel={setFilterModel} setSortModel={setSortModel} isAdmin={isAdmin} />
                     </StyledTabPanel>
                 )}
                 {tabValue === 2 && (
@@ -341,8 +333,8 @@ export const ProjectDashboard = () => {
                             value={newOwnerId}
                             onChange={(e) => setNewOwnerId(e.target.value)}
                         >
-                            {sortedMembers.length > 0 ? (
-                                sortedMembers.map((m) => (
+                            {members?.results.length > 0 ? (
+                                members?.results.map((m) => (
                                     <MenuItem
                                         key={m.member.id}
                                         value={m.member.id}
