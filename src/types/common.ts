@@ -125,3 +125,40 @@ export interface ProjectMemberResponse {
     member: UserData;
     role: number;
 }
+
+export interface TicketCreateData {
+    title: string;
+    description: string;
+    status: number;
+    projectId: string;
+    severity: number;
+    assignee: string;
+    deadline: string | undefined;
+}
+
+export interface TicketCreateResponse extends TicketCreateData {
+    id: string;
+    key: string;
+    reporter: string;
+    is_subscribed: boolean;
+}
+
+export interface TicketListData {
+    projectId: string;
+    limit: number;
+    offset: number;
+    ordering: string | undefined;
+    filter: Record<string, string> | undefined;
+}
+
+export interface TicketListResponse {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: TicketCreateResponse[];
+}
+
+export interface TicketDeleteData {
+    projectId: string;
+    ticketId: string;
+}

@@ -9,3 +9,4 @@ export * from './Projects';
 export * from './ProjectDashboard';
 export * from './ProjectInviteAccept';
 export * from './ProjectInviteReject';
+export * from './TicketDashboard';
