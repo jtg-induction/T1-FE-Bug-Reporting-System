@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import { DataGrid, DataGridProps, useGridApiRef } from '@mui/x-data-grid';
@@ -18,19 +18,20 @@ export const Table = ({
 }: TableProps & DataGridProps) => {
     const apiRef = useGridApiRef();
 
-    useEffect(() => {
-        if (!loading && rows && rows.length > 0) {
-            const timeout = setTimeout(() => {
-                apiRef.current?.autosizeColumns({
-                    includeHeaders: true,
-                    includeOutliers: true,
-                    expand: true,
-                });
-            }, 50);
+    const handleAutosize = useCallback(() => {
+        apiRef.current?.autosizeColumns({
+            includeHeaders: true,
+            includeOutliers: true,
+            expand: true,
+        });
+    }, [apiRef]);
 
+    useEffect(() => {
+        if (!loading) {
+            const timeout = setTimeout(handleAutosize, 50);
             return () => clearTimeout(timeout);
         }
-    }, [loading, rows, apiRef]);
+    }, [loading, rows, handleAutosize]);
 
     return (
         <Box>
@@ -43,6 +44,7 @@ export const Table = ({
                 loading={loading}
                 rows={rows}
                 columns={columns}
+                onResize={handleAutosize}
                 pageSizeOptions={[5]}
                 paginationModel={paginationModel}
                 onPaginationModelChange={onPaginationModelChange}
