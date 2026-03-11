@@ -28,18 +28,43 @@ import { SectionCard } from '@components/SectionCard';
 import { Table } from '@components/Table';
 
 import { MEMBER_ROLES } from './UserTable.config';
-import { ApiError, ProjectMember, ProjectUsersProps, User } from './UserTable.types';
+import {
+    ApiError,
+    ProjectMember,
+    ProjectUsersProps,
+    User,
+} from './UserTable.types';
 
-export const ProjectUsers = ({ isAdmin, paginationModel, ordering, filter, setPaginationModel, setFilterModel, setSortModel }: ProjectUsersProps) => {
-    const { id: projectId } = useParams<{ id: string }>();    
+export const ProjectUsers = ({
+    isAdmin,
+    isActive,
+    ownerId,
+    isOwner,
+    currentUserId,
+    paginationModel,
+    ordering,
+    filter,
+    setPaginationModel,
+    setFilterModel,
+    setSortModel,
+}: ProjectUsersProps) => {
+    const { id: projectId } = useParams<{ id: string }>();
     const { data: members, isLoading: isLoadingMembers } =
-        useGetProjectMembersQuery({projectId: projectId, limit: paginationModel.pageSize, offset: paginationModel.pageSize*paginationModel.page, ordering: ordering, filter: filter}, {skip: !projectId});
+        useGetProjectMembersQuery(
+            {
+                projectId: projectId,
+                limit: paginationModel.pageSize,
+                offset: paginationModel.pageSize * paginationModel.page,
+                ordering: ordering,
+                filter: filter,
+            },
+            { skip: !projectId },
+        );
     const { data: availableUsers } = useGetUsersToInviteQuery(projectId!, {
         skip: !isAdmin,
     });
     const [inviteMember, { isLoading: isInviting, error: inviteError }] =
         useInviteMemberMutation();
-
     const [changeRole] = useChangeRoleMutation();
     const [revokeMember] = useRevokeMemberMutation();
 
@@ -72,9 +97,7 @@ export const ProjectUsers = ({ isAdmin, paginationModel, ordering, filter, setPa
                         projectId: projectId!,
                         user_id: userId,
                     }).unwrap();
-                } catch {
-                    /* Handle error via toast or UI */
-                }
+                } catch {}
             }
         })();
     };
@@ -111,13 +134,13 @@ export const ProjectUsers = ({ isAdmin, paginationModel, ordering, filter, setPa
             field: 'designation',
             headerName: 'Designation',
             flex: 1,
-            type: "singleSelect",
+            type: 'singleSelect',
             valueOptions: [
-                {value: "M", label: "Manager"},
-                {value: "TL", label: "Team Lead"},
-                {value: "INTERN", label: "Intern"},
-                {value: "SD", label: "Software Developer"},
-                {value: "SSD", label: "Senior Developer"},
+                { value: 'M', label: 'Manager' },
+                { value: 'TL', label: 'Team Lead' },
+                { value: 'INTERN', label: 'Intern' },
+                { value: 'SD', label: 'Software Developer' },
+                { value: 'SSD', label: 'Senior Developer' },
             ],
             valueGetter: (_, row) => row.member?.designation,
         },
@@ -125,13 +148,18 @@ export const ProjectUsers = ({ isAdmin, paginationModel, ordering, filter, setPa
             field: 'role',
             headerName: 'Role',
             flex: 1,
-            type: "singleSelect",
+            type: 'singleSelect',
             valueOptions: [
-                {value: 0, label: "Member"},
-                {value: 1, label: "Admin"}
+                { value: 0, label: 'Member' },
+                { value: 1, label: 'Admin' },
             ],
-            renderCell: (params) =>
-                MEMBER_ROLES.find((r) => r.value === params.value)?.label,
+            renderCell: (params) => {
+                if (params.row.member?.id === ownerId) {
+                    return 'Owner';
+                }
+                return MEMBER_ROLES.find((r) => r.value === params.value)
+                    ?.label;
+            },
         },
         {
             field: 'actions',
@@ -140,13 +168,13 @@ export const ProjectUsers = ({ isAdmin, paginationModel, ordering, filter, setPa
             sortable: false,
             filterable: false,
             renderCell: (params: GridRenderCellParams<ProjectMember>) => {
-                if (!isAdmin) return null;
-
                 const isRowAdmin = params.row.role === 1;
                 const userId = params.row.member?.id;
 
-                if (!userId) return null;
-
+                if (!isAdmin || !isActive) return null;
+                if (userId === currentUserId) return null;
+                if (!userId || userId === ownerId) return null;
+                if (isRowAdmin && !isOwner) return null;
                 return (
                     <Stack direction="row" spacing={1}>
                         {!isRowAdmin && (
@@ -197,8 +225,12 @@ export const ProjectUsers = ({ isAdmin, paginationModel, ordering, filter, setPa
                         rowCount={members?.count ?? 0}
                         paginationModel={paginationModel}
                         onPaginationModelChange={setPaginationModel}
-                        onFilterModelChange={(newModel) => handleFilterChange(newModel, setFilterModel)}
-                        onSortModelChange={(newModel) => handleSortChange(newModel, setSortModel)}
+                        onFilterModelChange={(newModel) =>
+                            handleFilterChange(newModel, setFilterModel)
+                        }
+                        onSortModelChange={(newModel) =>
+                            handleSortChange(newModel, setSortModel)
+                        }
                         loading={isLoadingMembers}
                         rows={members?.results ?? []}
                         columns={columns}
@@ -212,7 +244,7 @@ export const ProjectUsers = ({ isAdmin, paginationModel, ordering, filter, setPa
                         alignItems="center"
                     >
                         <Typography variant="h2">Project Members</Typography>
-                        {isAdmin && (
+                        {isAdmin && isActive && (
                             <Button
                                 variant="contained"
                                 startIcon={<Add />}

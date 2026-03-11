@@ -28,6 +28,7 @@ import {
 } from '@mui/material';
 
 import { Dialog } from '@components/Dialog';
+import { NotFoundPage } from '@pages/NotFoundPage';
 
 import { ProjectUsers } from './component/UserTable/UserTable';
 import { DASHBOARD_TEXT, INITIAL_EDIT_STATE } from './ProjectDashboard.config';
@@ -53,17 +54,29 @@ export const ProjectDashboard = () => {
     const { id: projectId } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [tabValue, setTabValue] = useState(0);
-    const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 5 });
+    const [paginationModel, setPaginationModel] = useState({
+        page: 0,
+        pageSize: 5,
+    });
     const [filterModel, setFilterModel] = useState({});
-    const [sortModel, setSortModel] = useState<string>()
+    const [sortModel, setSortModel] = useState<string>();
     const { data: currentUser } = useGetMeQuery();
     const { data: project, isLoading } = useGetProjectQuery(
         projectId as string,
         { skip: !projectId },
     );
-    const { data: members } = useGetProjectMembersQuery({ projectId: projectId, limit: paginationModel.pageSize, offset: paginationModel.pageSize*paginationModel.page, ordering: sortModel, filter: filterModel }, {
-        skip: !projectId,
-    });
+    const { data: members } = useGetProjectMembersQuery(
+        {
+            projectId: projectId,
+            limit: paginationModel.pageSize,
+            offset: paginationModel.pageSize * paginationModel.page,
+            ordering: sortModel,
+            filter: filterModel,
+        },
+        {
+            skip: !projectId,
+        },
+    );
 
     const [updateProject, { isLoading: isUpdating }] =
         useUpdateProjectMutation();
@@ -93,12 +106,15 @@ export const ProjectDashboard = () => {
         setOpenEdit(true);
     };
 
-    if (isLoading || !project) {
+    if (isLoading) {
         return (
             <Typography variant="h6" align="center">
                 {DASHBOARD_TEXT.loading}
             </Typography>
         );
+    }
+    if (!project) {
+        return <NotFoundPage />;
     }
 
     const isAdmin = project.project_role === 1;
@@ -113,7 +129,7 @@ export const ProjectDashboard = () => {
                     updateData: formData,
                 }).unwrap();
                 setOpenEdit(false);
-            } catch { }
+            } catch {}
         })();
     };
 
@@ -131,7 +147,7 @@ export const ProjectDashboard = () => {
                     } else {
                         await unarchiveProject(projectId!).unwrap();
                     }
-                } catch { }
+                } catch {}
             }
         })();
     };
@@ -167,7 +183,7 @@ export const ProjectDashboard = () => {
 
                 setOpenLeaveDialog(false);
                 navigate('/');
-            } catch { }
+            } catch {}
         })();
     };
 
@@ -190,15 +206,17 @@ export const ProjectDashboard = () => {
                 </Typography>
 
                 <Stack direction="row" spacing={2}>
-                    <Button
-                        startIcon={<LogoutIcon />}
-                        variant="outlined"
-                        color="error"
-                        onClick={handleLeaveClick}
-                        disabled={isLeaving}
-                    >
-                        {isLeaving ? 'Leaving...' : 'Leave'}
-                    </Button>
+                    {isActive && (
+                        <Button
+                            startIcon={<LogoutIcon />}
+                            variant="outlined"
+                            color="error"
+                            onClick={handleLeaveClick}
+                            disabled={isLeaving}
+                        >
+                            {isLeaving ? 'Leaving...' : 'Leave'}
+                        </Button>
+                    )}
 
                     {isAdmin && (
                         <Stack direction="row" spacing={2}>
@@ -288,7 +306,19 @@ export const ProjectDashboard = () => {
                 )}
                 {tabValue === 1 && (
                     <StyledTabPanel>
-                        <ProjectUsers filter={filterModel} ordering={sortModel} paginationModel={paginationModel} setPaginationModel={setPaginationModel} setFilterModel={setFilterModel} setSortModel={setSortModel} isAdmin={isAdmin} />
+                        <ProjectUsers
+                            filter={filterModel}
+                            ordering={sortModel}
+                            paginationModel={paginationModel}
+                            setPaginationModel={setPaginationModel}
+                            setFilterModel={setFilterModel}
+                            setSortModel={setSortModel}
+                            isAdmin={isAdmin}
+                            isActive={isActive}
+                            ownerId={project.owner}
+                            isOwner={isOwner}
+                            currentUserId={currentUser?.id}
+                        />
                     </StyledTabPanel>
                 )}
                 {tabValue === 2 && (
