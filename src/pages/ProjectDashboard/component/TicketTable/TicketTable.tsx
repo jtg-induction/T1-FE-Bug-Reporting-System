@@ -33,6 +33,7 @@ import { ApiError, TicketData, TicketTableProps } from './TicketTable.types';
 
 export const TicketTable = ({
     isAdmin,
+    isActive,
     paginationModel,
     ordering,
     filter,
@@ -237,7 +238,7 @@ export const TicketTable = ({
                         alignItems="center"
                     >
                         <Typography variant="h2">Project Tickets</Typography>
-                        {isAdmin && (
+                        {isActive && isAdmin && (
                             <Button
                                 variant="contained"
                                 startIcon={<Add />}

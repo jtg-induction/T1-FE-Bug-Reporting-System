@@ -68,7 +68,11 @@ export const TicketDashboard = () => {
     }>();
     const navigate = useNavigate();
 
-    const { data: ticket, isLoading } = useGetTicketQuery(
+    const {
+        data: ticket,
+        isLoading,
+        error,
+    } = useGetTicketQuery(
         { projectId: projectId!, ticketId: ticketId! },
         { skip: !projectId || !ticketId },
     );
@@ -97,6 +101,10 @@ export const TicketDashboard = () => {
                 {DASHBOARD_TEXT.loading}
             </Typography>
         );
+    }
+
+    if (!isLoading && error) {
+        return navigate('/tickets');
     }
 
     const perm = ticket.permission_class;
@@ -209,41 +217,45 @@ export const TicketDashboard = () => {
                     Ticket: {ticket.title}
                 </Typography>
 
-                <Stack direction="row" spacing={1} flexWrap="wrap">
-                    <Tooltip title={isSubscribed ? 'Unsubscribe' : 'Subscribe'}>
-                        <Button
-                            variant="contained"
-                            color="warning"
-                            onClick={() => void handleSubscribeToggle}
+                {ticket.is_active && (
+                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                        <Tooltip
+                            title={isSubscribed ? 'Unsubscribe' : 'Subscribe'}
                         >
-                            {isSubscribed ? (
-                                <NotificationsOff />
-                            ) : (
-                                <NotificationsActive />
-                            )}
-                        </Button>
-                    </Tooltip>
-
-                    {perm === 3 && (
-                        <>
-                            <Tooltip title="Update Status">
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    onClick={(e) =>
-                                        setStatusAnchor(e.currentTarget)
-                                    }
-                                >
-                                    <Update />
-                                </Button>
-                            </Tooltip>
-                            <Menu
-                                anchorEl={statusAnchor}
-                                open={Boolean(statusAnchor)}
-                                onClose={() => setStatusAnchor(null)}
+                            <Button
+                                variant="contained"
+                                color="warning"
+                                onClick={() => void handleSubscribeToggle}
                             >
-                                {TICKET_STATUS.filter((s) => s.value !== 4).map(
-                                    (s) => (
+                                {isSubscribed ? (
+                                    <NotificationsOff />
+                                ) : (
+                                    <NotificationsActive />
+                                )}
+                            </Button>
+                        </Tooltip>
+
+                        {perm === 2 && (
+                            <>
+                                <Tooltip title="Update Status">
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={(e) =>
+                                            setStatusAnchor(e.currentTarget)
+                                        }
+                                    >
+                                        <Update />
+                                    </Button>
+                                </Tooltip>
+                                <Menu
+                                    anchorEl={statusAnchor}
+                                    open={Boolean(statusAnchor)}
+                                    onClose={() => setStatusAnchor(null)}
+                                >
+                                    {TICKET_STATUS.filter(
+                                        (s) => s.value !== 4,
+                                    ).map((s) => (
                                         <MenuItem
                                             key={s.value}
                                             onClick={() =>
@@ -254,58 +266,60 @@ export const TicketDashboard = () => {
                                         >
                                             {s.label}
                                         </MenuItem>
-                                    ),
-                                )}
-                            </Menu>
-                        </>
-                    )}
+                                    ))}
+                                </Menu>
+                            </>
+                        )}
 
-                    {perm >= 4 && (
-                        <>
-                            <Tooltip title="Move Ticket">
-                                <Button
-                                    variant="contained"
-                                    color="info"
-                                    onClick={() => setOpenMove(true)}
-                                >
-                                    <MoveUp />
-                                </Button>
-                            </Tooltip>
-                            <Tooltip title="Edit Ticket">
-                                <Button
-                                    variant="contained"
-                                    onClick={handleOpenEdit}
-                                >
-                                    <Edit />
-                                </Button>
-                            </Tooltip>
-                            <Tooltip title="Delete Ticket">
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    onClick={() => void handleDelete}
-                                >
-                                    <Delete />
-                                </Button>
-                            </Tooltip>
-                        </>
-                    )}
+                        {perm >= 3 && (
+                            <>
+                                <Tooltip title="Move Ticket">
+                                    <Button
+                                        variant="contained"
+                                        color="info"
+                                        onClick={() => setOpenMove(true)}
+                                    >
+                                        <MoveUp />
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title="Edit Ticket">
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleOpenEdit}
+                                    >
+                                        <Edit />
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title="Delete Ticket">
+                                    <Button
+                                        variant="contained"
+                                        color="error"
+                                        onClick={() => void handleDelete()}
+                                    >
+                                        <Delete />
+                                    </Button>
+                                </Tooltip>
+                            </>
+                        )}
 
-                    {perm === 5 && ticket.status !== 4 && (
-                        <Tooltip title="Close Ticket">
-                            <Button
-                                variant="contained"
-                                sx={{
-                                    bgcolor: 'success.main',
-                                    '&:hover': { bgcolor: 'success.dark' },
-                                }}
-                                onClick={() => void handleUpdate({ status: 4 })}
-                            >
-                                <CheckCircle />
-                            </Button>
-                        </Tooltip>
-                    )}
-                </Stack>
+                        {perm === 4 && ticket.status === 3 && (
+                            <Tooltip title="Close Ticket">
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        bgcolor: 'success.main',
+                                        '&:hover': { bgcolor: 'success.dark' },
+                                    }}
+                                    onClick={() =>
+                                        void handleUpdate({ status: 4 })
+                                    }
+                                >
+                                    <CheckCircle />
+                                </Button>
+                            </Tooltip>
+                        )}
+                    </Stack>
+                )}
             </StyledHeaderSection>
 
             <StyledDetailsCard>

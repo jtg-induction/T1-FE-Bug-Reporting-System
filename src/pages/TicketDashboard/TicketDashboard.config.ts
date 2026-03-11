@@ -37,8 +37,8 @@ export const TICKET_STATUS_MAP: Record<
 
 export const TICKET_STATUS = [
     { value: 1, label: 'Open' },
-    { value: 2, label: 'Resolved' },
-    { value: 3, label: 'In Progress' },
+    { value: 2, label: 'In Progress' },
+    { value: 3, label: 'Resolved' },
     { value: 4, label: 'Closed' },
 ];
 

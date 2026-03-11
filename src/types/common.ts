@@ -130,7 +130,7 @@ export interface TicketCreateData {
     title: string;
     description: string;
     status: number;
-    projectId: string;
+    project_id: string;
     severity: number;
     assignee: string;
     deadline: string | undefined;
