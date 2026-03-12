@@ -3,15 +3,16 @@
         "baseUrl": "./src",
         "paths": {
             "@assets/*": ["assets/*"],
-            "@constant": ["constant/index"],
             "@theme": ["theme/index"],
             "@components/*": ["components/*"],
             "@components": ["components/index"],
             "@context/*": ["context/*"],
             "@containers/*": ["containers/*"],
             "@containers": ["containers/index"],
+            "@constant": ["constant/index"],
             "@pages/*": ["pages/*"],
             "@pages": ["pages/index"],
+            "@schemas": ["schemas/index"],
             "@utils": ["utils/index"]
         }
     }

@@ -1,4 +1,4 @@
-import { Layout } from 'layout';
+import { Layout } from 'layouts';
 import { createBrowserRouter } from 'react-router-dom';
 
 import { ProtectedRoute } from '@components/ProtectedRoute';

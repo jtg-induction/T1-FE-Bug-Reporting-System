@@ -9,8 +9,7 @@ export const FormComponent = ({
     title,
     children,
     buttonText,
-    redirectText,
-    redirectPath,
+    redirect,
     onClick,
 }: FormComponentProps) => (
     <StyledFormComponent
@@ -25,8 +24,6 @@ export const FormComponent = ({
         </Typography>
         {children}
         <StyledButton type="submit">{buttonText}</StyledButton>
-        {redirectText && redirectPath && (
-            <Link to={redirectPath}>{redirectText}</Link>
-        )}
+        {redirect && <Link to={redirect.path}>{redirect.text}</Link>}
     </StyledFormComponent>
 );

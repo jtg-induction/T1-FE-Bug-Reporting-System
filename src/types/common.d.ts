@@ -24,7 +24,7 @@ export interface LoginData {
     password: string;
 }
 
-export interface SendVerifyLinkData {
+export interface GenerateEmailLinkData {
     email: string;
 }
 

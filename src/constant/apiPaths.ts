@@ -1,11 +1,15 @@
-export const apiPaths = {
-    login: '/login/',
-    refresh: '/refresh/',
-    logout: '/logout/',
-    register: '/register/',
-    me: '/users',
-    generateEmailLink: '/generate-email-link/',
-    verifyLink: '/verify-link/',
+export const API_PATHS = {
+    LOGIN: '/login/',
+    REFRESH: '/refresh/',
+    LOGOUT: '/logout/',
+    REGISTER: '/register/',
+    ME: '/users/',
+    GENERA_EMAIL_LINK: '/generate-email-link/',
+    VERIFY_LINK: '/verify-link/',
 };
 
-export const publicRoutes: string[] = ['login', 'signup', 'sendVerifyLink'];
+export const PUBLIC_MUTATIONS: string[] = [
+    'login',
+    'signup',
+    'generateEmailLink',
+];

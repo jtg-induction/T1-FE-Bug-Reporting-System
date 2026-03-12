@@ -1,12 +1,12 @@
-import { apiPaths, publicRoutes } from 'constant/apiPaths';
-import { ApiResponse } from 'types/common';
 import {
+    ApiResponse,
+    GenerateEmailLinkData,
     LoginData,
     LoginSignupRefreshResponse,
-    SendVerifyLinkData,
     UserRegistrationData,
 } from 'types/common';
 
+import { API_PATHS, PUBLIC_MUTATIONS } from '@constant';
 import type {
     BaseQueryFn,
     FetchArgs,
@@ -36,9 +36,12 @@ const baseQueryWithReauth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions);
 
-    if (result.error?.status === 401 && !publicRoutes.includes(api.endpoint)) {
+    if (
+        result.error?.status === 401 &&
+        !PUBLIC_MUTATIONS.includes(api.endpoint)
+    ) {
         const refreshResult = await baseQuery(
-            { url: apiPaths.refresh, method: 'POST' },
+            { url: API_PATHS.REFRESH, method: 'POST' },
             api,
             extraOptions,
         );
@@ -63,7 +66,7 @@ export const apiSlice = createApi({
     endpoints: (builder) => ({
         login: builder.mutation<ApiResponse, LoginData>({
             query: (credentials) => ({
-                url: apiPaths.login,
+                url: API_PATHS.LOGIN,
                 method: 'POST',
                 body: credentials,
             }),
@@ -71,30 +74,32 @@ export const apiSlice = createApi({
 
         signup: builder.mutation<ApiResponse, UserRegistrationData>({
             query: (data) => ({
-                url: apiPaths.register,
+                url: API_PATHS.REGISTER,
                 method: 'POST',
                 body: data,
             }),
         }),
 
         getMe: builder.query<ApiResponse, void>({
-            query: () => apiPaths.me,
+            query: () => API_PATHS.ME,
         }),
 
         logoutUser: builder.mutation<ApiResponse, void>({
             query: () => ({
-                url: apiPaths.logout,
+                url: API_PATHS.LOGOUT,
                 method: 'POST',
             }),
         }),
 
-        sendVerifyLink: builder.mutation<ApiResponse, SendVerifyLinkData>({
-            query: (data) => ({
-                url: apiPaths.generateEmailLink,
-                method: 'POST',
-                body: data,
-            }),
-        }),
+        generateEmailLink: builder.mutation<ApiResponse, GenerateEmailLinkData>(
+            {
+                query: (data) => ({
+                    url: API_PATHS.GENERA_EMAIL_LINK,
+                    method: 'POST',
+                    body: data,
+                }),
+            },
+        ),
     }),
 });
 
@@ -103,5 +108,5 @@ export const {
     useGetMeQuery,
     useLogoutUserMutation,
     useSignupMutation,
-    useSendVerifyLinkMutation,
+    useGenerateEmailLinkMutation,
 } = apiSlice;

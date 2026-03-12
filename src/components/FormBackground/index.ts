@@ -1,1 +1,1 @@
-export { FormBackground } from './FormBackground.component';
+export { FormBackground } from './FormBackground';

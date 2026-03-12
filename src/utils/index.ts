@@ -1,1 +1,1 @@
-export * from './geterrormessage';
+export * from './geteErrorMessage';

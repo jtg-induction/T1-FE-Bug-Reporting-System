@@ -1,3 +1,7 @@
+import z from 'zod';
+
+import { signupRequestSchema } from '@schemas';
+
 /**
  * Represents the state of the signup/email verification process.
  * @interface SignupState
@@ -10,3 +14,5 @@ export interface SignupState {
     emailError: string | null;
     isSent: boolean;
 }
+
+export type SignupRequestFormValues = z.infer<typeof signupRequestSchema>;
