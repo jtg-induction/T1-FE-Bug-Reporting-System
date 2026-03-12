@@ -3,8 +3,8 @@ import { Avatar as MUIAvatar } from '@mui/material';
 
 import { ConditionalWrapper } from '@components/ConditionalWrapper';
 
-import { AvatarProps } from './Avatar.props';
 import { AvatarWrapper } from './Avatar.style';
+import { AvatarProps } from './Avatar.types';
 
 /**
  * Custom styled Avatar with optional tooltip and click functionality.

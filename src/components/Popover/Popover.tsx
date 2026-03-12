@@ -1,5 +1,5 @@
-import { PopoverProps } from './Popover.props';
 import { StyledPopover } from './Popover.style';
+import { PopoverProps } from './Popover.types';
 
 /**
  * Reusable Popover component for displaying contextual content.
@@ -12,7 +12,6 @@ export const Popover = ({
     handleClose,
     PopoverContent,
 }: PopoverProps) => {
-
     // --- 1. STATE ---
 
     // --- 2. HOOKS ---

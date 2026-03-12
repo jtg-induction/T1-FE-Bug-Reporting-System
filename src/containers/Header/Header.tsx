@@ -17,7 +17,7 @@ import {
 import Logo from '@assets/images/logo-detail.png';
 import { Avatar } from '@components/Avatar';
 import { Popover } from '@components/Popover';
-import { PopoverContentProps } from '@components/Popover/Popover.props';
+import { PopoverContentProps } from '@components/Popover/Popover.types';
 import { useGetMeQuery, useLogoutUserMutation } from '@service';
 import { baseApi } from '@service';
 
