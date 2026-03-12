@@ -1,4 +1,5 @@
 import { UserData } from 'types/common';
+
 export interface PopoverContentProps {
     user: UserData;
     handleClose: () => void;

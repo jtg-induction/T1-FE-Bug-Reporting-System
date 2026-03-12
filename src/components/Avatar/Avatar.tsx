@@ -7,12 +7,12 @@ import { AvatarProps } from './Avatar.props';
 import { AvatarWrapper } from './Avatar.style';
 
 /**
- * A component that renders a custom styled Avatar.
- *
- * @param name - used to provide alt to the Avatar Component for fallback.
- * @param src - path to the image.
- * @param handleClick - (optional) - function that defines how onClick is handled.
- * @param tooltipContent - (optional) - component that defines what do you wanna display inside a tooltip.
+ * Custom styled Avatar with optional tooltip and click functionality.
+ * * @param name - Alt text for the avatar image.
+ * @param src - Image source URL.
+ * @param handleClick - Click event handler.
+ * @param toolTipContent - Content to display inside the tooltip.
+ * @param tooltipPosition - Placement of the tooltip relative to the avatar.
  */
 export const Avatar = ({
     name,

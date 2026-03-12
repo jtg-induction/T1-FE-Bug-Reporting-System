@@ -2,17 +2,22 @@ import { PopoverProps } from './Popover.props';
 import { StyledPopover } from './Popover.style';
 
 /**
- * A component that provides a reusable Popover component.
- *
- * @param anchorEl - position of the element for Popover
- * @param handleClose - function that defines how closing of popover is handled.
- * @param PopoverContent - Custom Component that you wanna display inside the Popover.
+ * Reusable Popover component for displaying contextual content.
+ * @param anchorEl - The DOM element used to set the position of the popover.
+ * @param handleClose - Callback function fired when the popover requests to close.
+ * @param PopoverContent - The React element or component to be rendered inside.
  */
 export const Popover = ({
     anchorEl,
     handleClose,
     PopoverContent,
 }: PopoverProps) => {
+
+    // --- 1. STATE ---
+
+    // --- 2. HOOKS ---
+
+    // --- 3. FUNCTIONS / LOGIC ---
     const open = Boolean(anchorEl);
 
     return (

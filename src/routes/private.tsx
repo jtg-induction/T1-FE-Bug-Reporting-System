@@ -1,5 +1,5 @@
 import { PRIVATE_PATHS } from '@constant';
-import { Overview, Profile } from '@pages';
+import { Overview, ProfilePage } from '@pages';
 
 export const privateRoutes = [
     {
@@ -7,7 +7,7 @@ export const privateRoutes = [
         element: <Overview />,
     },
     {
-        path: '/profile/:userId',
-        element: <Profile />,
+        path: `${PRIVATE_PATHS.PROFILE}/:userId`,
+        element: <ProfilePage />,
     },
 ];

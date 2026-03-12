@@ -5,7 +5,7 @@ export interface UserData {
     email: string;
     phone: string | null;
     date_of_birth: string | null;
-    designation: string | number;
+    designation: string;
 }
 
 export interface UserRegistrationData extends UserData {
@@ -38,7 +38,7 @@ export interface UpdateUserData {
     first_name: string;
     last_name: string;
     phone: string | null;
-    date_of_birth: string | null;
+    date_of_birth: string | null | undefined;
     designation: string | number;
 }
 
@@ -48,7 +48,7 @@ export interface UserProfileData {
     email: string;
     phone: string;
     date_of_birth: string;
-    designation: string | number;
+    designation: string;
     is_owner: boolean;
 }
 

@@ -1,9 +1,9 @@
 import { Outlet } from 'react-router-dom';
-import { useGetMeQuery } from 'redux/apiSlice';
 
 import { Box, Toolbar } from '@mui/material';
 
 import { Header } from '@containers';
+import { useGetMeQuery } from '@service';
 
 import { StyledMain } from './Layout.style';
 

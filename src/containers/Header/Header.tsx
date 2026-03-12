@@ -1,29 +1,30 @@
 import { useState } from 'react';
 
-import { PUBLIC_PATHS } from 'constant/paths';
+import { PRIVATE_PATHS, PUBLIC_PATHS } from 'constant/paths';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useGetMeQuery, useLogoutUserMutation } from 'redux/apiSlice';
 import { logout } from 'redux/features/authSlice';
 import { useAppDispatch } from 'redux/store';
 
-import { Box, Button, Stack, Toolbar, Typography } from '@mui/material';
+import { Box, Button, Divider,Stack, Toolbar, Typography } from '@mui/material';
 
 import { Avatar } from '@components/Avatar';
 import { Popover } from '@components/Popover';
 import { PopoverContentProps } from '@components/Popover/Popover.props';
+import { useGetMeQuery, useLogoutUserMutation } from '@service';
 
 import { StyledAppBar } from './Header.styles';
 
 export const Header = () => {
+    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
     const { data: user } = useGetMeQuery();
     const [logoutUser] = useLogoutUserMutation();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+
     const handleProfileClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
-
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
     const handlePopoverClose = () => {
         setAnchorEl(null);
@@ -35,8 +36,11 @@ export const Header = () => {
         setAnchorEl(null);
         navigate(PUBLIC_PATHS.LOGIN);
     };
+
+    const fullName = user ? `${user.first_name} ${user.last_name}` : 'Anonymous';
+
     return (
-        <StyledAppBar elevation={1}>
+        <StyledAppBar elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
             <Toolbar>
                 <Stack
                     width="100%"
@@ -46,31 +50,27 @@ export const Header = () => {
                 >
                     <Box
                         component="img"
-                        src=""
+                        src="/logo.svg"
                         alt="LOGO"
-                        onClick={() => void navigate('/')}
+                        onClick={void navigate(PRIVATE_PATHS.DASHBOARD)}
+                        sx={{ 
+                            height: 32, 
+                            cursor: 'pointer',
+                            transition: 'opacity 0.2s',
+                            '&:hover': { opacity: 0.8 } 
+                        }}
                     />
-                    <Stack>
+                    <Stack direction="row" alignItems="center" spacing={2}>
                         <Avatar
-                            src=""
-                            name={
-                                user
-                                    ? user.first_name + ' ' + user.last_name
-                                    : 'Anonymous'
-                            }
+                            src={""}
+                            name={fullName}
                             handleClick={handleProfileClick}
-                            toolTipContent={
-                                user ? (
-                                    <Typography variant="h4">
-                                        {user.email}
-                                    </Typography>
-                                ) : (
-                                    <>Anonymous</>
-                                )
-                            }
+                            toolTipContent={user?.email || 'Guest'}
                         />
                         {user && (
                             <Popover
+                                anchorEl={anchorEl}
+                                handleClose={handlePopoverClose}
                                 PopoverContent={
                                     <PopoverContent
                                         user={user}
@@ -78,8 +78,6 @@ export const Header = () => {
                                         handleLogout={handleLogout}
                                     />
                                 }
-                                handleClose={handlePopoverClose}
-                                anchorEl={anchorEl}
                             />
                         )}
                     </Stack>
@@ -89,30 +87,46 @@ export const Header = () => {
     );
 };
 
+/**
+ * Internal content for the user profile popover.
+ * Enhanced with better typography and action hierarchy.
+ */
 const PopoverContent = ({
     user,
     handleClose,
     handleLogout,
 }: PopoverContentProps) => (
-    <Stack gap={4}>
-        <Typography variant="h4">
-            {user.first_name + ' ' + user.last_name}
-        </Typography>
-        <Typography variant="h5">{user.email}</Typography>
-        <Stack
-            direction={{ xs: 'column', md: 'row' }}
-            gap={2}
-            justifyContent="space-between"
-        >
+    <Stack sx={{ p: 2, minWidth: 240 }}>
+        <Box sx={{ mb: 2 }}>
+            <Typography variant="subtitle1" fontWeight="600" lineHeight={1.2}>
+                {`${user.first_name} ${user.last_name}`}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+                {user.email}
+            </Typography>
+        </Box>
+        
+        <Divider sx={{ my: 1.5 }} />
+
+        <Stack gap={1}>
             <Button
+                fullWidth
                 variant="contained"
+                disableElevation
                 component={NavLink}
-                to={`/profile/${user.id}`}
+                to={`${PRIVATE_PATHS.PROFILE}/${user.id}`}
                 onClick={handleClose}
+                sx={{ textTransform: 'none' }}
             >
                 View Profile
             </Button>
-            <Button variant="contained" onClick={(e) => void handleLogout?.(e)}>
+            <Button 
+                fullWidth
+                variant="outlined" 
+                color="error"
+                onClick={void handleLogout()}
+                sx={{ textTransform: 'none' }}
+            >
                 Logout
             </Button>
         </Stack>
