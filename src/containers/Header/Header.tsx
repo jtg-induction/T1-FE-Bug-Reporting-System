@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { publicPaths } from 'constant/paths';
+import { PUBLIC_PATHS } from 'constant/paths';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useGetMeQuery, useLogoutUserMutation } from 'redux/apiSlice';
 import { logout } from 'redux/features/authSlice';
@@ -33,7 +33,7 @@ export const Header = () => {
         await logoutUser();
         dispatch(logout());
         setAnchorEl(null);
-        navigate(publicPaths.login);
+        navigate(PUBLIC_PATHS.LOGIN);
     };
     return (
         <StyledAppBar elevation={1}>

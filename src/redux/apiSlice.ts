@@ -108,7 +108,7 @@ export const apiSlice = createApi({
 
         getUser: builder.query<ApiResponse, string>({
             query: (userId) => ({
-                url: `${API_PATHS.USERS}/${userId}/`,
+                url: `${API_PATHS.USERS}${userId}/`,
                 method: 'GET',
             }),
         }),
@@ -118,7 +118,7 @@ export const apiSlice = createApi({
             { userId: string; updateData: UpdateUserData }
         >({
             query: ({ updateData, userId }) => ({
-                url: `${API_PATHS.USERS}/${userId}/`,
+                url: `${API_PATHS.USERS}${userId}/`,
                 method: 'PUT',
                 body: updateData,
             }),

@@ -21,8 +21,8 @@ import {
     Typography,
 } from '@mui/material';
 
-import { validationRegex } from '@constant';
-import { DESIGNATIONS } from '@pages/SignupComplete/SignupComplete.config';
+import { VALIDATION_REGEX } from '@constant';
+import { DESIGNATIONS } from '@containers';
 
 import { INITIAL_USER_DATA } from './Profile.config';
 import { StyledSection } from './Profile.style';
@@ -77,7 +77,7 @@ export const Profile = () => {
             newErrors.phone = 'Phone number is required';
         } else if (
             formData.phone &&
-            !validationRegex.phone.test(formData.phone)
+            !VALIDATION_REGEX.PHONE.test(formData.phone)
         ) {
             newErrors.phone = 'Enter a valid phone number';
         }
@@ -271,11 +271,16 @@ export const Profile = () => {
                         error={Boolean(errors.designation)}
                         helperText={errors.designation}
                     >
-                        {DESIGNATIONS.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
+                        {DESIGNATIONS.map(
+                            (option: { VALUE: string; LABEL: string }) => (
+                                <MenuItem
+                                    key={option.VALUE}
+                                    value={option.VALUE}
+                                >
+                                    {option.LABEL}
+                                </MenuItem>
+                            ),
+                        )}
                     </TextField>
                     <TextField
                         fullWidth
