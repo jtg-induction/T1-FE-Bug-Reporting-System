@@ -4,7 +4,7 @@ export const API_PATHS = {
     LOGOUT: '/logout/',
     REGISTER: '/register/',
     ME: '/users/',
-    GENERA_EMAIL_LINK: '/generate-email-link/',
+    GENERATE_EMAIL_LINK: '/generate-email-link/',
     VERIFY_LINK: '/verify-link/',
 };
 

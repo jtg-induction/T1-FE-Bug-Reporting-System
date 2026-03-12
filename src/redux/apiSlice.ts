@@ -94,7 +94,7 @@ export const apiSlice = createApi({
         generateEmailLink: builder.mutation<ApiResponse, GenerateEmailLinkData>(
             {
                 query: (data) => ({
-                    url: API_PATHS.GENERA_EMAIL_LINK,
+                    url: API_PATHS.GENERATE_EMAIL_LINK,
                     method: 'POST',
                     body: data,
                 }),
