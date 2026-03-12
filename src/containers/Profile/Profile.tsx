@@ -8,7 +8,7 @@ import { AlertColor } from '@mui/material';
 
 import { ProfileView } from '@components';
 import { ProfileFormValues } from '@components/ProfileView/ProfileView.types';
-import { privatePaths } from '@constant';
+import { PRIVATE_PATHS } from '@constant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
     useGetMeQuery,
@@ -94,7 +94,7 @@ export const ProfileContainer = () => {
         setSnackbar((prev) => ({ ...prev, open: false }));
     };
 
-    if (error) return <Navigate to={privatePaths.profile} />;
+    if (error) return <Navigate to={PRIVATE_PATHS.PROFILE} />;
 
     return (
         <ProfileView

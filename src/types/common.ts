@@ -56,7 +56,6 @@ export interface UserProfileData extends UserData {
  */
 export interface LoginSignupRefreshResponse {
     access: string;
-    user: UserData;
 }
 
 export interface UserRegistrationData extends Omit<UserData, 'id'> {

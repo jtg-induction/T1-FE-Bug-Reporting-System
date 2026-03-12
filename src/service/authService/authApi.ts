@@ -3,11 +3,11 @@ import {
     ApiResponse,
     LoginData,
     LoginSignupRefreshResponse,
-    SendVerifyLinkData,
     UserRegistrationData,
+    VerifyLinkData,
 } from 'types/common';
 
-import { apiPaths } from '@constant';
+import { API_PATHS } from '@constant';
 
 export const authApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -16,7 +16,7 @@ export const authApi = baseApi.injectEndpoints({
             LoginData
         >({
             query: (credentials) => ({
-                url: apiPaths.login,
+                url: API_PATHS.LOGIN,
                 method: 'POST',
                 body: credentials,
             }),
@@ -27,7 +27,7 @@ export const authApi = baseApi.injectEndpoints({
             UserRegistrationData
         >({
             query: (data) => ({
-                url: apiPaths.register,
+                url: API_PATHS.REGISTER,
                 method: 'POST',
                 body: data,
             }),
@@ -35,17 +35,14 @@ export const authApi = baseApi.injectEndpoints({
 
         logoutUser: builder.mutation<ApiResponse<null>, void>({
             query: () => ({
-                url: apiPaths.logout,
+                url: API_PATHS.LOGOUT,
                 method: 'POST',
             }),
         }),
 
-        sendVerifyLink: builder.mutation<
-            ApiResponse<SendVerifyLinkData>,
-            SendVerifyLinkData
-        >({
+        generateEmailLink: builder.mutation<ApiResponse<null>, VerifyLinkData>({
             query: (data) => ({
-                url: apiPaths.generateEmailLink,
+                url: API_PATHS.GENERATE_EMAIL_LINK,
                 method: 'POST',
                 body: data,
             }),
@@ -57,5 +54,5 @@ export const {
     useLoginMutation,
     useLogoutUserMutation,
     useSignupMutation,
-    useSendVerifyLinkMutation,
+    useGenerateEmailLinkMutation,
 } = authApi;

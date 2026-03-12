@@ -3,5 +3,5 @@ export {
     useLoginMutation,
     useLogoutUserMutation,
     useSignupMutation,
-    useSendVerifyLinkMutation,
+    useGenerateEmailLinkMutation,
 } from './authApi';

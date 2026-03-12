@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useSignupMutation } from 'redux/apiSlice';
 import { setCredentials } from 'redux/features/authSlice';
 
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -20,6 +19,7 @@ import { FormBackground, FormComponent } from '@components';
 import { PRIVATE_PATHS } from '@constant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema } from '@schemas';
+import { useSignupMutation } from '@service';
 import { getErrorMessage } from '@utils';
 
 import {
@@ -68,8 +68,8 @@ export const SignupCompleteContainer = () => {
                 confirm_password: data.confirmPassword,
             };
 
-            const response = await signup(submitData);
-            if ('data' in response) {
+            const response = await signup(submitData).unwrap();
+            if (response.success) {
                 dispatch(setCredentials(response.data));
                 navigate(PRIVATE_PATHS.DASHBOARD);
             }

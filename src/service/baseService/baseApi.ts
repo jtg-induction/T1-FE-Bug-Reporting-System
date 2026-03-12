@@ -1,4 +1,4 @@
-import { apiPaths, publicRoutes } from 'constant/apiPaths';
+import { API_PATHS, PUBLIC_MUTATIONS } from 'constant/apiPaths';
 import { logout, setCredentials } from 'redux/features/authSlice';
 import { RootState } from 'redux/store';
 import { ApiResponse } from 'types/common';
@@ -30,9 +30,12 @@ const baseQueryWithReauth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions);
 
-    if (result.error?.status === 401 && !publicRoutes.includes(api.endpoint)) {
+    if (
+        result.error?.status === 401 &&
+        !PUBLIC_MUTATIONS.includes(api.endpoint)
+    ) {
         const refreshResult = await baseQuery(
-            { url: apiPaths.refresh, method: 'POST' },
+            { url: API_PATHS.REFRESH, method: 'POST' },
             api,
             extraOptions,
         );

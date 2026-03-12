@@ -1,11 +1,11 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useGenerateEmailLinkMutation } from 'redux/apiSlice';
 
 import { Alert, Stack, TextField, Typography } from '@mui/material';
 
 import { FormBackground, FormComponent } from '@components';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupRequestSchema } from '@schemas';
+import { useGenerateEmailLinkMutation } from '@service';
 import { getErrorMessage } from '@utils';
 
 import { SIGNUP_CONFIG } from './SignupRequest.config';

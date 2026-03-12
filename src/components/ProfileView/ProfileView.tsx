@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 
 import { Snackbar } from '@components/Snackbar';
-import { DESIGNATIONS } from '@pages/SignupComplete/SignupComplete.config';
+import { DESIGNATIONS } from '@containers/SignupComplete';
 
 import * as S from './ProfileView.style';
 import { ProfileViewProps } from './ProfileView.types';
@@ -185,12 +185,12 @@ export const ProfileView = ({
                                             const selectedOption =
                                                 DESIGNATIONS.find(
                                                     (opt) =>
-                                                        opt.value ===
+                                                        opt.VALUE ===
                                                         field.value,
                                                 );
                                             const displayValue = editStatus
                                                 ? field.value
-                                                : selectedOption?.label ||
+                                                : selectedOption?.LABEL ||
                                                   field.value;
 
                                             return (
@@ -219,14 +219,14 @@ export const ProfileView = ({
                                                             (option) => (
                                                                 <MenuItem
                                                                     key={
-                                                                        option.value
+                                                                        option.VALUE
                                                                     }
                                                                     value={
-                                                                        option.value
+                                                                        option.VALUE
                                                                     }
                                                                 >
                                                                     {
-                                                                        option.label
+                                                                        option.LABEL
                                                                     }
                                                                 </MenuItem>
                                                             ),
@@ -310,19 +310,6 @@ export const ProfileView = ({
                     </S.StyledSection>
                 </form>
 
-                {/* <Snackbar
-                    open={snackbar.open}
-                    autoHideDuration={4000}
-                    onClose={onSnackbarClose}
-                >
-                    <Alert
-                        onClose={onSnackbarClose}
-                        severity={snackbar.severity || 'success'}
-                        variant="filled"
-                    >
-                        {snackbar.message}
-                    </Alert>
-                </Snackbar> */}
                 <Snackbar
                     open={snackbar.open}
                     message={snackbar.message}

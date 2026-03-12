@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { validationRegex } from '@constant';
+import { VALIDATION_REGEX } from '@constant';
 
 export const profileSchema = z.object({
     first_name: z
@@ -14,7 +14,7 @@ export const profileSchema = z.object({
     date_of_birth: z.string().optional().or(z.literal('')).nullable(),
     phone: z
         .string()
-        .regex(validationRegex.phone, 'Enter a valid phone number')
+        .regex(VALIDATION_REGEX.PHONE, 'Enter a valid phone number')
         .nullable()
         .or(z.literal('')),
     designation: z.string().nonempty('Designation is required'),
