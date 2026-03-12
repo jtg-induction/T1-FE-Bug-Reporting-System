@@ -3,8 +3,8 @@ import {
     GenerateEmailLinkData,
     LoginData,
     LoginSignupRefreshResponse,
-    UserData,
     UpdateUserData,
+    UserData,
     UserRegistrationData,
 } from 'types/common';
 
@@ -106,7 +106,7 @@ export const apiSlice = createApi({
             }),
         }),
 
-        getUser: builder.query<ApiResponse, string>({
+        getUser: builder.query<ApiResponse<UserData>, string>({
             query: (userId) => ({
                 url: `${API_PATHS.USERS}${userId}/`,
                 method: 'GET',
@@ -114,7 +114,7 @@ export const apiSlice = createApi({
         }),
 
         updateUser: builder.mutation<
-            ApiResponse,
+            ApiResponse<UserData>,
             { userId: string; updateData: UpdateUserData }
         >({
             query: ({ updateData, userId }) => ({

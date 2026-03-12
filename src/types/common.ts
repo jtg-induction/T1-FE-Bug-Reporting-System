@@ -54,11 +54,7 @@ export interface UserProfileData {
 
 export interface ApiResponse<T> {
     status: number;
-<<<<<<< HEAD:src/types/common.ts
     data: T;
-=======
-    data: LoginSignupRefreshResponse | UserData | UserProfileData | void;
->>>>>>> fac95a8 (FS_02:Standardized api response):src/types/common.d.ts
     message?: string;
 }
 
