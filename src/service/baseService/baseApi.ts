@@ -38,10 +38,11 @@ const baseQueryWithReauth: BaseQueryFn<
         );
 
         if (refreshResult.data) {
-            const authResponse = refreshResult as ApiResponse;
-            api.dispatch(
-                setCredentials(authResponse.data as LoginSignupRefreshResponse),
-            );
+            const authResponse =
+                refreshResult as ApiResponse<LoginSignupRefreshResponse>;
+
+            if (authResponse?.success && authResponse.data)
+                api.dispatch(setCredentials(authResponse.data));
             result = await baseQuery(args, api, extraOptions);
         } else {
             api.dispatch(logout());

@@ -6,3 +6,4 @@ export { ConditionalWrapper } from './ConditionalWrapper';
 export { Avatar } from './Avatar';
 export { Popover } from './Popover';
 export { ProfileView } from './ProfileView';
+export { Snackbar } from './Snackbar';

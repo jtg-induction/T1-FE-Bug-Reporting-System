@@ -5,19 +5,29 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { logout } from 'redux/features/authSlice';
 import { useAppDispatch } from 'redux/store';
 
-import { Box, Button, Divider,Stack, Toolbar, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Divider,
+    Stack,
+    Toolbar,
+    Typography,
+} from '@mui/material';
 
+import Logo from '@assets/images/logo-detail.png';
 import { Avatar } from '@components/Avatar';
 import { Popover } from '@components/Popover';
 import { PopoverContentProps } from '@components/Popover/Popover.props';
 import { useGetMeQuery, useLogoutUserMutation } from '@service';
+import { baseApi } from '@service';
 
 import { StyledAppBar } from './Header.styles';
 
 export const Header = () => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-    const { data: user } = useGetMeQuery();
+    const { data: response } = useGetMeQuery();
+    const user = response?.data;
     const [logoutUser] = useLogoutUserMutation();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -33,14 +43,20 @@ export const Header = () => {
     const handleLogout = async () => {
         await logoutUser();
         dispatch(logout());
+        dispatch(baseApi.util.resetApiState());
         setAnchorEl(null);
         navigate(PUBLIC_PATHS.LOGIN);
     };
 
-    const fullName = user ? `${user.first_name} ${user.last_name}` : 'Anonymous';
+    const fullName = user
+        ? `${user.first_name} ${user.last_name}`
+        : 'Anonymous';
 
     return (
-        <StyledAppBar elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
+        <StyledAppBar
+            elevation={0}
+            sx={{ borderBottom: '1px solid', borderColor: 'divider' }}
+        >
             <Toolbar>
                 <Stack
                     width="100%"
@@ -50,24 +66,25 @@ export const Header = () => {
                 >
                     <Box
                         component="img"
-                        src="/logo.svg"
-                        alt="LOGO"
-                        onClick={void navigate(PRIVATE_PATHS.DASHBOARD)}
-                        sx={{ 
-                            height: 32, 
+                        src={Logo}
+                        alt="Redirect to Dashboard"
+                        onClick={() => void navigate(PRIVATE_PATHS.DASHBOARD)}
+                        sx={{
+                            height: 32,
                             cursor: 'pointer',
                             transition: 'opacity 0.2s',
-                            '&:hover': { opacity: 0.8 } 
+                            '&:hover': { opacity: 0.8 },
                         }}
                     />
-                    <Stack direction="row" alignItems="center" spacing={2}>
-                        <Avatar
-                            src={""}
-                            name={fullName}
-                            handleClick={handleProfileClick}
-                            toolTipContent={user?.email || 'Guest'}
-                        />
-                        {user && (
+                    {user && (
+                        <Stack direction="row" alignItems="center" spacing={2}>
+                            <Avatar
+                                src={''}
+                                name={fullName}
+                                handleClick={handleProfileClick}
+                                toolTipContent={user.email || 'Guest'}
+                            />
+
                             <Popover
                                 anchorEl={anchorEl}
                                 handleClose={handlePopoverClose}
@@ -79,8 +96,8 @@ export const Header = () => {
                                     />
                                 }
                             />
-                        )}
-                    </Stack>
+                        </Stack>
+                    )}
                 </Stack>
             </Toolbar>
         </StyledAppBar>
@@ -105,7 +122,7 @@ const PopoverContent = ({
                 {user.email}
             </Typography>
         </Box>
-        
+
         <Divider sx={{ my: 1.5 }} />
 
         <Stack gap={1}>
@@ -120,11 +137,11 @@ const PopoverContent = ({
             >
                 View Profile
             </Button>
-            <Button 
+            <Button
                 fullWidth
-                variant="outlined" 
+                variant="outlined"
                 color="error"
-                onClick={void handleLogout()}
+                onClick={() => void handleLogout()}
                 sx={{ textTransform: 'none' }}
             >
                 Logout

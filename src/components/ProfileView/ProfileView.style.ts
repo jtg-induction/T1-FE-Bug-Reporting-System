@@ -5,16 +5,14 @@ export const MainWrapper = styled(Box)(({ theme }) => ({
     minHeight: '100vh',
     display: 'flex',
     justifyContent: 'center',
-    backgroundColor: '#F9FAFB',
     padding: theme.spacing(4, 2),
     [theme.breakpoints.up('md')]: {
         padding: theme.spacing(8, 4),
     },
 }));
 
-export const ContentContainer = styled(Box)(({ theme }) => ({
+export const ContentContainer = styled(Box)(() => ({
     width: '100%',
-    maxWidth: theme.typography.pxToRem(1000),
 }));
 
 export const HeaderContainer = styled(Stack)(({ theme }) => ({
@@ -30,7 +28,9 @@ export const HeaderContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export const PageTitle = styled(Typography)(({ theme }) => {
-    const { typography: { pxToRem } } = theme;
+    const {
+        typography: { pxToRem },
+    } = theme;
 
     return {
         fontSize: pxToRem(20),
@@ -39,20 +39,20 @@ export const PageTitle = styled(Typography)(({ theme }) => {
         color: theme.palette.text.primary,
         [theme.breakpoints.up('md')]: {
             fontSize: theme.typography.pxToRem(32),
-        }
-    }
-
+        },
+    };
 });
 
 export const SectionLabel = styled(Typography)(({ theme }) => {
-    const { typography: { pxToRem } } = theme;
+    const {
+        typography: { pxToRem },
+    } = theme;
     return {
         fontSize: pxToRem(16),
         fontWeight: 800,
         color: theme.palette.text.primary,
         marginBottom: theme.spacing(4),
-    }
-
+    };
 });
 
 export const StyledSection = styled(Box)(({ theme }) => ({
@@ -67,7 +67,9 @@ export const StyledSection = styled(Box)(({ theme }) => ({
 }));
 
 export const FormGridStack = styled(Stack)(({ theme }) => {
-    const { typography: {pxToRem} } = theme;
+    const {
+        typography: { pxToRem },
+    } = theme;
 
     return {
         '& .MuiTextField-root': {
@@ -93,16 +95,16 @@ export const FormGridStack = styled(Stack)(({ theme }) => {
             '& .MuiFilledInput-root': {
                 backgroundColor: '#F3F4F6',
                 '&:before, &:after': { display: 'none' },
-                
+
                 '& .MuiInputBase-input': {
                     padding: `${pxToRem(8)} ${pxToRem(16)}`,
                 },
                 '&.MuiInputBase-multiline': {
                     padding: `${pxToRem(0)} ${pxToRem(0)}`,
-                }
+                },
             },
-        }
-    }
+        },
+    };
 });
 
 export const SaveButton = styled(Button)(({ theme }) => ({
@@ -113,7 +115,7 @@ export const SaveButton = styled(Button)(({ theme }) => ({
     textTransform: 'none',
     [theme.breakpoints.up('md')]: {
         fontSize: theme.typography.pxToRem(16),
-    }
+    },
 }));
 
 export const ActionIconButton = styled(Button)(({ theme }) => ({
@@ -127,5 +129,5 @@ export const ActionIconButton = styled(Button)(({ theme }) => ({
     color: theme.palette.text.primary,
     [theme.breakpoints.up('md')]: {
         fontSize: theme.typography.pxToRem(16),
-    }
+    },
 }));

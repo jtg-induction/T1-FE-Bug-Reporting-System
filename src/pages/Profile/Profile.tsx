@@ -1,3 +1,9 @@
 import { ProfileContainer } from '@containers';
 
-export const ProfilePage = () => <ProfileContainer />
+import { StyledStack } from './Profile.styles';
+
+export const ProfilePage = () => (
+    <StyledStack>
+        <ProfileContainer />
+    </StyledStack>
+);

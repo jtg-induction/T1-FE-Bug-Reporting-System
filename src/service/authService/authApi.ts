@@ -2,6 +2,7 @@ import { baseApi } from 'service/baseService/baseApi';
 import {
     ApiResponse,
     LoginData,
+    LoginSignupRefreshResponse,
     SendVerifyLinkData,
     UserRegistrationData,
 } from 'types/common';
@@ -10,7 +11,10 @@ import { apiPaths } from '@constant';
 
 export const authApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        login: builder.mutation<ApiResponse, LoginData>({
+        login: builder.mutation<
+            ApiResponse<LoginSignupRefreshResponse>,
+            LoginData
+        >({
             query: (credentials) => ({
                 url: apiPaths.login,
                 method: 'POST',
@@ -18,7 +22,10 @@ export const authApi = baseApi.injectEndpoints({
             }),
         }),
 
-        signup: builder.mutation<ApiResponse, UserRegistrationData>({
+        signup: builder.mutation<
+            ApiResponse<LoginSignupRefreshResponse>,
+            UserRegistrationData
+        >({
             query: (data) => ({
                 url: apiPaths.register,
                 method: 'POST',
@@ -26,14 +33,17 @@ export const authApi = baseApi.injectEndpoints({
             }),
         }),
 
-        logoutUser: builder.mutation<ApiResponse, void>({
+        logoutUser: builder.mutation<ApiResponse<null>, void>({
             query: () => ({
                 url: apiPaths.logout,
                 method: 'POST',
             }),
         }),
 
-        sendVerifyLink: builder.mutation<ApiResponse, SendVerifyLinkData>({
+        sendVerifyLink: builder.mutation<
+            ApiResponse<SendVerifyLinkData>,
+            SendVerifyLinkData
+        >({
             query: (data) => ({
                 url: apiPaths.generateEmailLink,
                 method: 'POST',
