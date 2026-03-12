@@ -1,1 +1,1 @@
-export * from './geteErrorMessage';
+export * from './getErrorMessage';

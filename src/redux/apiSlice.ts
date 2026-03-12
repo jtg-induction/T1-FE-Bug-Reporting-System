@@ -3,6 +3,7 @@ import {
     GenerateEmailLinkData,
     LoginData,
     LoginSignupRefreshResponse,
+    UserData,
     UserRegistrationData,
 } from 'types/common';
 
@@ -14,6 +15,7 @@ import type {
 } from '@reduxjs/toolkit/query';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+import { ReauthApiResponse } from './apislice.types';
 import { logout, setCredentials } from './features/authSlice';
 import type { RootState } from './store';
 
@@ -31,7 +33,7 @@ const baseQuery = fetchBaseQuery({
 
 const baseQueryWithReauth: BaseQueryFn<
     string | FetchArgs,
-    ApiResponse,
+    ReauthApiResponse,
     FetchBaseQueryError
 > = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions);
@@ -47,10 +49,8 @@ const baseQueryWithReauth: BaseQueryFn<
         );
 
         if (refreshResult.data) {
-            const authResponse = refreshResult as ApiResponse;
-            api.dispatch(
-                setCredentials(authResponse.data as LoginSignupRefreshResponse),
-            );
+            const authResponse = refreshResult as ReauthApiResponse;
+            api.dispatch(setCredentials(authResponse.data));
             result = await baseQuery(args, api, extraOptions);
         } else {
             api.dispatch(logout());
@@ -64,7 +64,10 @@ export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery: baseQueryWithReauth,
     endpoints: (builder) => ({
-        login: builder.mutation<ApiResponse, LoginData>({
+        login: builder.mutation<
+            ApiResponse<LoginSignupRefreshResponse>,
+            LoginData
+        >({
             query: (credentials) => ({
                 url: API_PATHS.LOGIN,
                 method: 'POST',
@@ -72,7 +75,7 @@ export const apiSlice = createApi({
             }),
         }),
 
-        signup: builder.mutation<ApiResponse, UserRegistrationData>({
+        signup: builder.mutation<ApiResponse<UserData>, UserRegistrationData>({
             query: (data) => ({
                 url: API_PATHS.REGISTER,
                 method: 'POST',
@@ -80,26 +83,27 @@ export const apiSlice = createApi({
             }),
         }),
 
-        getMe: builder.query<ApiResponse, void>({
+        getMe: builder.query<ApiResponse<UserData>, void>({
             query: () => API_PATHS.ME,
         }),
 
-        logoutUser: builder.mutation<ApiResponse, void>({
+        logoutUser: builder.mutation<ApiResponse<void>, void>({
             query: () => ({
                 url: API_PATHS.LOGOUT,
                 method: 'POST',
             }),
         }),
 
-        generateEmailLink: builder.mutation<ApiResponse, GenerateEmailLinkData>(
-            {
-                query: (data) => ({
-                    url: API_PATHS.GENERATE_EMAIL_LINK,
-                    method: 'POST',
-                    body: data,
-                }),
-            },
-        ),
+        generateEmailLink: builder.mutation<
+            ApiResponse<void>,
+            GenerateEmailLinkData
+        >({
+            query: (data) => ({
+                url: API_PATHS.GENERATE_EMAIL_LINK,
+                method: 'POST',
+                body: data,
+            }),
+        }),
     }),
 });
 

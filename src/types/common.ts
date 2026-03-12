@@ -33,9 +33,9 @@ export interface VerifyLinkData {
     token: string;
 }
 
-export interface ApiResponse {
+export interface ApiResponse<T> {
     status: number;
-    data: LoginSignupRefreshResponse | UserData | void;
+    data: T;
     message?: string;
 }
 
