@@ -10,3 +10,4 @@ export { PopoverContent } from './PopoverContent';
 export { Table } from './Table';
 export { SectionCard } from './SectionCard';
 export { Dialog } from './Dialog';
+export { ModalForm } from './ModalForm';

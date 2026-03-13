@@ -12,3 +12,8 @@ export {
     useGenerateEmailLinkMutation,
 } from './authService';
 export { baseApi } from './baseService/baseApi';
+export {
+    projectApi,
+    useCreateProjectMutation,
+    useGetProjectsQuery,
+} from './projectService';
