@@ -3,4 +3,6 @@ export * from './Sidebar';
 export * from './Login';
 export * from './SignupRequest';
 export * from './SignupComplete';
-export * from './Profile';
+export * from './ProfileForm';
+export * from './ProfileHeader';
+export * from './UserMenu';

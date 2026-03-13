@@ -46,10 +46,9 @@ export interface UserData {
     phone: string | null;
     date_of_birth: string | null;
     designation: string;
-}
-
-export interface UserProfileData extends UserData {
-    is_owner: boolean;
+    can_edit: boolean;
+    jiraID?: string;
+    jira_access_token?: string;
 }
 
 /** * AUTH & REQUEST INTERFACES

@@ -5,10 +5,10 @@ import { Box, Toolbar } from '@mui/material';
 import { Header } from '@containers';
 import { useGetMeQuery } from '@service';
 
-import { StyledMain } from './Layout.style';
+import { StyledMain } from './Layout.styles';
 
 export const Layout = () => {
-    const {} = useGetMeQuery();
+    useGetMeQuery();
     return (
         <Box>
             <StyledMain>

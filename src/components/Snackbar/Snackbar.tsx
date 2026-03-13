@@ -20,7 +20,10 @@ export const CustomSnackbar = ({
             onClose={onClose}
             severity={severity}
             variant="filled"
-            sx={{ width: '100%', minWidth: '300px' }}
+            sx={(theme) => ({
+                width: '100%',
+                minWidth: theme.typography.pxToRem(300),
+            })}
         >
             {message}
         </Alert>

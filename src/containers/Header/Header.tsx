@@ -1,30 +1,23 @@
 import { useState } from 'react';
 
 import { PRIVATE_PATHS, PUBLIC_PATHS } from 'constant/paths';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { logout } from 'redux/features/authSlice';
 import { useAppDispatch } from 'redux/store';
 
-import {
-    Box,
-    Button,
-    Divider,
-    Stack,
-    Toolbar,
-    Typography,
-} from '@mui/material';
+import { Box, Stack, Toolbar } from '@mui/material';
 
 import Logo from '@assets/images/logo-detail.png';
 import { Avatar } from '@components/Avatar';
 import { Popover } from '@components/Popover';
-import { PopoverContentProps } from '@components/Popover/Popover.types';
+import { UserMenu } from '@containers/UserMenu';
 import { useGetMeQuery, useLogoutUserMutation } from '@service';
 import { baseApi } from '@service';
 
 import { StyledAppBar } from './Header.styles';
 
 export const Header = () => {
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+    const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
 
     const { data: response } = useGetMeQuery();
     const user = response?.data;
@@ -32,7 +25,7 @@ export const Header = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const handleProfileClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleProfileClick = (event: React.MouseEvent<HTMLDivElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
@@ -79,7 +72,6 @@ export const Header = () => {
                     {user && (
                         <Stack direction="row" alignItems="center" spacing={2}>
                             <Avatar
-                                src={''}
                                 name={fullName}
                                 handleClick={handleProfileClick}
                                 toolTipContent={user.email || 'Guest'}
@@ -89,7 +81,7 @@ export const Header = () => {
                                 anchorEl={anchorEl}
                                 handleClose={handlePopoverClose}
                                 PopoverContent={
-                                    <PopoverContent
+                                    <UserMenu
                                         user={user}
                                         handleClose={handlePopoverClose}
                                         handleLogout={handleLogout}
@@ -103,49 +95,3 @@ export const Header = () => {
         </StyledAppBar>
     );
 };
-
-/**
- * Internal content for the user profile popover.
- * Enhanced with better typography and action hierarchy.
- */
-const PopoverContent = ({
-    user,
-    handleClose,
-    handleLogout,
-}: PopoverContentProps) => (
-    <Stack sx={{ p: 2, minWidth: 240 }}>
-        <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1" fontWeight="600" lineHeight={1.2}>
-                {`${user.first_name} ${user.last_name}`}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-                {user.email}
-            </Typography>
-        </Box>
-
-        <Divider sx={{ my: 1.5 }} />
-
-        <Stack gap={1}>
-            <Button
-                fullWidth
-                variant="contained"
-                disableElevation
-                component={NavLink}
-                to={`${PRIVATE_PATHS.PROFILE}/${user.id}`}
-                onClick={handleClose}
-                sx={{ textTransform: 'none' }}
-            >
-                View Profile
-            </Button>
-            <Button
-                fullWidth
-                variant="outlined"
-                color="error"
-                onClick={() => void handleLogout()}
-                sx={{ textTransform: 'none' }}
-            >
-                Logout
-            </Button>
-        </Stack>
-    </Stack>
-);

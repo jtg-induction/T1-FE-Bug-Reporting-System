@@ -1,7 +1,7 @@
 import { Box, Toolbar, Typography } from '@mui/material';
 
 import { BASIC_PAGE_DATA } from './BasicPage.config';
-import { ImageWrapper, StyledBox, StyledButton } from './BasicPage.style';
+import { ImageWrapper, StyledBox, StyledButton } from './BasicPage.styles';
 import { type BasicPageProps, ScannerAction } from './BasicPage.types';
 
 /**
@@ -11,19 +11,13 @@ import { type BasicPageProps, ScannerAction } from './BasicPage.types';
  * @param type - The specific page state from ScannerAction.
  */
 export const BasicPage = ({ handleButton, type }: BasicPageProps) => {
-
-    // --- 1. STATE ---
-
-    // --- 2. HOOKS ---
-
-    // --- 3. FUNCTIONS / LOGIC ---
     const TYPE = ScannerAction[type];
     const pageContent = BASIC_PAGE_DATA[TYPE];
 
     return (
         <StyledBox>
             <Toolbar />
-            
+
             <ImageWrapper>
                 <Box
                     component="img"

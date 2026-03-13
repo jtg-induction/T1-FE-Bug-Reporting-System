@@ -18,4 +18,6 @@ export const profileSchema = z.object({
         .nullable()
         .or(z.literal('')),
     designation: z.string().nonempty('Designation is required'),
+    jiraID: z.string().optional(),
+    jira_access_token: z.string().optional(),
 });

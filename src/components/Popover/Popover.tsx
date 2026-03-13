@@ -1,4 +1,4 @@
-import { StyledPopover } from './Popover.style';
+import { StyledPopover } from './Popover.styles';
 import { PopoverProps } from './Popover.types';
 
 /**
@@ -12,11 +12,6 @@ export const Popover = ({
     handleClose,
     PopoverContent,
 }: PopoverProps) => {
-    // --- 1. STATE ---
-
-    // --- 2. HOOKS ---
-
-    // --- 3. FUNCTIONS / LOGIC ---
     const open = Boolean(anchorEl);
 
     return (

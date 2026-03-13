@@ -1,11 +1,13 @@
 import { Popover, styled } from '@mui/material';
+import { popoverClasses } from '@mui/material/Popover';
 
-export const StyledPopover = styled(Popover)(({ theme }) => {
-    const {
-        typography: { pxToRem },
-    } = theme;
-    return {
-        '& .MuiPopover-paper': {
+export const StyledPopover = styled(Popover)(
+    ({
+        theme: {
+            typography: { pxToRem },
+        },
+    }) => ({
+        [`& .${popoverClasses.paper}`]: {
             padding: pxToRem(30),
             display: 'flex',
             flexDirection: 'column',
@@ -13,5 +15,5 @@ export const StyledPopover = styled(Popover)(({ theme }) => {
             alignItems: 'center',
             gap: pxToRem(10),
         },
-    };
-});
+    }),
+);

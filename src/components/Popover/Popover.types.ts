@@ -1,13 +1,5 @@
-import { UserData } from 'types/common';
-
-export interface PopoverContentProps {
-    user: UserData;
-    handleClose: () => void;
-    handleLogout: () => Promise<void>;
-}
-
 export interface PopoverProps {
-    anchorEl: HTMLButtonElement | null;
+    anchorEl: HTMLDivElement | null;
     PopoverContent: React.ReactNode;
     handleClose: () => void;
 }
