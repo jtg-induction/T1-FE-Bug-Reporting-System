@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
-import { useRejectInviteMutation } from 'redux/apiSlice';
 
-import { CircularProgress,Stack, Typography } from '@mui/material';
+import { CircularProgress, Stack, Typography } from '@mui/material';
+
+import { useRejectInviteMutation } from '@service';
 
 export const RejectInvitePage = () => {
     const { id } = useParams<{ id: string }>();

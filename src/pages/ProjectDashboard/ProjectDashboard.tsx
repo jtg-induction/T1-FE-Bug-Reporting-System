@@ -1,16 +1,6 @@
 import { useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-    useArchiveProjectMutation,
-    useChangeRoleMutation,
-    useGetMeQuery,
-    useGetProjectMembersQuery,
-    useGetProjectQuery,
-    useRevokeMemberMutation,
-    useUnarchiveProjectMutation,
-    useUpdateProjectMutation,
-} from 'redux/apiSlice';
 
 import ArchiveIcon from '@mui/icons-material/Archive';
 import EditIcon from '@mui/icons-material/Edit';
@@ -29,6 +19,16 @@ import {
 
 import { Dialog } from '@components/Dialog';
 import { NotFoundPage } from '@pages/NotFoundPage';
+import {
+    useArchiveProjectMutation,
+    useChangeRoleMutation,
+    useGetMeQuery,
+    useGetProjectMembersQuery,
+    useGetProjectQuery,
+    useRevokeMemberMutation,
+    useUnarchiveProjectMutation,
+    useUpdateProjectMutation,
+} from '@service';
 
 import { ProjectUsers } from './component/UserTable/UserTable';
 import { DASHBOARD_TEXT, INITIAL_EDIT_STATE } from './ProjectDashboard.config';
@@ -98,9 +98,9 @@ export const ProjectDashboard = () => {
     const handleOpenEdit = () => {
         if (project) {
             setFormData({
-                title: project.title,
-                description: project.description,
-                status: project.status,
+                title: projectData?.title,
+                description: projectData?.description,
+                status: projectData?.status,
             });
         }
         setOpenEdit(true);
@@ -117,9 +117,12 @@ export const ProjectDashboard = () => {
         return <NotFoundPage />;
     }
 
-    const isAdmin = project.project_role === 1;
-    const isActive = project.status === 1;
-    const isOwner = project.owner === currentUser?.id;
+    const currentUserData = currentUser?.data;
+    const projectData = project.data;
+    const membersData = members?.data.results ?? [];
+    const isAdmin = projectData?.project_role === 1;
+    const isActive = projectData?.status === 1;
+    const isOwner = projectData?.owner === currentUserData?.id;
 
     const handleUpdate = () => {
         void (async () => {
@@ -165,7 +168,7 @@ export const ProjectDashboard = () => {
     const handleLeaveExecute = () => {
         void (async () => {
             try {
-                const currentUserId = currentUser?.id;
+                const currentUserId = currentUserData?.id;
                 if (isOwner) {
                     await changeRole({
                         projectId: projectId!,
@@ -202,7 +205,7 @@ export const ProjectDashboard = () => {
         <StyledDashboardContainer>
             <StyledHeaderSection>
                 <Typography variant="h6" fontWeight="bold">
-                    Project Key: {project.key}
+                    Project Key: {projectData?.key}
                 </Typography>
 
                 <Stack direction="row" spacing={2}>
@@ -260,10 +263,10 @@ export const ProjectDashboard = () => {
 
             <StyledDetailsCard>
                 <Typography variant="h4" gutterBottom fontWeight="medium">
-                    {project.title}
+                    {projectData?.title}
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
-                    {project.description}
+                    {projectData?.description}
                 </Typography>
 
                 <StyledInfoWrapper>
@@ -278,14 +281,17 @@ export const ProjectDashboard = () => {
 
                     <StyledInfoRow>
                         <StyledLabel>Jira URL:</StyledLabel>
-                        <StyledLink href={project.jira_url} target="_blank">
-                            {project.jira_url}
+                        <StyledLink
+                            href={projectData?.jira_url}
+                            target="_blank"
+                        >
+                            {projectData?.jira_url}
                         </StyledLink>
                     </StyledInfoRow>
 
                     <StyledInfoRow>
                         <StyledLabel>Jira ID:</StyledLabel>
-                        <Typography>{project.jira_project_id}</Typography>
+                        <Typography>{projectData?.jira_project_id}</Typography>
                     </StyledInfoRow>
                 </StyledInfoWrapper>
             </StyledDetailsCard>
@@ -315,9 +321,9 @@ export const ProjectDashboard = () => {
                             setSortModel={setSortModel}
                             isAdmin={isAdmin}
                             isActive={isActive}
-                            ownerId={project.owner}
+                            ownerId={projectData?.owner}
                             isOwner={isOwner}
-                            currentUserId={currentUser?.id}
+                            currentUserId={currentUserData?.id}
                         />
                     </StyledTabPanel>
                 )}
@@ -363,8 +369,8 @@ export const ProjectDashboard = () => {
                             value={newOwnerId}
                             onChange={(e) => setNewOwnerId(e.target.value)}
                         >
-                            {members?.results.length > 0 ? (
-                                members?.results.map((m) => (
+                            {membersData.length > 0 ? (
+                                membersData.map((m) => (
                                     <MenuItem
                                         key={m.member.id}
                                         value={m.member.id}

@@ -9,23 +9,18 @@ export interface ApiResponse<T> {
 
 /** * LIMIT-OFFSET PAGINATION METADATA
  */
-export interface PaginationMeta {
+export interface PaginationMeta<T> {
     count: number;
     next: string | null;
     previous: string | null;
-    limit: number;
-    offset: number;
+    results: T[];
 }
 
 /** * PAGINATED RESPONSE
  * Matches the 'metadata' key we used in StandardResultsSetPagination
  */
-export interface PaginatedResponse<T> {
-    success: boolean;
-    message: string;
-    metadata: PaginationMeta;
-    data: T[];
-    errors: null;
+export interface PaginatedResponse<T> extends Omit<ApiResponse<T>, 'data'> {
+    data: PaginationMeta<T>;
 }
 
 /** * ERROR STRUCTURE
@@ -106,23 +101,27 @@ export interface ProjectCreateResponse {
 }
 
 export interface ProjectListResponse extends ProjectCreateResponse {
-    count: number,
-    next: string | null,
-    previous: string | null,
-    results: ({ project_role: number } & ProjectCreateResponse)[],
+    project_role: number;
+    owner: string;
 }
 
 export interface ProjectListData {
-    limit: number,
-    offset: number,
-    ordering: string | undefined,
-    filter: Record<string, string> | undefined,
+    limit: number;
+    offset: number;
+    ordering: string | undefined;
+    filter: Record<string, string> | undefined;
 }
 
 export interface ProjectMemberData {
-    projectId: string,
-    limit: number,
-    offset: number,
-    ordering: string | undefined,
-    filter: Record<string, string> | undefined,
+    projectId: string;
+    limit: number;
+    offset: number;
+    ordering: string | undefined;
+    filter: Record<string, string> | undefined;
+}
+
+export interface ProjectMemberResponse {
+    id: string;
+    member: UserData;
+    role: number;
 }

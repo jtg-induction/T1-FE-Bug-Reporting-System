@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAcceptInviteMutation } from 'redux/apiSlice';
 
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { CircularProgress,Stack, Typography } from '@mui/material';
+import { CircularProgress, Stack, Typography } from '@mui/material';
+
+import { useAcceptInviteMutation } from '@service';
 
 export const AcceptInvitePage = () => {
     const { id } = useParams<{ id: string }>();

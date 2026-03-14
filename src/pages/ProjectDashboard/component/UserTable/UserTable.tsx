@@ -1,13 +1,6 @@
 import { useState } from 'react';
 
 import { useParams } from 'react-router-dom';
-import {
-    useChangeRoleMutation,
-    useGetProjectMembersQuery,
-    useGetUsersToInviteQuery,
-    useInviteMemberMutation,
-    useRevokeMemberMutation,
-} from 'redux/apiSlice';
 import { handleFilterChange, handleSortChange } from 'utils/utils';
 
 import { Add, PersonRemove, SupervisorAccount } from '@mui/icons-material';
@@ -26,14 +19,16 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { Dialog } from '@components/Dialog';
 import { SectionCard } from '@components/SectionCard';
 import { Table } from '@components/Table';
+import {
+    useChangeRoleMutation,
+    useGetProjectMembersQuery,
+    useGetUsersToInviteQuery,
+    useInviteMemberMutation,
+    useRevokeMemberMutation,
+} from '@service';
 
 import { MEMBER_ROLES } from './UserTable.config';
-import {
-    ApiError,
-    ProjectMember,
-    ProjectUsersProps,
-    User,
-} from './UserTable.types';
+import { ApiError, ProjectMember, ProjectUsersProps } from './UserTable.types';
 
 export const ProjectUsers = ({
     isAdmin,
@@ -217,12 +212,15 @@ export const ProjectUsers = ({
         })();
     };
 
+    const membersData = members?.data;
+    const availableUsersData = availableUsers?.data ?? [];
+
     return (
         <Stack spacing={4}>
             <SectionCard
                 MainContent={
                     <Table
-                        rowCount={members?.count ?? 0}
+                        rowCount={membersData?.count ?? 0}
                         paginationModel={paginationModel}
                         onPaginationModelChange={setPaginationModel}
                         onFilterModelChange={(newModel) =>
@@ -232,7 +230,7 @@ export const ProjectUsers = ({
                             handleSortChange(newModel, setSortModel)
                         }
                         loading={isLoadingMembers}
-                        rows={members?.results ?? []}
+                        rows={membersData?.results ?? []}
                         columns={columns}
                         pageSize={5}
                     />
@@ -298,7 +296,7 @@ export const ProjectUsers = ({
                                 })
                             }
                         >
-                            {(availableUsers as User[])?.map((user) => (
+                            {availableUsersData?.map((user) => (
                                 <MenuItem key={user.id} value={user.id}>
                                     {user.first_name} {user.last_name} (
                                     {user.email})
