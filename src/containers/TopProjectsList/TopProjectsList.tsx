@@ -25,8 +25,13 @@ import { TopProjectListsProps } from './TopProjectsList.types';
 
 export const TopProjectsList = ({ onAddClick }: TopProjectListsProps) => {
     const navigate = useNavigate();
-    const { data: topProjects, isLoading } = useGetProjectsQuery();
-    const projectsData = topProjects?.data ?? [];
+    const { data: topProjects, isLoading } = useGetProjectsQuery({
+        limit: 5,
+        offset: 0,
+        ordering: undefined,
+        filter: {},
+    });
+    const projectsData = topProjects?.data.results ?? [];
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
