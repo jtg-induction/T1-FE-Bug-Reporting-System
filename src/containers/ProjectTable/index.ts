@@ -1,1 +1,0 @@
-export { ProjectTableContainer } from './ProjectTable';

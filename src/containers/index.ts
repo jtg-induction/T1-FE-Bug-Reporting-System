@@ -7,6 +7,5 @@ export * from './ProfileForm';
 export * from './ProfileHeader';
 export * from './UserMenu';
 export * from './ProjectForm';
-export * from './ProjectTable';
 export * from './DashboardHeader';
 export * from './ActiveProjectSection';
