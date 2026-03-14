@@ -6,14 +6,11 @@ import {
 import { useAppDispatch, useAppSelector } from 'redux/store';
 
 import { Edit, Save } from '@mui/icons-material';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Button } from '@mui/material';
 
-import {
-    ActionIconButton,
-    HeaderContainer,
-    PageTitle,
-    SaveButton,
-} from './ProfileHeader.styles';
+import { PageHeader } from '@components';
+
+import { ActionIconButton, SaveButton } from './ProfileHeader.styles';
 import { HeaderProps } from './ProfileHeader.types';
 
 export const ProfileHeaderContainer = ({
@@ -25,31 +22,27 @@ export const ProfileHeaderContainer = ({
         (state) => state.profile,
     );
 
-    return (
-        <HeaderContainer>
-            <Box width="100%">
-                <PageTitle>
-                    {isEditable ? 'Account Settings' : 'User Profile'}
-                </PageTitle>
-                <Typography
-                    variant="h6"
-                    color="text.secondary"
-                    mt={2}
-                    fontWeight={400}
-                    fontSize={16}
-                >
-                    {isEditable
-                        ? 'Manage your public profile and personal information.'
-                        : 'User Details'}
-                </Typography>
-            </Box>
+    const title = isEditable ? 'Account Settings' : 'User Profile';
+    const subtitle = isEditable
+        ? 'Manage your public profile and personal information.'
+        : 'User Details';
 
-            {isEditable && (
-                <Stack
-                    direction="row"
-                    spacing={2}
-                    width="100%"
-                    justifyContent="end"
+    const renderActions = () => {
+        if (!isEditable) return null;
+
+        return !editStatus ? (
+            <ActionIconButton
+                onClick={() => dispatch(setEditStatus(true))}
+                startIcon={<Edit />}
+            >
+                Edit Profile
+            </ActionIconButton>
+        ) : (
+            <>
+                <Button
+                    onClick={onCancel}
+                    color="inherit"
+                    disabled={isUpdatingUser}
                 >
                     {!editStatus ? (
                         <ActionIconButton

@@ -1,7 +1,7 @@
 import { ProjectListResponse } from 'types/common';
 
 import { Add } from '@mui/icons-material';
-import { Button, Typography } from '@mui/material';
+import { Button, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
 
 import { SectionCard, Table } from '@components';
@@ -14,6 +14,8 @@ import { ProjectsSectionProps } from './ActiveProjectSection.types';
 export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
     const { data: projects, isLoading } = useGetProjectsQuery();
     const projectsData = projects?.data ?? [];
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const columns: GridColDef<ProjectListResponse>[] = [
         {
@@ -37,13 +39,13 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
         <SectionCard
             TitleContent={
                 <HeaderStack>
-                    <Typography variant="h2">Your Projects</Typography>
+                    <Typography variant="h2">Active Projects</Typography>
                     <Button
                         variant="contained"
-                        startIcon={<Add />}
+                        startIcon={!isMobile && <Add />}
                         onClick={onAddClick}
                     >
-                        Create Project
+                        {isMobile ? <Add /> : 'Create Project'}
                     </Button>
                 </HeaderStack>
             }

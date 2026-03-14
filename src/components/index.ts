@@ -11,3 +11,5 @@ export { Table } from './Table';
 export { SectionCard } from './SectionCard';
 export { Dialog } from './Dialog';
 export { ModalForm } from './ModalForm';
+export { ListCard } from './ListCard';
+export { PageHeader } from './PageHeader';

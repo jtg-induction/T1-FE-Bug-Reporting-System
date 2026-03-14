@@ -1,17 +1,18 @@
 import { useState } from 'react';
 
 import {
-    DashboardHeader,
+    ActiveProjectSection,
     ProjectFormContainer,
-    TopProjectsList,
+    ProjectHeader,
 } from '@containers';
 import { ProjectFormValues } from '@schemas';
 import { useCreateProjectMutation } from '@service';
 
-import { GridContainer, StyledStack } from './Overview.styles';
+import { StyledStack } from './Projects.styles';
 
-export const Overview = () => {
+export const ProjectsPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+
     const [createProject, { isLoading: isCreating }] =
         useCreateProjectMutation();
 
@@ -23,14 +24,9 @@ export const Overview = () => {
     };
 
     return (
-        <StyledStack spacing={4}>
-            <DashboardHeader />
-
-            <GridContainer>
-                <TopProjectsList onAddClick={() => setIsModalOpen(true)} />
-                <TopProjectsList onAddClick={() => setIsModalOpen(true)} />
-            </GridContainer>
-
+        <StyledStack>
+            <ProjectHeader />
+            <ActiveProjectSection onAddClick={() => setIsModalOpen(true)} />
             <ProjectFormContainer
                 open={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
