@@ -1,4 +1,4 @@
-import { ProjectUpdateFormData } from './ProjectDashboard.types';
+import { ProjectUpdateFormData } from './ProjectDetail.types';
 
 export const INITIAL_EDIT_STATE: ProjectUpdateFormData = {
     title: '',

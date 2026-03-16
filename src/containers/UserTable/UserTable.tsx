@@ -1,24 +1,32 @@
 import { useState } from 'react';
 
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { handleFilterChange, handleSortChange } from 'utils/utils';
 
-import { Add, PersonRemove, SupervisorAccount } from '@mui/icons-material';
+import {
+    AccountCircle,
+    Add,
+    PersonRemove,
+    SupervisorAccount,
+} from '@mui/icons-material';
 import {
     Alert,
     Button,
-    IconButton,
     MenuItem,
     Stack,
     TextField,
-    Tooltip,
     Typography,
 } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { Dialog } from '@components/Dialog';
-import { SectionCard } from '@components/SectionCard';
-import { Table } from '@components/Table';
+import {
+    ActionMenu,
+    ActionMenuItem,
+    Dialog,
+    SectionCard,
+    Table,
+} from '@components';
+import { PRIVATE_PATHS } from '@constant';
 import {
     useChangeRoleMutation,
     useGetProjectMembersQuery,
@@ -44,6 +52,8 @@ export const ProjectUsers = ({
     setSortModel,
 }: ProjectUsersProps) => {
     const { id: projectId } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+
     const { data: members, isLoading: isLoadingMembers } =
         useGetProjectMembersQuery(
             {
@@ -159,41 +169,48 @@ export const ProjectUsers = ({
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 120,
+            width: 80,
             sortable: false,
             filterable: false,
+            align: 'center',
             renderCell: (params: GridRenderCellParams<ProjectMember>) => {
                 const isRowAdmin = params.row.role === 1;
                 const userId = params.row.member?.id;
 
-                if (!isAdmin || !isActive) return null;
-                if (userId === currentUserId) return null;
-                if (!userId || userId === ownerId) return null;
-                if (isRowAdmin && !isOwner) return null;
-                return (
-                    <Stack direction="row" spacing={1}>
-                        {!isRowAdmin && (
-                            <Tooltip title="Promote to Admin">
-                                <IconButton
-                                    size="small"
-                                    color="warning"
-                                    onClick={() => handlePromote(userId)}
-                                >
-                                    <SupervisorAccount fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                        )}
-                        <Tooltip title="Revoke Member">
-                            <IconButton
-                                size="small"
-                                color="warning"
-                                onClick={() => handleRevoke(userId)}
-                            >
-                                <PersonRemove fontSize="small" />
-                            </IconButton>
-                        </Tooltip>
-                    </Stack>
-                );
+                if (!userId) return null;
+
+                const canManageUser =
+                    isAdmin &&
+                    isActive &&
+                    userId !== currentUserId &&
+                    userId !== ownerId;
+                const canPromote = canManageUser && !isRowAdmin;
+                const canRevoke = canManageUser && (!isRowAdmin || isOwner);
+
+                const menuOptions: ActionMenuItem[] = [
+                    {
+                        id: 'view-profile',
+                        label: 'View Profile',
+                        icon: <AccountCircle fontSize="small" />,
+                        onClick: () =>
+                            navigate(`${PRIVATE_PATHS.PROFILE}/${userId}`),
+                    },
+                    canPromote && {
+                        id: 'promote',
+                        label: 'Promote to Admin',
+                        icon: <SupervisorAccount fontSize="small" />,
+                        onClick: () => handlePromote(userId),
+                    },
+                    canRevoke && {
+                        id: 'revoke',
+                        label: 'Remove User',
+                        icon: <PersonRemove fontSize="small" />,
+                        onClick: () => handleRevoke(userId),
+                        textColor: 'error.main',
+                    },
+                ].filter((item): item is ActionMenuItem => Boolean(item));
+
+                return <ActionMenu items={menuOptions} />;
             },
         },
     ];
@@ -241,12 +258,15 @@ export const ProjectUsers = ({
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <Typography variant="h2">Project Members</Typography>
+                        <Typography variant="h6" fontWeight="bold">
+                            Project Members
+                        </Typography>
                         {isAdmin && isActive && (
                             <Button
                                 variant="contained"
                                 startIcon={<Add />}
                                 onClick={() => setOpenInvite(true)}
+                                size="small"
                             >
                                 Invite Member
                             </Button>
@@ -270,7 +290,7 @@ export const ProjectUsers = ({
                         <Button
                             variant="contained"
                             onClick={handleInvite}
-                            disabled={isInviting}
+                            disabled={isInviting || !inviteData.user_id}
                         >
                             {isInviting ? 'Inviting...' : 'Invite'}
                         </Button>
@@ -296,12 +316,18 @@ export const ProjectUsers = ({
                                 })
                             }
                         >
-                            {availableUsersData?.map((user) => (
-                                <MenuItem key={user.id} value={user.id}>
-                                    {user.first_name} {user.last_name} (
-                                    {user.email})
+                            {availableUsersData?.length > 0 ? (
+                                availableUsersData.map((user) => (
+                                    <MenuItem key={user.id} value={user.id}>
+                                        {user.first_name} {user.last_name} (
+                                        {user.email})
+                                    </MenuItem>
+                                ))
+                            ) : (
+                                <MenuItem disabled>
+                                    No users available to invite
                                 </MenuItem>
-                            ))}
+                            )}
                         </TextField>
                         <TextField
                             select

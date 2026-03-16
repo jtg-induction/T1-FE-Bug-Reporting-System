@@ -1,1 +1,1 @@
-export {ProjectDashboard} from './ProjectDashboard'
+export { ProjectDashboard } from './ProjectDashboard';

@@ -11,3 +11,6 @@ export * from './DashboardHeader';
 export * from './ActiveProjectSection';
 export * from './TopProjectsList';
 export * from './ProjectHeader';
+export * from './ProjectDetail';
+export * from './UserTable';
+export * from './ProjectDashboard';

@@ -1,13 +1,17 @@
+import { ProjectListResponse, UserData } from 'types/common';
+
+export interface ProjectDetailProps {
+    isActive: boolean;
+    isAdmin: boolean;
+    isOwner: boolean;
+    projectData: ProjectListResponse | null;
+    currentUserData: UserData | null | undefined;
+}
+
 export interface ProjectUpdateFormData {
     title: string;
     description: string;
     status: number;
-}
-
-export interface DashboardHeaderProps {
-    projectKey: string;
-    isAdmin: boolean;
-    onEditClick: () => void;
 }
 
 export interface EditDialogContentProps {
@@ -16,15 +20,6 @@ export interface EditDialogContentProps {
         field: keyof ProjectUpdateFormData,
         value: string | number,
     ) => void;
-}
-
-export interface MemberData {
-    role: number;
-    member: {
-        id: string;
-        first_name: string;
-        last_name: string;
-    };
 }
 
 export interface EditDialogActionsProps {

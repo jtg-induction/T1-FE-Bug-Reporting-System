@@ -1,5 +1,12 @@
 import { PRIVATE_PATHS } from '@constant';
-import { AcceptInvitePage, Overview, ProfilePage, ProjectDashboard, ProjectsPage, RejectInvitePage } from '@pages';
+import {
+    AcceptInvitePage,
+    Overview,
+    ProfilePage,
+    ProjectDashboard,
+    ProjectsPage,
+    RejectInvitePage,
+} from '@pages';
 
 export const privateRoutes = [
     {
@@ -23,7 +30,7 @@ export const privateRoutes = [
         element: <AcceptInvitePage />,
     },
     {
-        path: PRIVATE_PATHS.PROEJCT_REJECT_INVITE,
+        path: PRIVATE_PATHS.PROJECT_REJECT_INVITE,
         element: <RejectInvitePage />,
     },
 ];

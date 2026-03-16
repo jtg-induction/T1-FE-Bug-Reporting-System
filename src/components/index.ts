@@ -13,3 +13,5 @@ export { Dialog } from './Dialog';
 export { ModalForm } from './ModalForm';
 export { ListCard } from './ListCard';
 export { PageHeader } from './PageHeader';
+export { ActionMenu } from './ActionMenu';
+export type { ActionMenuItem, ActionMenuProps } from './ActionMenu';
