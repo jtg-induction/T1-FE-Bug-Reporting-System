@@ -11,37 +11,37 @@ import {
 } from '@mui/material';
 
 import { ListCard, SectionCard } from '@components';
-import { PRIVATE_PATHS } from '@constant';
-import { useGetProjectsQuery } from '@service';
+import { PRIVATE_PATHS, TICKET_STATUS_MAP } from '@constant';
+import { useGetUserTicketsQuery } from '@service';
 import { getTimeFromNow } from '@utils';
 
 import {
     HeaderStack,
     ListFooterContainer,
     ViewAllButton,
-} from './TopProjectsList.styles';
+} from './TopTicketsList.styles';
 
-export const TopProjectsList = () => {
+export const TopTicketsList = () => {
     const navigate = useNavigate();
-    const { data: topProjects, isLoading } = useGetProjectsQuery({
+    const { data: topTickets, isLoading } = useGetUserTicketsQuery({
         limit: 5,
         offset: 0,
         ordering: undefined,
         filter: {},
     });
-    const projectsData = topProjects?.data.results ?? [];
+    const ticketsData = topTickets?.data.results ?? [];
 
     return (
         <SectionCard
-            titleContent={
+            TitleContent={
                 <HeaderStack>
                     <Stack direction="row" spacing={1} alignItems="center">
                         <TrendingUp color="primary" />
-                        <Typography variant="h2">Top Projects</Typography>
+                        <Typography variant="h2">Top Tickets</Typography>
                     </Stack>
                 </HeaderStack>
             }
-            mainContent={
+            MainContent={
                 <>
                     <Box sx={{ mt: 1 }}>
                         {isLoading ? (
@@ -50,16 +50,16 @@ export const TopProjectsList = () => {
                             </Stack>
                         ) : (
                             <List disablePadding>
-                                {projectsData.length > 0 ? (
-                                    projectsData.map((project) => (
+                                {ticketsData.length > 0 ? (
+                                    ticketsData.map((ticket) => (
                                         <ListCard
-                                            key={project.id}
-                                            title={project.title}
-                                            subtitle={`Created ${getTimeFromNow(project.created_at)}`}
-                                            Info={<Chip size='small' sx={(mtheme) => ({color: mtheme.palette.common.white, backgroundColor: mtheme.palette.secondary.dark})} label={`Key - ${project.key}`} />}
+                                            key={ticket.id}
+                                            title={ticket.title}
+                                            subtitle={`Created ${getTimeFromNow(ticket.created_at)} ago`}
+                                            Info={<Chip size='small' color={TICKET_STATUS_MAP[ticket.status][1]} label={TICKET_STATUS_MAP[ticket.status][0]} />}
                                             handleOnClick={() =>
                                                 void navigate(
-                                                    `${PRIVATE_PATHS.PROJECTS}/${project.id}`,
+                                                    `${PRIVATE_PATHS.PROJECTS}/${ticket.project_id}${PRIVATE_PATHS.TICKETS}/${ticket.id}`,
                                                 )
                                             }
                                         />
@@ -70,22 +70,20 @@ export const TopProjectsList = () => {
                                         sx={{ p: 4, textAlign: 'center' }}
                                         color="text.secondary"
                                     >
-                                        No top projects to display.
+                                        No top tickets to display.
                                     </Typography>
                                 )}
                             </List>
                         )}
                     </Box>
 
-                    {!isLoading && projectsData.length > 0 && (
+                    {!isLoading && ticketsData.length > 0 && (
                         <ListFooterContainer>
                             <ViewAllButton
-                                onClick={() =>
-                                    void navigate(PRIVATE_PATHS.PROJECTS)
-                                }
+                                onClick={() => void navigate(PRIVATE_PATHS.TICKETS)}
                                 color="inherit"
                             >
-                                VIEW ALL PROJECTS
+                                VIEW ALL TICKETS
                             </ViewAllButton>
                         </ListFooterContainer>
                     )}

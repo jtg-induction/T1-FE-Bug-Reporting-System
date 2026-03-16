@@ -3,3 +3,4 @@ export * from './signupSchema';
 export * from './signupRequestSchema';
 export * from './ProfileViewScheme';
 export * from './projectSchema';
+export * from './ticketSchema';

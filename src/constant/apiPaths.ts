@@ -7,7 +7,8 @@ export const API_PATHS = {
     GENERATE_EMAIL_LINK: '/generate-email-link/',
     USERS: '/users/',
     PROJECTS: '/projects/',
-};
+    TICKETS: '/tickets/',
+}
 
 export const PUBLIC_MUTATIONS: string[] = [
     'login',

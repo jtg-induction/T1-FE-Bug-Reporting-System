@@ -1,24 +1,33 @@
-import { ListItemText, Typography } from '@mui/material';
+import { ArrowForward } from '@mui/icons-material';
 
-import { StyledListItem } from './ListCard.styles';
+import { 
+    ActionWrapper,
+    ContentWrapper,
+    InfoWrapper,
+    StyledListItem, 
+    SubInfoText,
+    TextGroup,
+    TitleText} from './ListCard.styles';
 import { ListCardProps } from './ListCard.types';
-
-export const ListCard = ({ title, Info, handleOnClick }: ListCardProps) => (
-    <StyledListItem
-        onClick={handleOnClick}
-        sx={{ cursor: handleOnClick ? 'pointer' : 'default' }}
-    >
-        <ListItemText
-            primary={
-                <Typography
-                    variant="body1"
-                    fontWeight="600"
-                    color="text.primary"
-                >
+export const ListCard = ({ title, subtitle, Info, handleOnClick }: ListCardProps) => (
+    <StyledListItem disablePadding>
+        <ContentWrapper>
+            <TextGroup>
+                <TitleText variant="h6" noWrap>
                     {title}
-                </Typography>
-            }
-            secondary={<>{Info}</>}
-        />
+                </TitleText>
+                <SubInfoText variant="caption">
+                    {subtitle}
+                </SubInfoText>
+            </TextGroup>
+
+            <InfoWrapper>
+                {Info}
+            </InfoWrapper>
+
+            <ActionWrapper onClick={handleOnClick}>
+                <ArrowForward />
+            </ActionWrapper>
+        </ContentWrapper>
     </StyledListItem>
 );

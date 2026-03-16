@@ -29,3 +29,15 @@ export {
     useUnarchiveProjectMutation,
     useUpdateProjectMutation,
 } from './projectService';
+export {
+    ticketApi,
+    useCreateTicketMutation,
+    useDeleteTicketMutation,
+    useGetProjectTicketsQuery,
+    useGetTicketQuery,
+    useGetUserTicketsQuery,
+    useSubscribeTicketMutation,
+    useUnsubscribeTicketMutation,
+    useUpdateTicketMutation,
+    useGetMovableProjectsQuery,
+} from './ticketService';

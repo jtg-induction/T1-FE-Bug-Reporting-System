@@ -1,1 +1,1 @@
-export { TicketDashboard } from './TicketDashboard';
+export { TicketDashboardPage } from './TicketDashboard';
