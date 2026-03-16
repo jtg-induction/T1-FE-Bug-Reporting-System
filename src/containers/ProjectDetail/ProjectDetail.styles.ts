@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { Box, Stack, styled } from '@mui/material';
+import { Box, Button, Stack, styled, Typography } from '@mui/material';
 
 export const StyledHeaderSection = styled(Stack)(
     ({
@@ -12,7 +12,7 @@ export const StyledHeaderSection = styled(Stack)(
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: `${pxToRem(8)}`,
+        padding: pxToRem(8),
         backgroundColor: palette.background.paper,
         borderBottom: `1px solid ${palette.divider}`,
     }),
@@ -29,10 +29,40 @@ export const StyledDetailsCard = styled(Box)(
         padding: pxToRem(8),
         borderRadius: shape.borderRadius,
         backgroundColor: palette.background.paper,
-        '& .description-text': {
-            lineHeight: 1.6,
-            color: palette.text.secondary,
+    }),
+);
+
+export const StyledDescriptionWrapper = styled(Box)(
+    ({
+        theme: {
+            typography: { pxToRem },
         },
+    }) => ({
+        marginBottom: pxToRem(24),
+    }),
+);
+
+export const StyledDescriptionText = styled(Typography, {
+    shouldForwardProp: (prop) => prop !== '$isExpanded',
+})<{ $isExpanded: boolean }>(({ $isExpanded, theme: { palette } }) => ({
+    lineHeight: 1.6,
+    color: palette.text.secondary,
+    display: '-webkit-box',
+    WebkitLineClamp: $isExpanded ? 'unset' : 1,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+}));
+
+export const StyledShowMoreButton = styled(Button)(
+    ({
+        theme: {
+            typography: { pxToRem },
+        },
+    }) => ({
+        marginTop: pxToRem(4),
+        minWidth: 'auto',
+        textTransform: 'none',
     }),
 );
 

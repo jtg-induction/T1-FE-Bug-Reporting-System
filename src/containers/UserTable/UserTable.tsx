@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 import { handleFilterChange, handleSortChange } from 'utils/utils';
@@ -9,24 +9,15 @@ import {
     PersonRemove,
     SupervisorAccount,
 } from '@mui/icons-material';
-import {
-    Alert,
-    Button,
-    MenuItem,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import {
-    ActionMenu,
-    ActionMenuItem,
-    Dialog,
-    SectionCard,
-    Table,
-} from '@components';
+import { ActionMenu, ActionMenuItem, SectionCard, Table } from '@components';
 import { PRIVATE_PATHS } from '@constant';
+import {
+    ProjectUserInviteFormContainer,
+    ProjectUserInviteFormData,
+} from '@containers';
 import {
     useChangeRoleMutation,
     useGetProjectMembersQuery,
@@ -68,13 +59,35 @@ export const ProjectUsers = ({
     const { data: availableUsers } = useGetUsersToInviteQuery(projectId!, {
         skip: !isAdmin,
     });
+
     const [inviteMember, { isLoading: isInviting, error: inviteError }] =
         useInviteMemberMutation();
     const [changeRole] = useChangeRoleMutation();
     const [revokeMember] = useRevokeMemberMutation();
 
     const [openInvite, setOpenInvite] = useState(false);
-    const [inviteData, setInviteData] = useState({ user_id: '', role: 0 });
+
+    const membersData = members?.data;
+    const availableUsersData = availableUsers?.data ?? [];
+
+    const userOptions = useMemo(() => {
+        if (availableUsersData.length === 0) {
+            return [{ LABEL: 'No users available to invite', VALUE: '' }];
+        }
+        return availableUsersData.map((user) => ({
+            LABEL: `${user.first_name} ${user.last_name} (${user.email})`,
+            VALUE: user.id,
+        }));
+    }, [availableUsersData]);
+
+    const roleOptions = useMemo(
+        () =>
+            MEMBER_ROLES.map((role) => ({
+                LABEL: role.label,
+                VALUE: role.value,
+            })),
+        [],
+    );
 
     const handlePromote = (userId: string) => {
         void (async () => {
@@ -105,6 +118,16 @@ export const ProjectUsers = ({
                 } catch {}
             }
         })();
+    };
+    const handleInviteSubmit = async (data: ProjectUserInviteFormData) => {
+        if (!data.user_id) return;
+        try {
+            await inviteMember({
+                projectId: projectId!,
+                ...data,
+            }).unwrap();
+            setOpenInvite(false);
+        } catch {}
     };
 
     const columns: GridColDef<ProjectMember>[] = [
@@ -215,23 +238,6 @@ export const ProjectUsers = ({
         },
     ];
 
-    const handleInvite = () => {
-        void (async () => {
-            if (!inviteData.user_id) return;
-            try {
-                await inviteMember({
-                    projectId: projectId!,
-                    ...inviteData,
-                }).unwrap();
-                setOpenInvite(false);
-                setInviteData({ user_id: '', role: 0 });
-            } catch {}
-        })();
-    };
-
-    const membersData = members?.data;
-    const availableUsersData = availableUsers?.data ?? [];
-
     return (
         <Stack spacing={4}>
             <SectionCard
@@ -275,80 +281,14 @@ export const ProjectUsers = ({
                 }
             />
 
-            <Dialog
+            <ProjectUserInviteFormContainer
                 open={openInvite}
-                handleClose={() => setOpenInvite(false)}
-                title="Invite Member"
-                DialogActionsContent={
-                    <>
-                        <Button
-                            onClick={() => setOpenInvite(false)}
-                            color="inherit"
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            variant="contained"
-                            onClick={handleInvite}
-                            disabled={isInviting || !inviteData.user_id}
-                        >
-                            {isInviting ? 'Inviting...' : 'Invite'}
-                        </Button>
-                    </>
-                }
-                DialogContentData={
-                    <Stack spacing={3} width="100%" sx={{ pt: 1 }}>
-                        {inviteError && (
-                            <Alert severity="error">
-                                {(inviteError as ApiError)?.data?.detail ||
-                                    'Invitation failed'}
-                            </Alert>
-                        )}
-                        <TextField
-                            select
-                            fullWidth
-                            label="Select User"
-                            value={inviteData.user_id}
-                            onChange={(e) =>
-                                setInviteData({
-                                    ...inviteData,
-                                    user_id: e.target.value,
-                                })
-                            }
-                        >
-                            {availableUsersData?.length > 0 ? (
-                                availableUsersData.map((user) => (
-                                    <MenuItem key={user.id} value={user.id}>
-                                        {user.first_name} {user.last_name} (
-                                        {user.email})
-                                    </MenuItem>
-                                ))
-                            ) : (
-                                <MenuItem disabled>
-                                    No users available to invite
-                                </MenuItem>
-                            )}
-                        </TextField>
-                        <TextField
-                            select
-                            fullWidth
-                            label="Role"
-                            value={inviteData.role}
-                            onChange={(e) =>
-                                setInviteData({
-                                    ...inviteData,
-                                    role: Number(e.target.value),
-                                })
-                            }
-                        >
-                            {MEMBER_ROLES.map((role) => (
-                                <MenuItem key={role.value} value={role.value}>
-                                    {role.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Stack>
-                }
+                onClose={() => setOpenInvite(false)}
+                onSubmit={handleInviteSubmit}
+                isLoading={isInviting}
+                errorMessage={(inviteError as ApiError)?.data?.detail}
+                userOptions={userOptions}
+                roleOptions={roleOptions}
             />
         </Stack>
     );

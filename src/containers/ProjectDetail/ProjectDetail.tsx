@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -6,17 +6,13 @@ import ArchiveIcon from '@mui/icons-material/Archive';
 import EditIcon from '@mui/icons-material/Edit';
 import LogoutIcon from '@mui/icons-material/Logout';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import {
-    Box,
-    Button,
-    Chip,
-    MenuItem,
-    Stack,
-    TextField,
-    Typography,
-} from '@mui/material';
+import { Chip, Stack, Typography } from '@mui/material';
 
-import { ActionMenu, ActionMenuItem, Dialog, SectionCard } from '@components';
+import { ActionMenu, ActionMenuItem, SectionCard } from '@components';
+import {
+    EditProjectFormContainer,
+    TransferOwnershipFormContainer,
+} from '@containers';
 import {
     useArchiveProjectMutation,
     useChangeRoleMutation,
@@ -26,70 +22,22 @@ import {
     useUpdateProjectMutation,
 } from '@service';
 
-import { DASHBOARD_TEXT, INITIAL_EDIT_STATE } from './ProjectDetail.config';
+import { INITIAL_EDIT_STATE } from './ProjectDetail.config';
 import {
+    StyledDescriptionText,
+    StyledDescriptionWrapper,
     StyledDetailsCard,
-    StyledDialogContentWrapper,
     StyledHeaderSection,
     StyledInfoRow,
     StyledInfoWrapper,
     StyledLabel,
     StyledLink,
+    StyledShowMoreButton,
 } from './ProjectDetail.styles';
 import {
-    EditDialogActionsProps,
     ProjectDetailProps,
     ProjectUpdateFormData,
 } from './ProjectDetail.types';
-
-const EditDialogContent = ({
-    formData,
-    handleFieldChange,
-}: {
-    formData: ProjectUpdateFormData;
-    handleFieldChange: (
-        field: keyof ProjectUpdateFormData,
-        value: string | number,
-    ) => void;
-}) => (
-    <StyledDialogContentWrapper>
-        <TextField
-            fullWidth
-            label="Title"
-            value={formData.title}
-            onChange={(e) => handleFieldChange('title', e.target.value)}
-        />
-        <TextField
-            fullWidth
-            multiline
-            rows={3}
-            label="Description"
-            value={formData.description}
-            onChange={(e) => handleFieldChange('description', e.target.value)}
-        />
-    </StyledDialogContentWrapper>
-);
-
-const EditDialogActions = ({
-    isUpdating,
-    onCancel,
-    onSave,
-    saveText,
-    disabled,
-}: EditDialogActionsProps) => (
-    <>
-        <Button onClick={onCancel} color="inherit">
-            Cancel
-        </Button>
-        <Button
-            variant="contained"
-            onClick={onSave}
-            disabled={disabled ?? isUpdating}
-        >
-            {saveText ?? (isUpdating ? 'Saving...' : 'Save Changes')}
-        </Button>
-    </>
-);
 
 export const ProjectDetailContainer = ({
     isActive,
@@ -100,6 +48,7 @@ export const ProjectDetailContainer = ({
 }: ProjectDetailProps) => {
     const { id: projectId } = useParams<{ id: string }>();
     const navigate = useNavigate();
+
     const { data: members } = useGetProjectMembersQuery(
         { projectId: projectId, limit: 100, offset: 0 },
         { skip: !projectId },
@@ -118,35 +67,37 @@ export const ProjectDetailContainer = ({
 
     const [openEdit, setOpenEdit] = useState(false);
     const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
-    const [newOwnerId, setNewOwnerId] = useState('');
-    const [formData, setFormData] =
-        useState<ProjectUpdateFormData>(INITIAL_EDIT_STATE);
-
     const [isExpanded, setIsExpanded] = useState(false);
 
     const membersData = members?.data.results ?? [];
 
-    const handleOpenEdit = () => {
-        if (projectData) {
-            setFormData({
-                title: projectData.title,
-                description: projectData.description,
-                status: projectData.status,
-            });
+    const memberOptions = useMemo(() => {
+        if (membersData.length === 0) {
+            return [{ LABEL: 'No other members available', VALUE: '' }];
         }
-        setOpenEdit(true);
-    };
+        return membersData.map((m) => ({
+            LABEL: `${m.member.first_name} ${m.member.last_name} (${m.role === 1 ? 'Admin' : 'Developer'})`,
+            VALUE: m.member.id,
+        }));
+    }, [membersData]);
 
-    const handleUpdate = () => {
-        void (async () => {
-            try {
-                await updateProject({
-                    projectId: projectId!,
-                    updateData: formData,
-                }).unwrap();
-                setOpenEdit(false);
-            } catch {}
-        })();
+    const initialEditData: ProjectUpdateFormData = useMemo(() => {
+        if (!projectData) return INITIAL_EDIT_STATE;
+        return {
+            title: projectData.title,
+            description: projectData.description,
+            status: projectData.status,
+        };
+    }, [projectData]);
+
+    const handleEditSubmit = async (data: ProjectUpdateFormData) => {
+        try {
+            await updateProject({
+                projectId: projectId!,
+                updateData: data,
+            }).unwrap();
+            setOpenEdit(false);
+        } catch {}
     };
 
     const handleArchiveToggle = () => {
@@ -174,40 +125,37 @@ export const ProjectDetailContainer = ({
         } else if (
             window.confirm('Are you sure you want to leave this project?')
         ) {
-            handleLeaveExecute();
+            executeLeaveProject();
         }
     };
 
-    const handleLeaveExecute = () => {
-        void (async () => {
-            try {
-                const currentUserId = currentUserData?.id;
-                if (isOwner) {
-                    await changeRole({
-                        projectId: projectId!,
-                        user_id: newOwnerId,
-                        role: 2,
-                    }).unwrap();
-                }
+    const executeLeaveProject = async (newOwnerId?: string) => {
+        try {
+            const currentUserId = currentUserData?.id;
 
-                if (currentUserId) {
-                    await revokeMember({
-                        projectId: projectId!,
-                        user_id: currentUserId,
-                    }).unwrap();
-                }
+            if (isOwner && newOwnerId) {
+                await changeRole({
+                    projectId: projectId!,
+                    user_id: newOwnerId,
+                    role: 2,
+                }).unwrap();
+            }
 
-                setOpenLeaveDialog(false);
-                navigate('/');
-            } catch {}
-        })();
+            if (currentUserId) {
+                await revokeMember({
+                    projectId: projectId!,
+                    user_id: currentUserId,
+                }).unwrap();
+            }
+
+            setOpenLeaveDialog(false);
+            navigate('/');
+        } catch {}
     };
 
-    const handleFieldChange = (
-        field: keyof ProjectUpdateFormData,
-        value: string | number,
-    ) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
+    const handleTransferSubmit = async (data: { newOwnerId: string }) => {
+        if (!data.newOwnerId) return;
+        await executeLeaveProject(data.newOwnerId);
     };
 
     if (!projectData) return null;
@@ -222,7 +170,7 @@ export const ProjectDetailContainer = ({
                 id: 'edit',
                 label: 'Edit Project',
                 icon: <EditIcon fontSize="small" />,
-                onClick: handleOpenEdit,
+                onClick: () => setOpenEdit(true),
             },
         isAdmin && {
             id: 'archive-toggle',
@@ -283,37 +231,23 @@ export const ProjectDetailContainer = ({
                 }
                 MainContent={
                     <StyledDetailsCard>
-                        <Box sx={{ mb: 3 }}>
-                            <Typography
+                        <StyledDescriptionWrapper>
+                            <StyledDescriptionText
                                 variant="body1"
-                                className="description-text"
-                                sx={{
-                                    display: '-webkit-box',
-                                    WebkitLineClamp: isExpanded ? 'unset' : 1,
-                                    WebkitBoxOrient: 'vertical',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                }}
+                                $isExpanded={isExpanded}
                             >
                                 {descriptionText}
-                            </Typography>
+                            </StyledDescriptionText>
                             {isLongDescription && (
-                                <Button
+                                <StyledShowMoreButton
                                     size="small"
                                     onClick={() => setIsExpanded(!isExpanded)}
-                                    sx={{
-                                        mt: 0.5,
-                                        p: 0,
-                                        minWidth: 'auto',
-                                        textTransform: 'none',
-                                        fontWeight: 'bold',
-                                    }}
                                     disableRipple
                                 >
                                     {isExpanded ? 'Show less' : 'Show more'}
-                                </Button>
+                                </StyledShowMoreButton>
                             )}
-                        </Box>
+                        </StyledDescriptionWrapper>
 
                         <StyledInfoWrapper>
                             <StyledInfoRow>
@@ -337,89 +271,20 @@ export const ProjectDetailContainer = ({
                 }
             />
 
-            <Dialog
+            <EditProjectFormContainer
                 open={openEdit}
-                handleClose={() => setOpenEdit(false)}
-                title={DASHBOARD_TEXT.editTitle}
-                DialogContentData={
-                    <EditDialogContent
-                        formData={formData}
-                        handleFieldChange={handleFieldChange}
-                    />
-                }
-                DialogActionsContent={
-                    <EditDialogActions
-                        isUpdating={isUpdating}
-                        onCancel={() => setOpenEdit(false)}
-                        onSave={handleUpdate}
-                    />
-                }
+                onClose={() => setOpenEdit(false)}
+                onSubmit={handleEditSubmit}
+                isLoading={isUpdating}
+                initialData={initialEditData}
             />
 
-            <Dialog
+            <TransferOwnershipFormContainer
                 open={openLeaveDialog}
-                handleClose={() => setOpenLeaveDialog(false)}
-                title="Transfer Ownership & Leave"
-                DialogContentData={
-                    <StyledDialogContentWrapper>
-                        <Typography variant="body1" sx={{ mb: 2 }}>
-                            As the project owner, you must transfer ownership to
-                            another member before leaving.
-                        </Typography>
-                        <TextField
-                            select
-                            fullWidth
-                            label="Select New Owner"
-                            value={newOwnerId}
-                            onChange={(e) => setNewOwnerId(e.target.value)}
-                        >
-                            {membersData.length > 0 ? (
-                                membersData.map((m) => (
-                                    <MenuItem
-                                        key={m.member.id}
-                                        value={m.member.id}
-                                    >
-                                        <Stack
-                                            direction="row"
-                                            justifyContent="space-between"
-                                            width="100%"
-                                        >
-                                            <Typography>
-                                                {m.member.first_name}{' '}
-                                                {m.member.last_name}
-                                            </Typography>
-                                            <Typography
-                                                variant="caption"
-                                                color="text.secondary"
-                                            >
-                                                (
-                                                {m.role === 1
-                                                    ? 'Admin'
-                                                    : 'Developer'}
-                                                )
-                                            </Typography>
-                                        </Stack>
-                                    </MenuItem>
-                                ))
-                            ) : (
-                                <MenuItem disabled>
-                                    No other members available
-                                </MenuItem>
-                            )}
-                        </TextField>
-                    </StyledDialogContentWrapper>
-                }
-                DialogActionsContent={
-                    <EditDialogActions
-                        isUpdating={isLeaving}
-                        onCancel={() => setOpenLeaveDialog(false)}
-                        onSave={handleLeaveExecute}
-                        saveText={
-                            isLeaving ? 'Processing...' : 'Transfer & Leave'
-                        }
-                        disabled={!newOwnerId || isLeaving}
-                    />
-                }
+                onClose={() => setOpenLeaveDialog(false)}
+                onSubmit={handleTransferSubmit}
+                isLoading={isLeaving}
+                memberOptions={memberOptions}
             />
         </>
     );

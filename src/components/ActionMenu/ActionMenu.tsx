@@ -62,7 +62,7 @@ export const ActionMenu = ({
                 slotProps={{
                     paper: {
                         elevation: 3,
-                        sx: { minWidth: 180, mt: 0.5 },
+                        sx: { minWidth: 180 },
                     },
                 }}
             >

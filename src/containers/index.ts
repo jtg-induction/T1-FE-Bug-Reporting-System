@@ -14,3 +14,6 @@ export * from './ProjectHeader';
 export * from './ProjectDetail';
 export * from './UserTable';
 export * from './ProjectDashboard';
+export * from './OwnershipTransferForm';
+export * from './EditProjectForm';
+export * from './ProjectUserInviteForm';
