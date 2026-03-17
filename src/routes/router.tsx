@@ -1,5 +1,4 @@
-import { AuthProvider } from 'context/useAuth';
-import { Layout } from 'layout';
+import { Layout } from 'layouts';
 import { createBrowserRouter } from 'react-router-dom';
 
 import { ProtectedRoute } from '@components/ProtectedRoute';
@@ -10,11 +9,7 @@ import { privateRoutes } from './private';
 import { publicRoutes } from './public';
 export const router = createBrowserRouter([
     {
-        element: (
-            <AuthProvider>
-                <Layout />
-            </AuthProvider>
-        ),
+        element: <Layout />,
         errorElement: <ErrorPage />,
         children: [
             ...publicRoutes,

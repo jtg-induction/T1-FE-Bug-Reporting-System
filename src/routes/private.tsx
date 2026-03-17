@@ -1,10 +1,9 @@
-import { privatePaths } from 'constant/paths';
-
-import { Overview } from '@pages/Overview';
+import { PRIVATE_PATHS } from '@constant';
+import { Overview } from '@pages';
 
 export const privateRoutes = [
     {
-        path: privatePaths.dashboard,
+        path: PRIVATE_PATHS.DASHBOARD,
         element: <Overview />,
     },
 ];

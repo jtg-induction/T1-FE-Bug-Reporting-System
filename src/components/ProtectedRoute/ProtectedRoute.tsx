@@ -1,15 +1,14 @@
-import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useGetMeQuery } from 'redux/apiSlice';
 
-import { useAuth } from 'context/useAuth';
-import { Navigate, useLocation } from 'react-router-dom';
+import { PUBLIC_PATHS } from '@constant';
 
-export const ProtectedRoute = ({ children }: React.PropsWithChildren) => {
-    const { user } = useAuth();
-    const { pathname } = useLocation();
+export const ProtectedRoute = () => {
+    const { data, isLoading } = useGetMeQuery();
 
-    if (!user && pathname) {
-        return <Navigate to="/login" />;
-    }
+    if (isLoading) return null;
 
-    return children;
+    if (!data) return <Navigate to={PUBLIC_PATHS.LOGIN} replace />;
+
+    return <Outlet />;
 };

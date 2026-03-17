@@ -6,7 +6,7 @@
     "scripts": {
         "dev": "vite",
         "build": "tsc -b && vite build",
-        "lint": "eslint --fix .",
+        "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "preview": "vite preview",
         "prettier": "npx prettier --write ./",
@@ -14,12 +14,19 @@
     },
     "dependencies": {
         "@emotion/react": "11.14.0",
-        "@emotion/styled": "11.14.1",
+        "@emotion/styled": "11.14.0",
+        "@hookform/resolvers": "^5.2.2",
+        "@mui/icons-material": "6.4.1",
         "@mui/material": "6.4.1",
+        "@mui/types": "7.4.11",
+        "@reduxjs/toolkit": "^2.11.2",
         "react": "19.2.0",
         "react-dom": "19.2.0",
         "react-error-boundary": "6.1.1",
-        "react-router-dom": "7.13.0"
+        "react-hook-form": "^7.71.2",
+        "react-redux": "^9.2.0",
+        "react-router-dom": "7.13.0",
+        "zod": "^4.3.6"
     },
     "devDependencies": {
         "@eslint/js": "9.39.1",
@@ -27,6 +34,8 @@
         "@types/node": "24.10.1",
         "@types/react": "19.2.7",
         "@types/react-dom": "19.2.3",
+        "@typescript-eslint/eslint-plugin": "^8.56.1",
+        "@typescript-eslint/parser": "^8.56.1",
         "@vitejs/plugin-react": "5.1.1",
         "eslint": "9.39.1",
         "eslint-config-prettier": "10.0.1",
