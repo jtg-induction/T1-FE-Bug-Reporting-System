@@ -42,7 +42,7 @@ export const TopTicketsList = () => {
                 </HeaderStack>
             }
             MainContent={
-                <>
+                <Stack sx={{justifyContent: 'space-between', height: '100%'}}>
                     <Box sx={{ mt: 1 }}>
                         {isLoading ? (
                             <Stack alignItems="center" sx={{ py: 5 }}>
@@ -77,7 +77,7 @@ export const TopTicketsList = () => {
                         )}
                     </Box>
 
-                    {!isLoading && ticketsData.length > 0 && (
+                    {!isLoading && (
                         <ListFooterContainer>
                             <ViewAllButton
                                 onClick={() => void navigate(PRIVATE_PATHS.TICKETS)}
@@ -87,7 +87,7 @@ export const TopTicketsList = () => {
                             </ViewAllButton>
                         </ListFooterContainer>
                     )}
-                </>
+                </Stack>
             }
         />
     );

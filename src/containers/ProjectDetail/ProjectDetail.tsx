@@ -4,13 +4,20 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { showSnackbar } from 'redux/features/profileSlice';
 import { useAppDispatch } from 'redux/store';
 
-import { Archive, Edit, Logout, Unarchive } from '@mui/icons-material';
+import {
+    Archive,
+    Edit,
+    Logout,
+    Unarchive,
+    Download,
+} from '@mui/icons-material';
 import { Chip, Stack, Typography } from '@mui/material';
 
 import { ActionMenu, ActionMenuItem, SectionCard } from '@components';
 import { PRIVATE_PATHS, ROLE_OWNER } from '@constant';
 import {
     EditProjectFormContainer,
+    JQLImportContainer,
     TransferOwnershipFormContainer,
 } from '@containers';
 import {
@@ -79,6 +86,7 @@ export const ProjectDetailContainer = ({
     const [openEdit, setOpenEdit] = useState(false);
     const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [openImport, setOpenImport] = useState(false);
 
     const projectMembersData = members?.data.results ?? [];
 
@@ -196,6 +204,13 @@ export const ProjectDetailContainer = ({
             display: isActive && isAdmin,
         },
         {
+            id: 'import',
+            label: 'Import Ticket',
+            icon: <Download fontSize="small" />,
+            onClick: () => setOpenImport(true),
+            display: isActive && isAdmin,
+        },
+        {
             id: 'archive-toggle',
             label: getArchiveLabel(isArchiving, isUnarchiving, isActive),
             icon: isActive ? (
@@ -305,6 +320,11 @@ export const ProjectDetailContainer = ({
                 onSubmit={handleTransferSubmit}
                 isLoading={isLeaving}
                 projectMemberOptions={projectMemberOptions}
+            />
+
+            <JQLImportContainer
+                open={openImport}
+                onClose={() => setOpenImport(false)}
             />
         </>
     );

@@ -38,3 +38,9 @@ export const TICKET_STATUS_MAP: Record<number, [string, AlertColor]> = {
     3: ['Resolved', 'info'],
     4: ['Closed', 'success'],
 };
+
+export const TICKET_SEVERITY_MAP: Record<number, [string, AlertColor]> = {
+    1: ['Low', 'info'],
+    2: ['Mid', 'warning'],
+    3: ['High', 'error'],
+};

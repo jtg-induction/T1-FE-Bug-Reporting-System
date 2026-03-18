@@ -18,7 +18,7 @@ export const StyledSectionCard = styled(Card)(({ theme }) => {
 
         [`& .${cardHeaderClasses.root}`]: {
             padding: 0,
-            height: '100%',
+            height: 'max-content',
         },
 
         [`& > .${cardContentClasses.root}`]: {

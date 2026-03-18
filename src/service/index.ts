@@ -40,4 +40,13 @@ export {
     useUnsubscribeTicketMutation,
     useUpdateTicketMutation,
     useGetMovableProjectsQuery,
+    useGetJQLTicketsMutation,
+    useImportTicketMutation,
 } from './ticketService';
+export {
+    commentApi,
+    useCreateCommentMutation,
+    useGetProjectCommentsQuery,
+    useDeleteCommentMutation,
+    useUpdateCommentMutation,
+} from './commentService';

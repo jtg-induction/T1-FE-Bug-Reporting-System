@@ -42,7 +42,7 @@ export const TopProjectsList = () => {
                 </HeaderStack>
             }
             mainContent={
-                <>
+                <Stack justifyContent='space-between' height='100%'>
                     <Box sx={{ mt: 1 }}>
                         {isLoading ? (
                             <Stack alignItems="center" sx={{ py: 5 }}>
@@ -55,7 +55,7 @@ export const TopProjectsList = () => {
                                         <ListCard
                                             key={project.id}
                                             title={project.title}
-                                            subtitle={`Created ${getTimeFromNow(project.created_at)}`}
+                                            subtitle={`Created ${getTimeFromNow(project.created_at)} ago`}
                                             Info={<Chip size='small' sx={(mtheme) => ({color: mtheme.palette.common.white, backgroundColor: mtheme.palette.secondary.dark})} label={`Key - ${project.key}`} />}
                                             handleOnClick={() =>
                                                 void navigate(
@@ -77,7 +77,7 @@ export const TopProjectsList = () => {
                         )}
                     </Box>
 
-                    {!isLoading && projectsData.length > 0 && (
+                    {!isLoading && (
                         <ListFooterContainer>
                             <ViewAllButton
                                 onClick={() =>
@@ -85,11 +85,11 @@ export const TopProjectsList = () => {
                                 }
                                 color="inherit"
                             >
-                                VIEW ALL PROJECTS
+                                {projectsData.length > 0 ? 'VIEW ALL PROJECTS' : 'CREATE NEW PROJECT'}
                             </ViewAllButton>
                         </ListFooterContainer>
                     )}
-                </>
+                </Stack>
             }
         />
     );

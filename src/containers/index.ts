@@ -26,3 +26,5 @@ export * from './TicketsHeader';
 export * from './TicketForm';
 export * from './TicketEditForm';
 export * from './MoveTicket';
+export * from './JQLImportForm';
+export * from './CommentSection';

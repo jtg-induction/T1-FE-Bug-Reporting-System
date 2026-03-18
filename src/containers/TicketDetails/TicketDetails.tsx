@@ -3,35 +3,39 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { UserData } from 'types/common';
 
-import { CheckCircle, DriveFileMove, Edit, NotificationsActive, NotificationsNone, Person, Speed } from '@mui/icons-material';
+import { CheckCircle, Delete, DriveFileMove, Edit, NotificationsActive, NotificationsNone, Person, Speed } from '@mui/icons-material';
 import { Box, Button, Chip, Divider, Stack, Typography } from '@mui/material';
 
 import { ActionMenu } from '@components';
-import { PRIVATE_PATHS, TICKET_STATUS_MAP } from '@constant';
-import { MoveTicketContainer, TicketEditForm } from '@containers';
+import { PRIVATE_PATHS, TICKET_SEVERITY_MAP, TICKET_STATUS_MAP } from '@constant';
+import { CommentSectionContainer,MoveTicketContainer, TicketEditForm } from '@containers';
+import * as Pages from '@pages';
 import { TicketFormValues } from '@schemas';
-import { useGetProjectMembersQuery, useGetTicketQuery, useSubscribeTicketMutation, useUnsubscribeTicketMutation, useUpdateTicketMutation } from '@service';
+import { useDeleteTicketMutation, useGetMeQuery, useGetProjectMembersQuery, useGetTicketQuery, useSubscribeTicketMutation, useUnsubscribeTicketMutation, useUpdateTicketMutation } from '@service';
 
-import { ActivityPlaceholder, BodyText, CommentSection, FlexHeader, MainLayout, MetadataStack, MetaItem, TicketContentCard, TruncatedTitle, UserInfo } from './TicketDetails.styles';
+import { BodyText, CommentSection, FlexHeader, MainLayout, MetadataStack, MetaItem, TicketContentCard, TruncatedTitle, UserInfo } from './TicketDetails.styles';
 
 export const TicketDashboardContainer = () => {
     const { pid: projectId, tid: ticketId } = useParams();
     const navigate = useNavigate();
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isStatusOnly, setIsStatusOnly] = useState(false);
-    const { data: ticket, isLoading } = useGetTicketQuery({ projectId: projectId!, ticketId: ticketId! });
-
+    const { data: ticket, isLoading, isError } = useGetTicketQuery({ projectId: projectId!, ticketId: ticketId! });
+    const{ data: user } = useGetMeQuery();
     const { data: members } = useGetProjectMembersQuery({ projectId: projectId! }, { skip: !projectId });
-    const membersData = members?.data ?? [];
+    const membersData = members?.data.results ?? [];
+    const currentUserId = user?.data?.id;
     const [updateTicket, { isLoading: isUpdating }] = useUpdateTicketMutation();
+    const [deleteTicket] = useDeleteTicketMutation();
     const [subscribe] = useSubscribeTicketMutation();
     const [unsubscribe] = useUnsubscribeTicketMutation();
     const [isMoveOpen, setIsMoveOpen] = useState(false);
 
-    if (isLoading || !ticket?.data) return null;
+    if (isLoading) return <>Loading...</>;
+    if (isError) return <Pages.NotFoundPage />
 
-    const d = ticket.data;
-    const perm = d.permission_class;
+    const d = ticket?.data;
+    const perm = d?.permission_class;
 
     const canClose = perm === 4 && d.status === 3;
 
@@ -68,6 +72,14 @@ export const TicketDashboardContainer = () => {
         setIsEditOpen(true);
     };
 
+    const handleDelete = async() => {
+        try{
+            await deleteTicket({projectId: projectId, ticketId: ticketId}).unwrap();
+        } catch {
+
+        }
+    }
+
     const menuItems = [];
     if (perm >= 3) {
         menuItems.push({
@@ -75,6 +87,12 @@ export const TicketDashboardContainer = () => {
             label: 'Edit Ticket',
             icon: <Edit />,
             onClick: () => handleOpenEdit(false)
+        }, 
+        {
+            id: 'delete',
+            label: 'Delete Ticket',
+            icon: <Delete />,
+            onClick: () => handleDelete()
         });
     } else if (perm === 2) {
         menuItems.push({
@@ -86,7 +104,7 @@ export const TicketDashboardContainer = () => {
     } if (perm === 4) {
         menuItems.push({
             id: 'move',
-            label: 'Move Project',
+            label: 'Move Ticket',
             icon: <DriveFileMove />,
             onClick: () => setIsMoveOpen(true)
 
@@ -144,8 +162,8 @@ export const TicketDashboardContainer = () => {
                     <MetaItem>
                         <Typography variant="caption" className="label">Severity</Typography>
                         <Stack direction="row" alignItems="center" spacing={0.5}>
-                            <Speed fontSize="inherit" color="action" />
-                            <Typography variant="body2">High</Typography>
+                            <Speed fontSize="inherit" color={TICKET_SEVERITY_MAP[d.severity][1]} />
+                            <Typography color={TICKET_SEVERITY_MAP[d.severity][1]} variant="body2">{TICKET_SEVERITY_MAP[d.severity][0]}</Typography>
                         </Stack>
                     </MetaItem>
 
@@ -171,10 +189,7 @@ export const TicketDashboardContainer = () => {
             </TicketContentCard>
 
             <CommentSection>
-                <Typography variant="h6">Activity</Typography>
-                <ActivityPlaceholder>
-                    Comments Container goes here...
-                </ActivityPlaceholder>
+                <CommentSectionContainer />
             </CommentSection>
 
 
@@ -185,10 +200,12 @@ export const TicketDashboardContainer = () => {
                 ticket={d}
                 isLoading={isUpdating}
                 onUpdate={handleUpdate}
-                memberOptions={(membersData as { id: string, member: UserData, role: number }[]).map(m => ({
-                    LABEL: `${m.member.first_name} ${m.member.last_name} - (${m.member.email})`,
-                    VALUE: m.member.id
-                })) || []}
+                memberOptions={(membersData as { id: string, member: UserData, role: number }[])
+                    .filter(m => m.member.id !== currentUserId)
+                    .map(m => ({
+                        LABEL: `${m.member.first_name} ${m.member.last_name} - (${m.member.email})`,
+                        VALUE: m.member.id
+                    })) || [{LABEL: 'No Members to Assign', VALUE: null}]}
             />
 
             <MoveTicketContainer

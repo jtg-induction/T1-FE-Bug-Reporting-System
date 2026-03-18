@@ -5,6 +5,7 @@ export const HeaderStack = styled(Stack)(() => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
+    maxHeight: 'max-content',
 }));
 
 export const ListFooterContainer = styled(Box)(

@@ -160,3 +160,17 @@ export interface TicketDeleteData {
     projectId: string;
     ticketId: string;
 }
+
+export interface CommentData {
+    description: string,
+}
+
+export interface CommentResponse {
+    id: string,
+    description: string,
+    author: string,
+    author_name: string,
+    jira_id: string,
+    created_at: string,
+    can_edit: boolean,
+}

@@ -8,6 +8,7 @@ export const API_PATHS = {
     USERS: '/users/',
     PROJECTS: '/projects/',
     TICKETS: '/tickets/',
+    COMMENTS: '/comments/',
 }
 
 export const PUBLIC_MUTATIONS: string[] = [

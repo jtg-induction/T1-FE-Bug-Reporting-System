@@ -89,6 +89,27 @@ export const ticketApi = baseApi.injectEndpoints({
                 url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}${ticketId}/movable_projects/`,
             }),
         }),
+        getJQLTickets: builder.mutation<
+            ApiResponse<{id: string, title: string, jira_key: string;}[]>,
+            {projectId: string, data: Record<"jql", string>}
+        >({
+            query: ({projectId, data}) => ({
+                url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}jira-import-list/`,
+                method: 'POST',
+                body: data,
+            }),
+        }),
+        importTicket: builder.mutation<
+            ApiResponse<TicketCreateResponse>,
+            {projectId: string, data: Record<"jira_id", string>}
+        >({
+            query: ({projectId, data}) => ({
+                url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}import-ticket/`,
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: ['Tickets']
+        }),
     }),
 });
 
@@ -102,4 +123,6 @@ export const {
     useUnsubscribeTicketMutation,
     useUpdateTicketMutation,
     useGetMovableProjectsQuery,
+    useGetJQLTicketsMutation,
+    useImportTicketMutation,
 } = ticketApi;

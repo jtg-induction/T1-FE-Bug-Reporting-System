@@ -9,4 +9,6 @@ export {
     useUnsubscribeTicketMutation,
     useUpdateTicketMutation,
     useGetMovableProjectsQuery,
+    useGetJQLTicketsMutation,
+    useImportTicketMutation,
 } from './ticketApi';

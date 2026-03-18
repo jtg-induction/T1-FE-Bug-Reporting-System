@@ -1,90 +1,54 @@
-import { useEffect } from 'react';
+import { useForm } from "react-hook-form";
+import { useParams } from 'react-router-dom';
 
-import { useForm } from 'react-hook-form';
+import { ModalForm } from "@components";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { INITIAL_TICKET_DATA, TicketFormValues, ticketSchema } from "@schemas";
+import { useGetUsersToInviteQuery } from "@service";
 
-import { Stack } from '@mui/material';
+import { TicketFormContainerProps } from "./TicketEditForm.types";
+import { TicketFields } from "../TicketForm/TicketFields";
 
-import { FormField, ModalForm } from '@components';
-import { TICKET_SEVERITY_OPTIONS, TICKET_STATUS_OPTIONS } from '@constant';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { TicketFormValues, ticketSchema } from '@schemas';
+export const TicketEditForm = ({ open, onClose, onUpdate, isLoading }: TicketFormContainerProps) => {
+    const { id } = useParams<{ id: string }>();
+    const formId = 'create-ticket-form';
 
-import { TicketFormContainerProps } from './TicketEditForm.types';
+    const { data: usersResponse } = useGetUsersToInviteQuery(id!, { skip: !id });
 
-export const TicketEditForm = ({ 
-    open, 
-    onClose, 
-    ticket, 
-    memberOptions, 
-    onUpdate, 
-    isLoading, 
-    isStatusOnly = false 
-}: TicketFormContainerProps) => {
-    const formId = 'ticket-edit-form';
-    
+    const userOptions = [
+        { VALUE: '', LABEL: 'Unassigned' },
+        ...(usersResponse?.data?.map(user => ({
+            VALUE: user.id,
+            LABEL: `${user.first_name} ${user.last_name}`
+        })) || [])
+    ];
+
     const { control, handleSubmit, reset } = useForm<TicketFormValues>({
         resolver: zodResolver(ticketSchema),
-        defaultValues: {
-            title: ticket.title,
-            description: ticket.description,
-            status: ticket.status,
-            severity: ticket.severity,
-            assignee: ticket.assignee || '', 
-            deadline: ticket.deadline || null,
-        },
+        defaultValues: INITIAL_TICKET_DATA,
     });
 
-    useEffect(() => {
-        if (open) {
-            reset({
-                title: ticket.title,
-                description: ticket.description,
-                status: ticket.status,
-                severity: ticket.severity,
-                assignee: ticket.assignee || '',
-                deadline: ticket.deadline || null,
-            });
-        }
-    }, [open, ticket, reset]);
-
-    const onSubmit = async (data: TicketFormValues) => {
+    const handleFormSubmit = async (data: TicketFormValues) => {
         await onUpdate(data);
+        reset();
+    };
+
+    const handleClose = () => {
+        reset();
         onClose();
     };
 
     return (
-        <ModalForm 
-            open={open} 
-            title={isStatusOnly ? "Update Status" : "Edit Ticket"} 
-            formId={formId} 
-            onClose={onClose} 
+        <ModalForm
+            open={open}
+            title="Create Ticket"
+            formId={formId}
+            onClose={handleClose}
             isLoading={isLoading}
+            submitLabel="Create"
         >
-            <form id={formId} onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
-                <Stack spacing={3} pt={1}>
-                    {isStatusOnly ? (
-                        /* Level 2 Permission: Status Only */
-                        <FormField 
-                            name="status" 
-                            control={control} 
-                            label="Status" 
-                            editStatus={true} 
-                            type="select" 
-                            options={TICKET_STATUS_OPTIONS.filter(o => o.VALUE !== 4)} 
-                        />
-                    ) : (
-                        <>
-                            <FormField name="title" control={control} label="Title" editStatus={true} />
-                            <FormField name="description" control={control} label="Description" editStatus={true} multiline rows={4} />
-                            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                                <FormField name="status" control={control} label="Status" editStatus={true} type="select" options={TICKET_STATUS_OPTIONS.filter(o => o.VALUE !== 4)} />
-                                <FormField name="severity" control={control} label="Severity" editStatus={true} type="select" options={TICKET_SEVERITY_OPTIONS} />
-                            </Stack>
-                            <FormField name="assignee" control={control} label="Assignee" editStatus={true} type="select" options={memberOptions} />
-                            <FormField name="deadline" control={control} label="Deadline" editStatus={true} type="date" />
-                        </>
-                    )}
-                </Stack>
+            <form id={formId} onSubmit={(e) => void handleSubmit(() => void handleFormSubmit)(e)}>
+                <TicketFields control={control} userOptions={userOptions} />
             </form>
         </ModalForm>
     );
