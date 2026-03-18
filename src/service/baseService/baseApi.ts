@@ -64,5 +64,7 @@ export const baseApi = createApi({
         'Ticket',
         'Comments',
         'Comment',
+        'ProjectSummary',
+        'UserSummary',
     ],
 });

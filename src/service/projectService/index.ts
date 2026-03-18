@@ -14,4 +14,5 @@ export {
     useRevokeMemberMutation,
     useUnarchiveProjectMutation,
     useUpdateProjectMutation,
+    useGetProjectSummaryQuery,
 } from './projectApi';

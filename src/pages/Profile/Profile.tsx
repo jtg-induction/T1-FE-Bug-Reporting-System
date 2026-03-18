@@ -3,7 +3,11 @@ import { hideSnackbar } from 'redux/features/profileSlice';
 import { useAppDispatch, useAppSelector } from 'redux/store';
 
 import { Snackbar } from '@components';
-import { ProfileFormContainer, ProfileHeaderContainer } from '@containers';
+import {
+    ProfileFormContainer,
+    ProfileHeaderContainer,
+    UserReportContainer,
+} from '@containers';
 import { NotFoundPage } from '@pages/NotFoundPage';
 import {
     useGetMeQuery,
@@ -11,7 +15,11 @@ import {
     useUpdateUserMutation,
 } from '@service';
 
-import { ContentContainer, MainWrapper } from './Profile.styles';
+import {
+    ContentContainer,
+    MainWrapper,
+    ReportContainer,
+} from './Profile.styles';
 
 export const ProfilePage = () => {
     const { userId } = useParams<{ userId: string }>();
@@ -52,6 +60,9 @@ export const ProfilePage = () => {
                     onClose={() => dispatch(hideSnackbar())}
                 />
             </ContentContainer>
+            <ReportContainer>
+                <UserReportContainer />
+            </ReportContainer>
         </MainWrapper>
     );
 };

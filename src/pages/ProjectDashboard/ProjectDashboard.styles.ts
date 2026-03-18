@@ -59,9 +59,19 @@ export const StyledTabPanel = styled(Box)(
             typography: { pxToRem },
             palette,
             shape,
+            breakpoints,
         },
     }) => ({
-        padding: pxToRem(32),
+        padding: pxToRem(8),
+
+        [breakpoints.up('sm')]: {
+            padding: pxToRem(16),
+        },
+
+        [breakpoints.up('md')]: {
+            padding: pxToRem(24),
+        },
+
         backgroundColor: palette.background.paper,
         border: `${pxToRem(1)} solid ${palette.divider}`,
         borderTop: 'none',

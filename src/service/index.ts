@@ -3,6 +3,8 @@ export {
     useGetMeQuery,
     useGetUserQuery,
     useUpdateUserMutation,
+    useGetUserSummaryQuery,
+    useGetUserTicketSummaryQuery,
 } from './userService';
 export {
     authApi,
@@ -28,6 +30,7 @@ export {
     useRevokeMemberMutation,
     useUnarchiveProjectMutation,
     useUpdateProjectMutation,
+    useGetProjectSummaryQuery,
 } from './projectService';
 export {
     ticketApi,

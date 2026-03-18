@@ -20,3 +20,8 @@ export { CommentInput } from './CommentInput';
 export { CommentRenderer } from './CommentRenderer';
 export { CommentItem } from './CommentItem';
 export { TicketColumn } from './TicketColumn';
+export { Stats } from './Stats';
+export { StatusDonutChart } from './StatusDonutChart';
+export { ChartFilter } from './ChartFilter';
+export { PriorityBarChart } from './PriorityBarChart';
+export { DeadlineLineChart } from './DeadlineLineChart';
