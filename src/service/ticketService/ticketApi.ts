@@ -11,7 +11,7 @@ export const ticketApi = baseApi.injectEndpoints({
         >({
             query: ({ limit, offset, ordering, filter }) => ({
                 url: `${API_PATHS.TICKETS}`,
-                params: { limit, offset, ordering, filter },
+                params: { limit, offset, ordering, ...filter },
             }),
             providesTags: ['Tickets'],
         }),
