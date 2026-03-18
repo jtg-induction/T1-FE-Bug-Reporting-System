@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import {
     ActiveProjectSection,
+    ArchivedProjectSection,
     ProjectFormContainer,
     ProjectHeader,
 } from '@containers';
@@ -15,6 +16,7 @@ export const ProjectsPage = () => {
         <StyledStack>
             <ProjectHeader />
             <ActiveProjectSection onAddClick={() => setIsModalOpen(true)} />
+            <ArchivedProjectSection />
             <ProjectFormContainer
                 open={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

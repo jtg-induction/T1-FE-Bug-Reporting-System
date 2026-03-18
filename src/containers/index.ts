@@ -9,6 +9,7 @@ export * from './UserMenu';
 export * from './ProjectForm';
 export * from './DashboardHeader';
 export * from './ActiveProjectSection';
+export * from './ArchivedProjectSection';
 export * from './TopProjectsList';
 export * from './ProjectHeader';
 export * from './ProjectDetail';
