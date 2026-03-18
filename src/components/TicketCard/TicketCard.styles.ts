@@ -27,7 +27,7 @@ export const TopRow = styled(Box)(({ theme: { typography: { pxToRem } } }) => ({
 }));
 
 export const TitleText = styled(Typography)(({ theme: { palette, typography: { pxToRem } } }) => ({
-    fontSize: pxToRem(20),
+    fontSize: pxToRem(16),
     fontWeight: 600,
     color: palette.text.primary,
     marginBottom: pxToRem(12),
@@ -45,13 +45,13 @@ export const TagRow = styled(Box)(({ theme: { typography: { pxToRem } } }) => ({
     marginBottom: pxToRem(16),
 }));
 
-export const StatusBadge = styled('span')(({ theme: { typography: { pxToRem }, palette } }) => ({
-    fontSize: pxToRem(12),
-    fontWeight: 700,
+export const StatusBadge = styled(Typography)(({ theme: { typography: { pxToRem }, palette } }) => ({
+    fontSize: pxToRem(8),
+    fontWeight: 900,
     textTransform: 'uppercase',
     padding: `${pxToRem(2)} ${pxToRem(8)}`,
     borderRadius: pxToRem(4),
-    backgroundColor: palette.grey[100],
+    backgroundColor: palette.grey[200],
     color: palette.text.secondary,
     border: `1px solid ${palette.divider}`,
 }))

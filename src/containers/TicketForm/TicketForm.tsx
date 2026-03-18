@@ -7,7 +7,7 @@ import { FormField, ModalForm } from "@components";
 import { TICKET_SEVERITY_OPTIONS, TICKET_STATUS_OPTIONS } from "@constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { INITIAL_TICKET_DATA, TicketFormValues, ticketSchema } from "@schemas";
-import { useCreateTicketMutation, useGetUsersToInviteQuery } from "@service";
+import { useCreateTicketMutation, useGetProjectMembersQuery } from "@service";
 
 import { TicketFormContainerProps } from "./TicketForm.types";
 
@@ -15,14 +15,15 @@ export const TicketFormContainer = ({ open, onClose }: TicketFormContainerProps)
     const { id } = useParams<{ id: string }>();
     const formId = 'create-ticket-form';
 
-    const { data: usersResponse } = useGetUsersToInviteQuery(id!, { skip: !id });
     const [createTicket, { isLoading: isCreatingTicket }] = useCreateTicketMutation();
 
+    const { data: usersResponse } = useGetProjectMembersQuery({projectId: id!}, { skip: !id });
+    const members = usersResponse?.data;
     const userOptions = [
         { VALUE: '', LABEL: 'Unassigned' },
-        ...(usersResponse?.data?.map(user => ({
-            VALUE: user.id,
-            LABEL: `${user.first_name} ${user.last_name}`
+        ...(members?.results?.map(user => ({
+            VALUE: user.member.id,
+            LABEL: `${user.member.first_name} ${user.member.last_name}`
         })) || [])
     ];
 

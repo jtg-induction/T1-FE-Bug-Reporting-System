@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { UserData } from 'types/common';
 
-import { CheckCircle, Delete, DriveFileMove, Edit, NotificationsActive, NotificationsNone, Person, Speed } from '@mui/icons-material';
+import { AccessAlarm,CheckCircle, Delete, DriveFileMove, Edit, NotificationsActive, NotificationsNone, Person, Speed } from '@mui/icons-material';
 import { Box, Button, Chip, Divider, Stack, Typography } from '@mui/material';
 
 import { ActionMenu } from '@components';
@@ -12,6 +12,7 @@ import { CommentSectionContainer,MoveTicketContainer, TicketEditForm } from '@co
 import * as Pages from '@pages';
 import { TicketFormValues } from '@schemas';
 import { useDeleteTicketMutation, useGetMeQuery, useGetProjectMembersQuery, useGetTicketQuery, useSubscribeTicketMutation, useUnsubscribeTicketMutation, useUpdateTicketMutation } from '@service';
+import { formatDateTime } from '@utils';
 
 import { BodyText, CommentSection, FlexHeader, MainLayout, MetadataStack, MetaItem, TicketContentCard, TruncatedTitle, UserInfo } from './TicketDetails.styles';
 
@@ -155,6 +156,7 @@ export const TicketDashboardContainer = () => {
                     <MetaItem>
                         <Typography variant="caption" className="label">Reporter</Typography>
                         <UserInfo>
+                            <Person fontSize="inherit" />
                             <Typography variant="body2" noWrap>{d.reporter}</Typography>
                         </UserInfo>
                     </MetaItem>
@@ -165,6 +167,14 @@ export const TicketDashboardContainer = () => {
                             <Speed fontSize="inherit" color={TICKET_SEVERITY_MAP[d.severity][1]} />
                             <Typography color={TICKET_SEVERITY_MAP[d.severity][1]} variant="body2">{TICKET_SEVERITY_MAP[d.severity][0]}</Typography>
                         </Stack>
+                    </MetaItem>
+
+                    <MetaItem>
+                        <Typography variant="caption" className="label">Deadline</Typography>
+                        <UserInfo>
+                            <AccessAlarm fontSize="inherit" />
+                            <Typography variant="body2" noWrap>{d.deadline ? formatDateTime(d.deadline).slice(0,12) : 'NA'}</Typography>
+                        </UserInfo>
                     </MetaItem>
 
                     {d.is_active && canClose && (

@@ -23,4 +23,4 @@ export const formatDateTime = (
             hour12: false,
         }),
     }).format(date);
-};
+};  

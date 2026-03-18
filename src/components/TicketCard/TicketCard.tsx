@@ -1,6 +1,6 @@
 import { formatDateTime } from 'utils/formatDatetime';
 
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { AccessAlarm } from '@mui/icons-material';
 import { Avatar, Typography } from '@mui/material';
 
 import { TICKET_STATUS_MAP } from '@constant';
@@ -31,8 +31,8 @@ export const TicketCard = ({ ticket, onClick }: TicketCardProps) => (
 
         <MetaFooter>
             <DeadlineInfo>
-                <WarningAmberIcon />
-                <span className="text">{formatDateTime(ticket.deadline)}</span>
+                <AccessAlarm color='error' />
+                <Typography color='error' className="text">{formatDateTime(ticket.deadline).slice(0,12)}</Typography>
             </DeadlineInfo>
             
             <AssigneeInfo>

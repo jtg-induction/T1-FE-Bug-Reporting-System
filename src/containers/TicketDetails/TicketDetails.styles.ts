@@ -36,7 +36,7 @@ export const MetadataStack = styled(Stack)(({ theme:{typography:{pxToRem}} }) =>
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: pxToRem(20),
-    alignItems: 'center',
+    alignItems: 'start',
 }));
 
 export const MetaItem = styled(Stack)(({theme:{typography:{pxToRem},palette:{grey}}}) => ({

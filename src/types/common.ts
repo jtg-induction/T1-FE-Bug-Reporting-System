@@ -153,7 +153,7 @@ export interface TicketListData {
     limit: number;
     offset: number;
     ordering: string | undefined;
-    filter: Record<string, string> | undefined;
+    filter: Record<string, string | number> | undefined;
 }
 
 export interface TicketDeleteData {

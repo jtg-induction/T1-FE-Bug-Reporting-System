@@ -13,6 +13,16 @@ export const ticketApi = baseApi.injectEndpoints({
                 url: `${API_PATHS.TICKETS}`,
                 params: { limit, offset, ordering, ...filter },
             }),
+            serializeQueryArgs: ({ queryArgs }) => ({filter: queryArgs.filter, ordering: queryArgs.ordering}),
+            merge: (currentCache, newItems, { arg }) => {
+                if (arg.offset === 0) {
+                    return newItems;
+                }
+                currentCache.data.results.push(...newItems.data.results);
+            },
+            forceRefetch({ currentArg, previousArg }) {
+                return currentArg !== previousArg;
+            },
             providesTags: ['Tickets'],
         }),
         getProjectTickets: builder.query<PaginatedResponse<TicketCreateResponse>, TicketListData>({
@@ -90,10 +100,10 @@ export const ticketApi = baseApi.injectEndpoints({
             }),
         }),
         getJQLTickets: builder.mutation<
-            ApiResponse<{id: string, title: string, jira_key: string;}[]>,
-            {projectId: string, data: Record<"jql", string>}
+            ApiResponse<{ id: string, title: string, jira_key: string; }[]>,
+            { projectId: string, data: Record<"jql", string> }
         >({
-            query: ({projectId, data}) => ({
+            query: ({ projectId, data }) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}jira-import-list/`,
                 method: 'POST',
                 body: data,
@@ -101,9 +111,9 @@ export const ticketApi = baseApi.injectEndpoints({
         }),
         importTicket: builder.mutation<
             ApiResponse<TicketCreateResponse>,
-            {projectId: string, data: Record<"jira_id", string>}
+            { projectId: string, data: Record<"jira_id", string> }
         >({
-            query: ({projectId, data}) => ({
+            query: ({ projectId, data }) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}import-ticket/`,
                 method: 'POST',
                 body: data,
