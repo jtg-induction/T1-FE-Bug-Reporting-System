@@ -6,4 +6,5 @@ export const PUBLIC_PATHS = {
 
 export const PRIVATE_PATHS = {
     DASHBOARD: '/',
+    PROFILE: '/profile',
 };

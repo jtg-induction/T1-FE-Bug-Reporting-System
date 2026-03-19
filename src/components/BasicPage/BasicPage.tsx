@@ -1,35 +1,46 @@
 import { Box, Toolbar, Typography } from '@mui/material';
 
 import { BASIC_PAGE_DATA } from './BasicPage.config';
-import { ImageWrapper, StyledBox, StyledButton } from './BasicPage.style';
+import { ImageWrapper, StyledBox, StyledButton } from './BasicPage.styles';
 import { type BasicPageProps, ScannerAction } from './BasicPage.types';
 
+/**
+ * A reusable page layout for displaying status-based information.
+ * Maps the 'type' prop to configuration data for images and text.
+ * * @param handleButton - Function to execute on primary button click.
+ * @param type - The specific page state from ScannerAction.
+ */
 export const BasicPage = ({ handleButton, type }: BasicPageProps) => {
     const TYPE = ScannerAction[type];
+    const pageContent = BASIC_PAGE_DATA[TYPE];
+
     return (
         <StyledBox>
             <Toolbar />
+
             <ImageWrapper>
                 <Box
                     component="img"
-                    src={BASIC_PAGE_DATA[TYPE].src}
-                    alt={BASIC_PAGE_DATA[TYPE].alt}
+                    src={pageContent.src}
+                    alt={pageContent.alt}
                 />
             </ImageWrapper>
+
             <Box>
                 <Typography variant="h1" textAlign="center">
-                    {BASIC_PAGE_DATA[TYPE].text}
+                    {pageContent.text}
                 </Typography>
                 <Typography
                     variant="h3"
                     color="text.secondary"
                     textAlign="center"
                 >
-                    {BASIC_PAGE_DATA[TYPE].subtext}
+                    {pageContent.subtext}
                 </Typography>
             </Box>
+
             <StyledButton onClick={handleButton}>
-                {BASIC_PAGE_DATA[TYPE].buttonText}
+                {pageContent.buttonText}
             </StyledButton>
         </StyledBox>
     );

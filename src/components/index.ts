@@ -2,3 +2,8 @@ export { BasicPage } from './BasicPage';
 export { FormComponent } from './Form';
 export { FormBackground } from './FormBackground';
 export { ProtectedRoute } from './ProtectedRoute';
+export { Avatar } from './Avatar';
+export { Popover } from './Popover';
+export { FormField } from './FormField';
+export { Snackbar } from './Snackbar';
+export { PopoverContent } from './PopoverContent';

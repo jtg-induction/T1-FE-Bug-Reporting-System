@@ -1,17 +1,19 @@
 import { useDispatch, useSelector } from 'react-redux';
 
 import { configureStore } from '@reduxjs/toolkit';
+import { baseApi } from '@service';
 
-import { apiSlice } from './apiSlice';
 import authReducer from './features/authSlice';
+import profileReducer from './features/profileSlice';
 
 export const store = configureStore({
     reducer: {
         auth: authReducer,
-        [apiSlice.reducerPath]: apiSlice.reducer,
+        profile: profileReducer,
+        [baseApi.reducerPath]: baseApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(apiSlice.middleware),
+        getDefaultMiddleware().concat(baseApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

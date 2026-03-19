@@ -23,11 +23,9 @@ export const authSlice = createSlice({
             action: PayloadAction<LoginSignupRefreshResponse>,
         ) => {
             state.access = action.payload.access;
-            state.user = action.payload.user;
         },
         logout: (state) => {
             state.access = null;
-            state.user = null;
         },
     },
 });

@@ -13,7 +13,8 @@
             "@pages/*": ["pages/*"],
             "@pages": ["pages/index"],
             "@schemas": ["schemas/index"],
-            "@utils": ["utils/index"]
+            "@utils": ["utils/index"],
+            "@service": ["service/index"]
         }
     }
 }

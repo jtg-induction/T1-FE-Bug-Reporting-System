@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useLoginMutation } from 'redux/apiSlice';
 import { setCredentials } from 'redux/features/authSlice';
 import { useAppDispatch } from 'redux/store';
 
@@ -19,6 +18,7 @@ import { FormBackground, FormComponent } from '@components';
 import { PRIVATE_PATHS } from '@constant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '@schemas';
+import { useLoginMutation } from '@service';
 import { getErrorMessage } from '@utils';
 
 import { LOGIN_PAGE_CONFIG } from './Login.config';
@@ -48,8 +48,8 @@ export const LoginContainer = () => {
         const result = await login({
             email: data.email,
             password: data.password,
-        });
-        if ('data' in result) {
+        }).unwrap();
+        if (result.success && result.data) {
             dispatch(setCredentials(result.data));
             navigate(PRIVATE_PATHS.DASHBOARD);
         }
