@@ -4,7 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { TableProps } from './Table.types';
 
 export const Table = ({ loading, rows, columns, pageSize }: TableProps) => (
-    <Box height={400} width="100%">
+    <Box height={400}>
         <DataGrid
             loading={loading}
             rows={rows}

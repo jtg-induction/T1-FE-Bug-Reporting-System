@@ -1,13 +1,10 @@
-import { ProjectListResponse } from 'types/common';
-
 import { Add } from '@mui/icons-material';
 import { Button, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { GridColDef } from '@mui/x-data-grid';
 
 import { SectionCard, Table } from '@components';
-import { PROJECT_ROLE_MAP } from '@constant';
 import { useGetProjectsQuery } from '@service';
 
+import { columns } from './ActiveProjectSection.configs';
 import { HeaderStack } from './ActiveProjectSection.styles';
 import { ProjectsSectionProps } from './ActiveProjectSection.types';
 
@@ -16,24 +13,6 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
     const projectsData = projects?.data ?? [];
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-    const columns: GridColDef<ProjectListResponse>[] = [
-        {
-            field: 'id',
-            headerName: 'ID',
-            width: 80,
-            renderCell: (params) =>
-                params.api.getRowIndexRelativeToVisibleRows(params.id) + 1,
-        },
-        { field: 'key', headerName: 'Project Key', flex: 1 },
-        { field: 'title', headerName: 'Project Title', flex: 1.5 },
-        {
-            field: 'project_role',
-            headerName: 'Role',
-            flex: 1,
-            valueGetter: (value) => PROJECT_ROLE_MAP[value] || 'Unknown',
-        },
-    ];
 
     return (
         <SectionCard

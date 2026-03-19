@@ -5,22 +5,11 @@ import {
     ProjectFormContainer,
     TopProjectsList,
 } from '@containers';
-import { ProjectFormValues } from '@schemas';
-import { useCreateProjectMutation } from '@service';
 
 import { GridContainer, StyledStack } from './Overview.styles';
 
 export const Overview = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [createProject, { isLoading: isCreating }] =
-        useCreateProjectMutation();
-
-    const handleCreateProject = async (formData: ProjectFormValues) => {
-        try {
-            await createProject(formData).unwrap();
-            setIsModalOpen(false);
-        } catch {}
-    };
 
     return (
         <StyledStack spacing={4}>
@@ -34,8 +23,7 @@ export const Overview = () => {
             <ProjectFormContainer
                 open={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onSubmit={handleCreateProject}
-                isLoading={isCreating}
+                onSubmit={() => setIsModalOpen(false)}
             />
         </StyledStack>
     );
