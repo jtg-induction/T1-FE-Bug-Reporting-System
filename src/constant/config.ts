@@ -20,9 +20,11 @@ export const DESIGNATION_MAP = [
     { value: 'SSD', label: 'Senior Developer' },
 ];
 export const TICKET_SEVERITY_OPTIONS = [
-    { LABEL: 'Low', VALUE: 1 },
-    { LABEL: 'Mid', VALUE: 2 },
-    { LABEL: 'High', VALUE: 3 },
+    { LABEL: 'Lowest', VALUE: 1 },
+    { LABEL: 'Low', VALUE: 2 },
+    { LABEL: 'Mid', VALUE: 3 },
+    { LABEL: 'High', VALUE: 4 },
+    { LABEL: 'Highest', VALUE: 5 },
 ];
 
 export const TICKET_STATUS_OPTIONS = [
@@ -40,7 +42,9 @@ export const TICKET_STATUS_MAP: Record<number, [string, AlertColor]> = {
 };
 
 export const TICKET_SEVERITY_MAP: Record<number, [string, AlertColor]> = {
-    1: ['Low', 'info'],
-    2: ['Mid', 'warning'],
-    3: ['High', 'error'],
+    1: ['Lowest', 'info'],
+    2: ['Low', 'info'],
+    3: ['Mid', 'warning'],
+    4: ['High', 'error'],
+    5: ['Highest', 'error'],
 };
