@@ -1,1 +1,1 @@
-export { TicketColumn } from "./TicketColumn";
+export { TicketColumn } from './TicketColumn';

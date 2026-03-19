@@ -34,7 +34,7 @@ export const getTimeFromNow = (timestamp: string | number | Date): string => {
         const minutes = Math.floor(diffInMs / msInMin);
         return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
     }
-    
+
     const seconds = Math.floor(diffInMs / msInSec);
     return `${seconds} ${seconds === 1 ? 'second' : 'seconds'}`;
 };

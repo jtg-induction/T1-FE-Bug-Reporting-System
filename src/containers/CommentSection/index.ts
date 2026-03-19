@@ -1,1 +1,1 @@
-export  { CommentSectionContainer } from "./CommentSection";
+export { CommentSectionContainer } from './CommentSection';

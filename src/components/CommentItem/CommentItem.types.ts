@@ -1,4 +1,4 @@
-import { CommentResponse } from "types/common";
+import { CommentResponse } from 'types/common';
 
 export interface CommentItemProps {
     comment: CommentResponse;

@@ -1,26 +1,27 @@
 import { useState } from 'react';
 
 import { Delete, Edit } from '@mui/icons-material';
-import { Stack,Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 
 import { ActionMenu, CommentInput, CommentRenderer } from '@components';
 import { getTimeFromNow } from '@utils';
 
-import { 
-    AuthorInfo, 
+import {
+    AuthorInfo,
     AvatarPlaceholder,
     ContentWrapper,
-    EditContainer, 
-    HeaderStack, 
+    EditContainer,
+    HeaderStack,
     ItemContainer,
-    Metadata} from './CommentItem.styles';
+    Metadata,
+} from './CommentItem.styles';
 import { CommentItemProps } from './CommentItem.types';
 
-export const CommentItem = ({ 
-    comment, 
-    onUpdate, 
-    onDelete, 
-    isUpdating 
+export const CommentItem = ({
+    comment,
+    onUpdate,
+    onDelete,
+    isUpdating,
 }: CommentItemProps) => {
     const [isEditing, setIsEditing] = useState(false);
 
@@ -32,8 +33,8 @@ export const CommentItem = ({
     if (isEditing) {
         return (
             <EditContainer>
-                <CommentInput 
-                    initialContent={comment.description} 
+                <CommentInput
+                    initialContent={comment.description}
                     isLoading={isUpdating}
                     onSubmit={() => void handleUpdate}
                     onCancel={() => setIsEditing(false)}
@@ -60,7 +61,12 @@ export const CommentItem = ({
         },
     ];
 
-    const initials = comment.author_name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    const initials = comment.author_name
+        ?.split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
 
     return (
         <ItemContainer>
@@ -68,7 +74,10 @@ export const CommentItem = ({
                 <AuthorInfo>
                     <AvatarPlaceholder>{initials}</AvatarPlaceholder>
                     <Stack>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                        <Typography
+                            variant="subtitle2"
+                            sx={{ fontWeight: 600 }}
+                        >
                             {comment.author_name}
                         </Typography>
                         <Metadata variant="caption">
@@ -76,10 +85,10 @@ export const CommentItem = ({
                         </Metadata>
                     </Stack>
                 </AuthorInfo>
-                
+
                 {comment.can_edit && <ActionMenu items={menuItems} />}
             </HeaderStack>
-            
+
             <ContentWrapper>
                 <CommentRenderer content={comment.description} />
             </ContentWrapper>

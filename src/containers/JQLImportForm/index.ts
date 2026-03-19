@@ -1,1 +1,1 @@
-export { JQLImportContainer } from "./JQLImportForm";
+export { JQLImportContainer } from './JQLImportForm';

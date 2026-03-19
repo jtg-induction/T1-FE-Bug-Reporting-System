@@ -1,1 +1,1 @@
-export { MoveTicketContainer } from "./MoveTicket";
+export { MoveTicketContainer } from './MoveTicket';

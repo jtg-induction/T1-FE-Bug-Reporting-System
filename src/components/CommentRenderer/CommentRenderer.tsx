@@ -30,11 +30,19 @@ export const CommentRenderer = ({ content }: CommentRendererProps) => (
             ),
             ul: ({ children }) => <StyledUl>{children}</StyledUl>,
             li: ({ children }) => <StyledLi>{children}</StyledLi>,
-            strong: ({ children }) => <BoldSpan component="span">{children}</BoldSpan>,
-            em: ({ children }) => <ItalicSpan component="span">{children}</ItalicSpan>,
+            strong: ({ children }) => (
+                <BoldSpan component="span">{children}</BoldSpan>
+            ),
+            em: ({ children }) => (
+                <ItalicSpan component="span">{children}</ItalicSpan>
+            ),
             h3: ({ children }) => <StyledH3 variant="h6">{children}</StyledH3>,
-            blockquote: ({ children }) => <StyledBlockquote>{children}</StyledBlockquote>,
-            code: ({ children }) => <StyledCode component="code">{children}</StyledCode>,
+            blockquote: ({ children }) => (
+                <StyledBlockquote>{children}</StyledBlockquote>
+            ),
+            code: ({ children }) => (
+                <StyledCode component="code">{children}</StyledCode>
+            ),
         }}
     >
         {content}

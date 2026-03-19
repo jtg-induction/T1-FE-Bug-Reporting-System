@@ -1,25 +1,27 @@
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { showSnackbar } from 'redux/features/profileSlice';
+import { useAppDispatch } from 'redux/store';
 
 import { Alert, Stack, Typography } from '@mui/material';
 
 import { FormField, ModalForm } from '@components';
-import { useGetMovableProjectsQuery } from '@service';
+import { PRIVATE_PATHS } from '@constant';
+import { useGetMovableProjectsQuery, useUpdateTicketMutation } from '@service';
 
 import { MoveTicketFormProps, MoveTicketValues } from './MoveTicket.types';
 
-export const MoveTicketContainer = ({
-    open,
-    onClose,
-    onMove,
-    isLoading,
-    currentProjectName
-}: MoveTicketFormProps) => {
+export const MoveTicketContainer = ({ open, onClose }: MoveTicketFormProps) => {
     const { pid: currentPid } = useParams<{ pid: string }>();
     const { tid: currentTid } = useParams<{ tid: string }>();
     const formId = 'move-ticket-form';
-
-    const { data: projectsResponse, isLoading: isFetchingProjects } = useGetMovableProjectsQuery({ projectId: currentPid, ticketId: currentTid });
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const { data: projectsResponse, isLoading: isFetchingProjects } =
+        useGetMovableProjectsQuery({
+            projectId: currentPid,
+            ticketId: currentTid,
+        });
 
     const rawProjects = projectsResponse?.data ?? [];
 
@@ -27,17 +29,37 @@ export const MoveTicketContainer = ({
         .filter((p) => p.id !== currentPid)
         .map((p) => ({
             LABEL: `${p.title} (Key - ${p.key})`,
-            VALUE: p.id
+            VALUE: p.id,
         }));
 
     const { control, handleSubmit, reset } = useForm<MoveTicketValues>({
-        defaultValues: { projectId: '' }
+        defaultValues: { projectId: '' },
     });
 
+    const [updateTicket, { isLoading: isUpdating }] = useUpdateTicketMutation();
     const onSubmit = async (data: MoveTicketValues) => {
-        await onMove(data.projectId);
-        reset();
-        onClose();
+        try {
+            await updateTicket({
+                projectId: currentPid!,
+                ticketId: currentTid!,
+                updateData: {
+                    project_id: data.projectId,
+                },
+            }).unwrap();
+
+            reset();
+            onClose();
+            navigate(
+                `${PRIVATE_PATHS.PROJECTS}/${data.projectId}${PRIVATE_PATHS.TICKETS}/${currentTid}`,
+            );
+        } catch {
+            dispatch(
+                showSnackbar({
+                    message: 'Move Ticket Failed',
+                    severity: 'error',
+                }),
+            );
+        }
     };
 
     return (
@@ -46,13 +68,15 @@ export const MoveTicketContainer = ({
             title="Move Ticket to Project"
             formId={formId}
             onClose={onClose}
-            isLoading={isLoading || isFetchingProjects}
+            isLoading={isUpdating || isFetchingProjects}
             submitLabel="Move Ticket"
         >
             <form id={formId} onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
                 <Stack spacing={3} pt={1}>
                     <Alert severity="info">
-                        Moving this ticket will transfer it from <strong>{currentProjectName || 'the current project'}</strong> to the selected project.
+                        Moving this ticket will transfer it from{' '}
+                        <strong>{'the current project'}</strong> to the selected
+                        project.
                     </Alert>
 
                     {projectOptions.length > 0 ? (

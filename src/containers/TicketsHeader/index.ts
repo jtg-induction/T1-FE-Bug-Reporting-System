@@ -1,1 +1,1 @@
-export { TicketsHeader } from "./TicketsHeader";
+export { TicketsHeader } from './TicketsHeader';

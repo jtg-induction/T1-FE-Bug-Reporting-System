@@ -42,7 +42,7 @@ export const TopTicketsList = () => {
                 </HeaderStack>
             }
             MainContent={
-                <Stack sx={{justifyContent: 'space-between', height: '100%'}}>
+                <Stack sx={{ justifyContent: 'space-between', height: '100%' }}>
                     <Box sx={{ mt: 1 }}>
                         {isLoading ? (
                             <Stack alignItems="center" sx={{ py: 5 }}>
@@ -56,7 +56,21 @@ export const TopTicketsList = () => {
                                             key={ticket.id}
                                             title={ticket.title}
                                             subtitle={`Created ${getTimeFromNow(ticket.created_at)} ago`}
-                                            Info={<Chip size='small' color={TICKET_STATUS_MAP[ticket.status][1]} label={TICKET_STATUS_MAP[ticket.status][0]} />}
+                                            Info={
+                                                <Chip
+                                                    size="small"
+                                                    color={
+                                                        TICKET_STATUS_MAP[
+                                                            ticket.status
+                                                        ][1]
+                                                    }
+                                                    label={
+                                                        TICKET_STATUS_MAP[
+                                                            ticket.status
+                                                        ][0]
+                                                    }
+                                                />
+                                            }
                                             handleOnClick={() =>
                                                 void navigate(
                                                     `${PRIVATE_PATHS.PROJECTS}/${ticket.project_id}${PRIVATE_PATHS.TICKETS}/${ticket.id}`,
@@ -80,7 +94,9 @@ export const TopTicketsList = () => {
                     {!isLoading && (
                         <ListFooterContainer>
                             <ViewAllButton
-                                onClick={() => void navigate(PRIVATE_PATHS.TICKETS)}
+                                onClick={() =>
+                                    void navigate(PRIVATE_PATHS.TICKETS)
+                                }
                                 color="inherit"
                             >
                                 VIEW ALL TICKETS

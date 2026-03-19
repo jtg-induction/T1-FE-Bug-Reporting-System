@@ -5,7 +5,4 @@ export interface MoveTicketValues {
 export interface MoveTicketFormProps {
     open: boolean;
     onClose: () => void;
-    onMove: (newProjectId: string) => Promise<void>;
-    isLoading: boolean;
-    currentProjectName?: string;
 }

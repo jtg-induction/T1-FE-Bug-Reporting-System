@@ -2,32 +2,33 @@ import { useEffect, useState } from 'react';
 
 import { Markdown } from 'tiptap-markdown';
 
-import { 
-    Code, 
-    FormatBold, 
-    FormatItalic, 
-    FormatListBulleted, 
-    FormatListNumbered, 
-    FormatQuote, 
-    Title 
+import {
+    Code,
+    FormatBold,
+    FormatItalic,
+    FormatListBulleted,
+    FormatListNumbered,
+    FormatQuote,
+    Title,
 } from '@mui/icons-material';
 import { Button, Divider, Stack, ToggleButton } from '@mui/material';
 
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
-import { 
-    InputWrapper, 
-    StyledEditorContent, 
-    StyledToolbar} from './CommentInput.styles';
+import {
+    InputWrapper,
+    StyledEditorContent,
+    StyledToolbar,
+} from './CommentInput.styles';
 import { CommentInputProps } from './CommentInput.types';
 
-export const CommentInput = ({ 
-    onSubmit, 
-    onCancel, 
-    isLoading, 
-    initialContent = '', 
-    buttonText 
+export const CommentInput = ({
+    onSubmit,
+    onCancel,
+    isLoading,
+    initialContent = '',
+    buttonText,
 }: CommentInputProps) => {
     const [isEmpty, setIsEmpty] = useState(!initialContent);
 
@@ -53,9 +54,11 @@ export const CommentInput = ({
 
     const handleAction = () => {
         if (editor && !editor.isEmpty) {
-            const md = (editor.storage.markdown as { getMarkdown: () => string }).getMarkdown();
+            const md = (
+                editor.storage.markdown as { getMarkdown: () => string }
+            ).getMarkdown();
             onSubmit(md);
-            
+
             if (!initialContent) {
                 editor.commands.clearContent();
             }
@@ -85,7 +88,9 @@ export const CommentInput = ({
                 <ToggleButton
                     value="heading"
                     selected={editor.isActive('heading', { level: 3 })}
-                    onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                    onClick={() =>
+                        editor.chain().focus().toggleHeading({ level: 3 }).run()
+                    }
                 >
                     <Title fontSize="small" />
                 </ToggleButton>
@@ -93,7 +98,9 @@ export const CommentInput = ({
                 <ToggleButton
                     value="bulletList"
                     selected={editor.isActive('bulletList')}
-                    onClick={() => editor.chain().focus().toggleBulletList().run()}
+                    onClick={() =>
+                        editor.chain().focus().toggleBulletList().run()
+                    }
                 >
                     <FormatListBulleted fontSize="small" />
                 </ToggleButton>
@@ -101,7 +108,9 @@ export const CommentInput = ({
                 <ToggleButton
                     value="orderedList"
                     selected={editor.isActive('orderedList')}
-                    onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                    onClick={() =>
+                        editor.chain().focus().toggleOrderedList().run()
+                    }
                 >
                     <FormatListNumbered fontSize="small" />
                 </ToggleButton>
@@ -109,7 +118,9 @@ export const CommentInput = ({
                 <ToggleButton
                     value="blockquote"
                     selected={editor.isActive('blockquote')}
-                    onClick={() => editor.chain().focus().toggleBlockquote().run()}
+                    onClick={() =>
+                        editor.chain().focus().toggleBlockquote().run()
+                    }
                 >
                     <FormatQuote fontSize="small" />
                 </ToggleButton>
@@ -129,12 +140,17 @@ export const CommentInput = ({
 
             <Divider />
 
-            <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ p: 1 }}>
+            <Stack
+                direction="row"
+                justifyContent="flex-end"
+                spacing={1}
+                sx={{ p: 1 }}
+            >
                 {onCancel && (
-                    <Button 
-                        size="small" 
-                        variant="text" 
-                        color="inherit" 
+                    <Button
+                        size="small"
+                        variant="text"
+                        color="inherit"
                         onClick={onCancel}
                         disabled={isLoading}
                     >
@@ -147,7 +163,10 @@ export const CommentInput = ({
                     disabled={isLoading || isEmpty}
                     onClick={handleAction}
                 >
-                    {isLoading ? 'Processing...' : (buttonText || (initialContent ? 'Save Changes' : 'Comment'))}
+                    {isLoading
+                        ? 'Processing...'
+                        : buttonText ||
+                          (initialContent ? 'Save Changes' : 'Comment')}
                 </Button>
             </Stack>
         </InputWrapper>

@@ -5,7 +5,7 @@
  */
 export const formatDateTime = (
     timestamp: string | number | Date | undefined,
-    includeTime: boolean = true
+    includeTime: boolean = true,
 ): string => {
     if (!timestamp) return 'N/A';
 
@@ -23,4 +23,4 @@ export const formatDateTime = (
             hour12: false,
         }),
     }).format(date);
-};  
+};

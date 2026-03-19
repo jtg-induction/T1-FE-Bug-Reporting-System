@@ -1,5 +1,14 @@
 import { PRIVATE_PATHS } from '@constant';
-import { AcceptInvitePage, Overview, ProfilePage, ProjectDashboard, ProjectsPage, RejectInvitePage, TicketDashboardPage, TicketPage } from '@pages';
+import {
+    AcceptInvitePage,
+    Overview,
+    ProfilePage,
+    ProjectDashboard,
+    ProjectsPage,
+    RejectInvitePage,
+    TicketDashboardPage,
+    TicketPage,
+} from '@pages';
 
 export const privateRoutes = [
     {

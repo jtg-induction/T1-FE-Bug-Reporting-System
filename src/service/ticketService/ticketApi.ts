@@ -1,7 +1,15 @@
-import { ApiResponse, PaginatedResponse, ProjectListResponse, TicketCreateData, TicketCreateResponse, TicketDeleteData, TicketListData } from "types/common";
+import {
+    ApiResponse,
+    PaginatedResponse,
+    ProjectListResponse,
+    TicketCreateData,
+    TicketCreateResponse,
+    TicketDeleteData,
+    TicketListData,
+} from 'types/common';
 
-import { API_PATHS } from "@constant";
-import { baseApi } from "@service";
+import { API_PATHS } from '@constant';
+import { baseApi } from '@service';
 
 export const ticketApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -13,7 +21,10 @@ export const ticketApi = baseApi.injectEndpoints({
                 url: `${API_PATHS.TICKETS}`,
                 params: { limit, offset, ordering, ...filter },
             }),
-            serializeQueryArgs: ({ queryArgs }) => ({filter: queryArgs.filter, ordering: queryArgs.ordering}),
+            serializeQueryArgs: ({ queryArgs }) => ({
+                filter: queryArgs.filter,
+                ordering: queryArgs.ordering,
+            }),
             merge: (currentCache, newItems, { arg }) => {
                 if (arg.offset === 0) {
                     return newItems;
@@ -25,7 +36,10 @@ export const ticketApi = baseApi.injectEndpoints({
             },
             providesTags: ['Tickets'],
         }),
-        getProjectTickets: builder.query<PaginatedResponse<TicketCreateResponse>, TicketListData>({
+        getProjectTickets: builder.query<
+            PaginatedResponse<TicketCreateResponse>,
+            TicketListData
+        >({
             query: ({ projectId, limit, offset, ordering, filter }) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}`,
                 params: { limit, offset, ordering, ...filter },
@@ -41,7 +55,10 @@ export const ticketApi = baseApi.injectEndpoints({
             }),
             providesTags: ['Ticket'],
         }),
-        createTicket: builder.mutation<ApiResponse<TicketCreateResponse>, TicketCreateData>({
+        createTicket: builder.mutation<
+            ApiResponse<TicketCreateResponse>,
+            TicketCreateData
+        >({
             query: (data) => ({
                 url: `${API_PATHS.PROJECTS}${data.project_id}${API_PATHS.TICKETS}`,
                 method: 'POST',
@@ -100,8 +117,8 @@ export const ticketApi = baseApi.injectEndpoints({
             }),
         }),
         getJQLTickets: builder.mutation<
-            ApiResponse<{ id: string, title: string, jira_key: string; }[]>,
-            { projectId: string, data: Record<"jql", string> }
+            ApiResponse<{ id: string; title: string; jira_key: string }[]>,
+            { projectId: string; data: Record<'jql', string> }
         >({
             query: ({ projectId, data }) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}jira-import-list/`,
@@ -111,14 +128,14 @@ export const ticketApi = baseApi.injectEndpoints({
         }),
         importTicket: builder.mutation<
             ApiResponse<TicketCreateResponse>,
-            { projectId: string, data: Record<"jira_id", string> }
+            { projectId: string; data: Record<'jira_id', string> }
         >({
             query: ({ projectId, data }) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}import-ticket/`,
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: ['Tickets']
+            invalidatesTags: ['Tickets'],
         }),
     }),
 });

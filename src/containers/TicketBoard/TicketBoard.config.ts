@@ -1,4 +1,4 @@
-import { BoardColumn } from "@components/TicketColumn/TicketColumn.types";
+import { BoardColumn } from '@components/TicketColumn/TicketColumn.types';
 
 export const COLUMNS: BoardColumn[] = [
     { id: 1, label: 'TO DO' },
@@ -6,4 +6,3 @@ export const COLUMNS: BoardColumn[] = [
     { id: 3, label: 'IN REVIEW' },
     { id: 4, label: 'DONE' },
 ];
-

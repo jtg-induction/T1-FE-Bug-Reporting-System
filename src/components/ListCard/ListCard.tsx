@@ -1,29 +1,31 @@
 import { ArrowForward } from '@mui/icons-material';
 
-import { 
+import {
     ActionWrapper,
     ContentWrapper,
     InfoWrapper,
-    StyledListItem, 
+    StyledListItem,
     SubInfoText,
     TextGroup,
-    TitleText} from './ListCard.styles';
+    TitleText,
+} from './ListCard.styles';
 import { ListCardProps } from './ListCard.types';
-export const ListCard = ({ title, subtitle, Info, handleOnClick }: ListCardProps) => (
+export const ListCard = ({
+    title,
+    subtitle,
+    Info,
+    handleOnClick,
+}: ListCardProps) => (
     <StyledListItem disablePadding>
         <ContentWrapper>
             <TextGroup>
                 <TitleText variant="h6" noWrap>
                     {title}
                 </TitleText>
-                <SubInfoText variant="caption">
-                    {subtitle}
-                </SubInfoText>
+                <SubInfoText variant="caption">{subtitle}</SubInfoText>
             </TextGroup>
 
-            <InfoWrapper>
-                {Info}
-            </InfoWrapper>
+            <InfoWrapper>{Info}</InfoWrapper>
 
             <ActionWrapper onClick={handleOnClick}>
                 <ArrowForward />

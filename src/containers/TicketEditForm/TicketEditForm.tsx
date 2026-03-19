@@ -1,42 +1,56 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
+import { showSnackbar } from 'redux/features/profileSlice';
+import { useAppDispatch } from 'redux/store';
 
-import { ModalForm } from "@components";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { INITIAL_TICKET_DATA, TicketFormValues, ticketSchema } from "@schemas";
-import { useGetProjectMembersQuery, useGetTicketQuery } from "@service"; 
+import { Stack } from '@mui/material';
 
-import { TicketFormContainerProps } from "./TicketEditForm.types";
-import { TicketFields } from "../TicketForm/TicketFields";
+import { FormField, ModalForm } from '@components';
+import { TICKET_SEVERITY_OPTIONS, TICKET_STATUS_OPTIONS } from '@constant';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { INITIAL_TICKET_DATA, TicketFormValues, ticketSchema } from '@schemas';
+import {
+    useGetProjectMembersQuery,
+    useGetTicketQuery,
+    useUpdateTicketMutation,
+} from '@service';
 
-export const TicketEditForm = ({ open, onClose, onUpdate, isLoading: isUpdating }: TicketFormContainerProps) => {
-    const { pid: projectId, tid: ticketId } = useParams<{ pid: string, tid: string }>();
+import { TicketFormContainerProps } from './TicketEditForm.types';
+
+export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
+    const { pid: projectId, tid: ticketId } = useParams<{
+        pid: string;
+        tid: string;
+    }>();
     const formId = 'update-ticket-form';
-
+    const dispatch = useAppDispatch();
     const { data: ticketData, isLoading: isFetching } = useGetTicketQuery(
-        { projectId: projectId!, ticketId: ticketId! }, 
-        { skip: !projectId || !ticketId }
+        { projectId: projectId!, ticketId: ticketId! },
+        { skip: !projectId || !ticketId },
     );
-    const { data: usersResponse } = useGetProjectMembersQuery({ projectId: projectId! }, { skip: !projectId });
-    
+    const { data: usersResponse } = useGetProjectMembersQuery(
+        { projectId: projectId! },
+        { skip: !projectId },
+    );
+    const [updateTicket, { isLoading: isUpdating }] = useUpdateTicketMutation();
     const ticket = ticketData?.data;
     const members = usersResponse?.data;
 
     const userOptions = [
         { VALUE: '', LABEL: 'Unassigned' },
-        ...(members?.results?.map(user => ({
+        ...(members?.results?.map((user) => ({
             VALUE: user.member.id,
-            LABEL: `${user.member.first_name} ${user.member.last_name}`
-        })) || [])
+            LABEL: `${user.member.first_name} ${user.member.last_name}`,
+        })) || []),
     ];
 
-    const { 
-        control, 
-        handleSubmit, 
-        reset, 
-        formState: { dirtyFields }
+    const {
+        control,
+        handleSubmit,
+        reset,
+        formState: { dirtyFields },
     } = useForm<TicketFormValues>({
         resolver: zodResolver(ticketSchema),
         defaultValues: INITIAL_TICKET_DATA,
@@ -44,12 +58,11 @@ export const TicketEditForm = ({ open, onClose, onUpdate, isLoading: isUpdating 
 
     useEffect(() => {
         if (ticket && open) {
-            reset(ticket); 
+            reset(ticket);
         }
     }, [ticket, reset, open]);
 
     const handleFormSubmit = async (data: TicketFormValues) => {
-
         const dirtyPayload = Object.keys(dirtyFields).reduce((acc, key) => {
             const fieldName = key as keyof TicketFormValues;
             acc[fieldName] = data[fieldName];
@@ -57,10 +70,22 @@ export const TicketEditForm = ({ open, onClose, onUpdate, isLoading: isUpdating 
         }, {} as Partial<TicketFormValues>);
 
         if (Object.keys(dirtyPayload).length > 0) {
-            await onUpdate(dirtyPayload); 
+            try {
+                await updateTicket({
+                    projectId: projectId!,
+                    ticketId: ticketId!,
+                    updateData: dirtyPayload,
+                }).unwrap();
+                onClose();
+            } catch {
+                dispatch(
+                    showSnackbar({
+                        message: 'Ticket Updation Failed',
+                        severity: 'error',
+                    }),
+                );
+            }
         }
-        
-        onClose();
     };
 
     const handleClose = () => {
@@ -74,11 +99,67 @@ export const TicketEditForm = ({ open, onClose, onUpdate, isLoading: isUpdating 
             title="Update Ticket"
             formId={formId}
             onClose={handleClose}
-            isLoading={isUpdating || isFetching} 
+            isLoading={isUpdating || isFetching}
             submitLabel="Update"
         >
-            <form id={formId} onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}>
-                <TicketFields control={control} userOptions={userOptions} />
+            <form
+                id={formId}
+                onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}
+            >
+                <Stack spacing={3} sx={{ mt: 1 }}>
+                    <FormField
+                        name="title"
+                        label="Title"
+                        control={control}
+                        editStatus={true}
+                    />
+                    <FormField
+                        name="description"
+                        label="Description"
+                        control={control}
+                        editStatus={true}
+                        multiline
+                        rows={3}
+                    />
+
+                    <Stack direction="row" spacing={2}>
+                        <FormField
+                            name="status"
+                            label="Status"
+                            type="select"
+                            control={control}
+                            editStatus={true}
+                            options={TICKET_STATUS_OPTIONS}
+                            fullWidth
+                        />
+                        <FormField
+                            name="severity"
+                            label="Severity"
+                            type="select"
+                            control={control}
+                            editStatus={true}
+                            options={TICKET_SEVERITY_OPTIONS}
+                            fullWidth
+                        />
+                    </Stack>
+
+                    <FormField
+                        name="assignee"
+                        label="Assignee"
+                        type="select"
+                        control={control}
+                        editStatus={true}
+                        options={userOptions}
+                    />
+
+                    <FormField
+                        name="deadline"
+                        label="Deadline"
+                        type="date"
+                        control={control}
+                        editStatus={true}
+                    />
+                </Stack>
             </form>
         </ModalForm>
     );

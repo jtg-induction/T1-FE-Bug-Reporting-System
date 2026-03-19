@@ -56,7 +56,19 @@ export const TopProjectsList = () => {
                                             key={project.id}
                                             title={project.title}
                                             subtitle={`Created ${getTimeFromNow(project.created_at)} ago`}
-                                            Info={<Chip size='small' sx={(mtheme) => ({color: mtheme.palette.common.white, backgroundColor: mtheme.palette.secondary.dark})} label={`Key - ${project.key}`} />}
+                                            Info={
+                                                <Chip
+                                                    size="small"
+                                                    sx={(mtheme) => ({
+                                                        color: mtheme.palette
+                                                            .common.white,
+                                                        backgroundColor:
+                                                            mtheme.palette
+                                                                .secondary.dark,
+                                                    })}
+                                                    label={`Key - ${project.key}`}
+                                                />
+                                            }
                                             handleOnClick={() =>
                                                 void navigate(
                                                     `${PRIVATE_PATHS.PROJECTS}/${project.id}`,
@@ -85,7 +97,9 @@ export const TopProjectsList = () => {
                                 }
                                 color="inherit"
                             >
-                                {projectsData.length > 0 ? 'VIEW ALL PROJECTS' : 'CREATE NEW PROJECT'}
+                                {projectsData.length > 0
+                                    ? 'VIEW ALL PROJECTS'
+                                    : 'CREATE NEW PROJECT'}
                             </ViewAllButton>
                         </ListFooterContainer>
                     )}

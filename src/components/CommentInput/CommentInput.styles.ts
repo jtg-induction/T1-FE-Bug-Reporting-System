@@ -18,12 +18,18 @@ export const StyledToolbar = styled(ToggleButtonGroup)({
     padding: 4,
 });
 
-export const StyledEditorContent = styled(EditorContent)(({ theme: { typography: { pxToRem } } }) => ({
-    '& .tiptap': {
-        minHeight: pxToRem(120),
-        padding: `0 ${pxToRem(12)}`,
-        outline: 'none',
-        fontFamily: 'inherit',
-        fontSize: pxToRem(16),
-    }
-}));
+export const StyledEditorContent = styled(EditorContent)(
+    ({
+        theme: {
+            typography: { pxToRem },
+        },
+    }) => ({
+        '& .tiptap': {
+            minHeight: pxToRem(120),
+            padding: `0 ${pxToRem(12)}`,
+            outline: 'none',
+            fontFamily: 'inherit',
+            fontSize: pxToRem(16),
+        },
+    }),
+);

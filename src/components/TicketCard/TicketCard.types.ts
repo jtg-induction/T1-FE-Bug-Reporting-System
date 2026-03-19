@@ -1,4 +1,4 @@
-import { TicketCreateResponse } from "types/common";
+import { TicketCreateResponse } from 'types/common';
 
 export type TicketStatus = 'TODO' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
 
@@ -13,6 +13,6 @@ export interface Ticket {
 
 export interface TicketCardProps {
     ticket: TicketCreateResponse;
-    onClick: (projectId:string, ticketId: string) => void;
+    onClick: (projectId: string, ticketId: string) => void;
     hideDeadline?: boolean;
 }

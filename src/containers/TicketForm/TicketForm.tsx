@@ -1,30 +1,40 @@
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
+import { showSnackbar } from 'redux/features/profileSlice';
+import { useAppDispatch } from 'redux/store';
 
-import { Stack } from "@mui/material";
+import { Stack } from '@mui/material';
 
-import { FormField, ModalForm } from "@components";
-import { TICKET_SEVERITY_OPTIONS, TICKET_STATUS_OPTIONS } from "@constant";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { INITIAL_TICKET_DATA, TicketFormValues, ticketSchema } from "@schemas";
-import { useCreateTicketMutation, useGetProjectMembersQuery } from "@service";
+import { FormField, ModalForm } from '@components';
+import { TICKET_SEVERITY_OPTIONS, TICKET_STATUS_OPTIONS } from '@constant';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { INITIAL_TICKET_DATA, TicketFormValues, ticketSchema } from '@schemas';
+import { useCreateTicketMutation, useGetProjectMembersQuery } from '@service';
 
-import { TicketFormContainerProps } from "./TicketForm.types";
+import { TicketFormContainerProps } from './TicketForm.types';
 
-export const TicketFormContainer = ({ open, onClose }: TicketFormContainerProps) => {
+export const TicketFormContainer = ({
+    open,
+    onClose,
+}: TicketFormContainerProps) => {
     const { id } = useParams<{ id: string }>();
+    const dispatch = useAppDispatch();
     const formId = 'create-ticket-form';
 
-    const [createTicket, { isLoading: isCreatingTicket }] = useCreateTicketMutation();
+    const [createTicket, { isLoading: isCreatingTicket }] =
+        useCreateTicketMutation();
 
-    const { data: usersResponse } = useGetProjectMembersQuery({projectId: id!}, { skip: !id });
+    const { data: usersResponse } = useGetProjectMembersQuery(
+        { projectId: id! },
+        { skip: !id },
+    );
     const members = usersResponse?.data;
     const userOptions = [
         { VALUE: '', LABEL: 'Unassigned' },
-        ...(members?.results?.map(user => ({
+        ...(members?.results?.map((user) => ({
             VALUE: user.member.id,
-            LABEL: `${user.member.first_name} ${user.member.last_name}`
-        })) || [])
+            LABEL: `${user.member.first_name} ${user.member.last_name}`,
+        })) || []),
     ];
 
     const { control, handleSubmit, reset } = useForm<TicketFormValues>({
@@ -41,8 +51,14 @@ export const TicketFormContainer = ({ open, onClose }: TicketFormContainerProps)
             }).unwrap();
             onClose();
             reset();
-        } catch { }
-        
+        } catch {
+            dispatch(
+                showSnackbar({
+                    message: 'Ticket Creation Failed',
+                    severity: 'error',
+                }),
+            );
+        }
     };
 
     const handleClose = () => {
@@ -59,10 +75,25 @@ export const TicketFormContainer = ({ open, onClose }: TicketFormContainerProps)
             isLoading={isCreatingTicket}
             submitLabel="Create"
         >
-            <form id={formId} onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}>
+            <form
+                id={formId}
+                onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}
+            >
                 <Stack spacing={3} sx={{ mt: 1 }}>
-                    <FormField name="title" label="Title" control={control} editStatus={true} />
-                    <FormField name="description" label="Description" control={control} editStatus={true} multiline rows={3} />
+                    <FormField
+                        name="title"
+                        label="Title"
+                        control={control}
+                        editStatus={true}
+                    />
+                    <FormField
+                        name="description"
+                        label="Description"
+                        control={control}
+                        editStatus={true}
+                        multiline
+                        rows={3}
+                    />
 
                     <Stack direction="row" spacing={2}>
                         <FormField
