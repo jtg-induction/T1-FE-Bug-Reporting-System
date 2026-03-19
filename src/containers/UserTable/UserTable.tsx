@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
+import { showSnackbar } from 'redux/features/profileSlice';
+import { useAppDispatch } from 'redux/store';
 import { handleFilterChange, handleSortChange } from 'utils/utils';
 
 import {
@@ -44,7 +46,7 @@ export const ProjectUsers = ({
 }: ProjectUsersProps) => {
     const { id: projectId } = useParams<{ id: string }>();
     const navigate = useNavigate();
-
+    const dispatch = useAppDispatch();
     const { data: members, isLoading: isLoadingMembers } =
         useGetProjectMembersQuery(
             {
@@ -98,7 +100,14 @@ export const ProjectUsers = ({
                         user_id: userId,
                         role: 1,
                     }).unwrap();
-                } catch {}
+                } catch {
+                    dispatch(
+                        showSnackbar({
+                            message: 'User Promotion Failed',
+                            severity: 'error',
+                        }),
+                    );
+                }
             }
         })();
     };
@@ -115,7 +124,14 @@ export const ProjectUsers = ({
                         projectId: projectId!,
                         user_id: userId,
                     }).unwrap();
-                } catch {}
+                } catch {
+                    dispatch(
+                        showSnackbar({
+                            message: 'User Revocation Failed',
+                            severity: 'error',
+                        }),
+                    );
+                }
             }
         })();
     };
@@ -127,7 +143,14 @@ export const ProjectUsers = ({
                 ...data,
             }).unwrap();
             setOpenInvite(false);
-        } catch {}
+        } catch {
+            dispatch(
+                showSnackbar({
+                    message: 'User Invite Failed',
+                    severity: 'error',
+                }),
+            );
+        }
     };
 
     const columns: GridColDef<ProjectMember>[] = [

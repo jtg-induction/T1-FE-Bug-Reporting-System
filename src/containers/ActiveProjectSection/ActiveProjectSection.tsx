@@ -36,7 +36,7 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
 
     const projectsData = projects?.data.results ?? [];
     const projectsCount = projects?.data.count ?? 0;
-    
+
     const handleRowClick = (params: GridRowParams<ProjectListResponse>) => {
         navigate(`/projects/${params.row.id}`);
     };

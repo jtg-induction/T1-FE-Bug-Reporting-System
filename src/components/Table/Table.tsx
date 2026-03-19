@@ -3,12 +3,22 @@ import { DataGrid, DataGridProps } from '@mui/x-data-grid';
 
 import { TableProps } from './Table.types';
 
-export const Table = ({ loading, rows, columns, paginationModel, onPaginationModelChange, onFilterModelChange, onSortModelChange, rowCount, ...props }: TableProps & DataGridProps) => (
-    <Box height={400}>
+export const Table = ({
+    loading,
+    rows,
+    columns,
+    paginationModel,
+    onPaginationModelChange,
+    onFilterModelChange,
+    onSortModelChange,
+    rowCount,
+    ...props
+}: TableProps & DataGridProps) => (
+    <Box>
         <DataGrid
-            paginationMode='server'
-            filterMode='server'
-            sortingMode='server'
+            paginationMode="server"
+            filterMode="server"
+            sortingMode="server"
             rowCount={rowCount}
             loading={loading}
             rows={rows}

@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
+import { showSnackbar } from 'redux/features/profileSlice';
+import { useAppDispatch } from 'redux/store';
 
 import ArchiveIcon from '@mui/icons-material/Archive';
 import EditIcon from '@mui/icons-material/Edit';
@@ -54,6 +56,7 @@ export const ProjectDetailContainer = ({
         { skip: !projectId },
     );
 
+    const dispatch = useAppDispatch();
     const [updateProject, { isLoading: isUpdating }] =
         useUpdateProjectMutation();
     const [archiveProject, { isLoading: isArchiving }] =
@@ -97,7 +100,14 @@ export const ProjectDetailContainer = ({
                 updateData: data,
             }).unwrap();
             setOpenEdit(false);
-        } catch {}
+        } catch {
+            dispatch(
+                showSnackbar({
+                    message: 'Project Updation Failed',
+                    severity: 'error',
+                }),
+            );
+        }
     };
 
     const handleArchiveToggle = () => {
@@ -114,7 +124,14 @@ export const ProjectDetailContainer = ({
                     } else {
                         await unarchiveProject(projectId!).unwrap();
                     }
-                } catch {}
+                } catch {
+                    dispatch(
+                        showSnackbar({
+                            message: 'Project Archiving Failed',
+                            severity: 'error',
+                        }),
+                    );
+                }
             }
         })();
     };
@@ -150,7 +167,14 @@ export const ProjectDetailContainer = ({
 
             setOpenLeaveDialog(false);
             navigate('/');
-        } catch {}
+        } catch {
+            dispatch(
+                showSnackbar({
+                    message: 'Leave Project Failed',
+                    severity: 'error',
+                }),
+            );
+        }
     };
 
     const handleTransferSubmit = async (data: { newOwnerId: string }) => {
