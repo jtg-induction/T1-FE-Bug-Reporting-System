@@ -1,23 +1,19 @@
-import { CardContent, CardHeader } from '@mui/material';
+import { CardHeader } from '@mui/material';
 
-import { StyledSectionCard } from './SectionCard.styles';
+import { StyledCardContent, StyledSectionCard } from './SectionCard.styles';
 import { SectionCardProps } from './SectionCard.types';
 
 export const SectionCard = ({
-    TitleContent,
-    SubheaderContent,
-    MainContent,
+    titleContent,
+    subheaderContent,
+    mainContent,
 }: SectionCardProps) => (
     <StyledSectionCard>
         <CardHeader
             sx={(theme) => ({ ...theme.mixins.lineClamp(2) })}
-            title={TitleContent}
-            subheader={SubheaderContent}
+            title={titleContent}
+            subheader={subheaderContent}
         />
-        <CardContent
-            sx={{ height: '100%', '&:last-child': { paddingBottom: 0 } }}
-        >
-            {MainContent}
-        </CardContent>
+        <StyledCardContent>{mainContent}</StyledCardContent>
     </StyledSectionCard>
 );

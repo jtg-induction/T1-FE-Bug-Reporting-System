@@ -5,12 +5,13 @@ export const StyledStack = styled(Stack)(
         theme: {
             typography: { pxToRem },
             breakpoints,
+            spacing,
         },
     }) => ({
-        padding: `${pxToRem(16)} ${pxToRem(160)}`,
+        padding: spacing(4, 40),
         gap: pxToRem(24),
         [breakpoints.down('md')]: {
-            padding: `${pxToRem(16)} ${pxToRem(24)} 0`,
+            padding: spacing(4, 6, 0),
         },
     }),
 );

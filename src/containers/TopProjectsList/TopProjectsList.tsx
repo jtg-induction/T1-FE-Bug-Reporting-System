@@ -32,7 +32,7 @@ export const TopProjectsList = ({ onAddClick }: TopProjectListsProps) => {
 
     return (
         <SectionCard
-            TitleContent={
+            titleContent={
                 <HeaderStack>
                     <Stack direction="row" spacing={1} alignItems="center">
                         <TrendingUp color="primary" />
@@ -48,7 +48,7 @@ export const TopProjectsList = ({ onAddClick }: TopProjectListsProps) => {
                     </Button>
                 </HeaderStack>
             }
-            MainContent={
+            mainContent={
                 <>
                     <Box sx={{ mt: 1 }}>
                         {isLoading ? (

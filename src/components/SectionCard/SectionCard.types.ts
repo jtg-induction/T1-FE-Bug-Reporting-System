@@ -1,5 +1,5 @@
 export interface SectionCardProps {
-    TitleContent: React.ReactNode;
-    SubheaderContent?: React.ReactNode;
-    MainContent: React.ReactNode;
+    titleContent: React.ReactElement | string;
+    subheaderContent?: React.ReactElement | string;
+    mainContent: React.ReactElement | string;
 }

@@ -1,5 +1,5 @@
 import { Card, styled } from '@mui/material';
-import { cardContentClasses } from '@mui/material/CardContent';
+import CardContent, { cardContentClasses } from '@mui/material/CardContent';
 import { cardHeaderClasses } from '@mui/material/CardHeader';
 
 export const StyledSectionCard = styled(Card)(({ theme }) => {
@@ -26,3 +26,10 @@ export const StyledSectionCard = styled(Card)(({ theme }) => {
         },
     };
 });
+
+export const StyledCardContent = styled(CardContent)(() => ({
+    height: '100%',
+    '&:last-child': {
+        paddingBottom: 0,
+    },
+}));

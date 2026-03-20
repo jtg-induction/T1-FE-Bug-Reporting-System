@@ -1,15 +1,10 @@
 import { Stack, styled } from '@mui/material';
 
 export const StyledStack = styled(Stack)(
-    ({
-        theme: {
-            typography: { pxToRem },
-            breakpoints,
-        },
-    }) => ({
-        padding: `${pxToRem(16)} ${pxToRem(160)}`,
+    ({ theme: { breakpoints, spacing } }) => ({
+        padding: spacing(4, 40),
         [breakpoints.down('md')]: {
-            padding: `${pxToRem(16)} ${pxToRem(24)}`,
+            padding: spacing(4, 6),
         },
     }),
 );
