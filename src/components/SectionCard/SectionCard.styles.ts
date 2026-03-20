@@ -1,8 +1,8 @@
-import { Card, styled, SxProps, Theme } from '@mui/material';
+import { Card, styled } from '@mui/material';
+import { cardContentClasses } from '@mui/material/CardContent';
+import { cardHeaderClasses } from '@mui/material/CardHeader';
 
-export const StyledSectionCard = styled(Card)<{
-    sx?: SxProps<Theme> | undefined;
-}>(({ theme, sx }) => {
+export const StyledSectionCard = styled(Card)(({ theme }) => {
     const {
         shadows,
         typography: { pxToRem },
@@ -16,15 +16,13 @@ export const StyledSectionCard = styled(Card)<{
         boxShadow: shadows[3],
         padding: theme.spacing(4),
 
-        '& .MuiCardHeader-root': {
+        [`& .${cardHeaderClasses.root}`]: {
             padding: 0,
             height: '100%',
         },
 
-        '& > .MuiCardContent-root': {
+        [`& > .${cardContentClasses.root}`]: {
             padding: 0,
         },
-
-        sx,
     };
 });

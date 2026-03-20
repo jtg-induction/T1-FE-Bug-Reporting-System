@@ -3,11 +3,11 @@ import { alpha, ListItem, styled } from '@mui/material';
 export const StyledListItem = styled(ListItem)(
     ({
         theme: {
-            typography: { pxToRem },
             palette: { primary, secondary },
+            spacing,
         },
     }) => ({
-        padding: `${pxToRem(4)} ${pxToRem(8)}`,
+        padding: spacing(1, 2),
         borderRadius: 2,
         transition: '0.2s',
         '&:nth-of-type(odd)': {

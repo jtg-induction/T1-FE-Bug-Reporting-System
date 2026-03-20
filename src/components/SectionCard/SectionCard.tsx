@@ -1,15 +1,14 @@
 import { CardContent, CardHeader } from '@mui/material';
 
-import { StyledSectionCard } from './SectionCard.style';
+import { StyledSectionCard } from './SectionCard.styles';
 import { SectionCardProps } from './SectionCard.types';
 
 export const SectionCard = ({
     TitleContent,
     SubheaderContent,
     MainContent,
-    sx,
 }: SectionCardProps) => (
-    <StyledSectionCard sx={sx}>
+    <StyledSectionCard>
         <CardHeader
             sx={(theme) => ({ ...theme.mixins.lineClamp(2) })}
             title={TitleContent}

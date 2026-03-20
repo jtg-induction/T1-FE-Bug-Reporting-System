@@ -31,11 +31,10 @@ export const StyledDialogActions = styled(DialogActions)(
     ({
         theme: {
             typography: { pxToRem },
+            spacing,
         },
     }) => ({
-        paddingLeft: pxToRem(12),
-        paddingRight: pxToRem(12),
-        paddingBottom: pxToRem(12),
+        padding: spacing(0, 3, 3),
         gap: pxToRem(4),
     }),
 );
