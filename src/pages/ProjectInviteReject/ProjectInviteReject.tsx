@@ -9,12 +9,18 @@ import { useRejectInviteMutation } from '@service';
 export const RejectInvitePage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [rejectInvite, { isSuccess }] = useRejectInviteMutation();
+
+    const [rejectInvite, { isLoading, isSuccess, isError }] =
+        useRejectInviteMutation();
 
     useEffect(() => {
-        if (id) {
-            rejectInvite(id);
-        }
+        if (!id) return;
+
+        const request = rejectInvite(id);
+
+        return () => {
+            request.abort();
+        };
     }, [id, rejectInvite]);
 
     useEffect(() => {
@@ -24,9 +30,25 @@ export const RejectInvitePage = () => {
     }, [isSuccess, navigate]);
 
     return (
-        <Stack alignItems="center" justifyContent="center" height="100vh">
-            <CircularProgress color="error" />
-            <Typography>Declining invitation...</Typography>
+        <Stack
+            alignItems="center"
+            justifyContent="center"
+            height="100vh"
+            spacing={2}
+        >
+            {(isLoading || (!isSuccess && !isError)) && (
+                <>
+                    <CircularProgress color="error" />
+                    <Typography>Declining invitation...</Typography>
+                </>
+            )}
+
+            {isError && !isSuccess && (
+                <Typography color="error">
+                    Failed to decline invitation. The link may have expired or
+                    already been processed.
+                </Typography>
+            )}
         </Stack>
     );
 };

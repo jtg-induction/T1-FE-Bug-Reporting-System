@@ -84,6 +84,7 @@ export const projectApi = baseApi.injectEndpoints({
 
         getUsersToInvite: builder.query<ApiResponse<UserData[]>, string>({
             query: (projectId) => `projects/${projectId}/available_members/`,
+            providesTags: ['ProjectMembers'],
         }),
 
         inviteMember: builder.mutation<

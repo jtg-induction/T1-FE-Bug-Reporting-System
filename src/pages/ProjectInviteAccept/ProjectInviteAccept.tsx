@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { CheckCircleOutline } from '@mui/icons-material';
 import { CircularProgress, Stack, Typography } from '@mui/material';
 
 import { useAcceptInviteMutation } from '@service';
@@ -14,16 +14,18 @@ export const AcceptInvitePage = () => {
         useAcceptInviteMutation();
 
     useEffect(() => {
-        if (id) {
-            acceptInvite(id);
-        }
+        if (!id) return;
+        const request = acceptInvite(id);
+        return () => {
+            request.abort();
+        };
     }, [id, acceptInvite]);
 
     useEffect(() => {
         if (isSuccess) {
             const timer = setTimeout(() => {
                 navigate(`/projects/${id}`);
-            }, 5000);
+            }, 1000);
             return () => clearTimeout(timer);
         }
     }, [isSuccess, id, navigate]);
@@ -43,14 +45,14 @@ export const AcceptInvitePage = () => {
             )}
             {isSuccess && (
                 <>
-                    <CheckCircleOutlineIcon color="success" fontSize="medium" />
+                    <CheckCircleOutline color="success" fontSize="medium" />
                     <Typography variant="h4">Invitation Accepted!</Typography>
                     <Typography color="text.secondary">
-                        Redirecting to your project dashboard in 5 seconds...
+                        Redirecting to your project dashboard ...
                     </Typography>
                 </>
             )}
-            {isError && (
+            {isError && !isSuccess && (
                 <Typography color="error">
                     Failed to accept invitation. The link may have expired.
                 </Typography>
