@@ -40,16 +40,10 @@ export const ItalicSpan = styled(Box)({
     fontStyle: 'italic',
 }) as typeof Box;
 
-export const StyledH3 = styled(Typography)(
-    ({
-        theme: {
-            typography: { pxToRem },
-        },
-    }) => ({
-        margin: `${pxToRem(4)} 0`,
-        fontWeight: 'bold',
-    }),
-);
+export const StyledH3 = styled(Typography)(({ theme: { spacing } }) => ({
+    margin: spacing(1, 0),
+    fontWeight: 'bold',
+}));
 
 export const StyledBlockquote = styled(Box)(
     ({

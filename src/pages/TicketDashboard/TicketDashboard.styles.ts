@@ -5,13 +5,14 @@ export const PageWrapper = styled(Stack)(
         theme: {
             typography: { pxToRem },
             breakpoints,
+            spacing,
         },
     }) => ({
         minHeight: '100vh',
-        padding: `${pxToRem(16)} ${pxToRem(24)}`,
+        padding: spacing(4, 6),
         gap: pxToRem(24),
         [breakpoints.up('md')]: {
-            padding: `${pxToRem(16)} ${pxToRem(160)}`,
+            padding: spacing(4, 40),
         },
     }),
 );

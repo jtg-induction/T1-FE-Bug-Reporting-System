@@ -77,12 +77,13 @@ export const StatusBadge = styled(Typography)(
         theme: {
             typography: { pxToRem },
             palette,
+            spacing,
         },
     }) => ({
         fontSize: pxToRem(8),
         fontWeight: 900,
         textTransform: 'uppercase',
-        padding: `${pxToRem(2)} ${pxToRem(8)}`,
+        padding: spacing(0.5, 2),
         borderRadius: pxToRem(4),
         backgroundColor: palette.grey[200],
         color: palette.text.secondary,

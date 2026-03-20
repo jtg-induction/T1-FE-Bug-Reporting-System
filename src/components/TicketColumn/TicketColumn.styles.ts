@@ -24,12 +24,13 @@ export const StyledColumnHeader = styled(Stack)(
         theme: {
             palette,
             typography: { pxToRem },
+            spacing,
         },
     }) => ({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: `${pxToRem(8)} 0`,
+        padding: spacing(2, 0),
         marginBottom: pxToRem(4),
         borderBottom: `1px solid ${palette.divider}`,
     }),

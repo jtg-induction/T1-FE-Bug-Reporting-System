@@ -42,7 +42,7 @@ export const TopProjectsList = () => {
                 </HeaderStack>
             }
             mainContent={
-                <Stack justifyContent='space-between' height='100%'>
+                <Stack justifyContent="space-between" height="100%">
                     <Box sx={{ mt: 1 }}>
                         {isLoading ? (
                             <Stack alignItems="center" sx={{ py: 5 }}>

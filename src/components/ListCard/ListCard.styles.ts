@@ -30,12 +30,13 @@ export const ContentWrapper = styled(Box)(
     ({
         theme: {
             typography: { pxToRem },
+            spacing,
         },
     }) => ({
         display: 'flex',
         alignItems: 'center',
         width: '100%',
-        padding: `${pxToRem(16)} ${pxToRem(20)}`,
+        padding: spacing(4, 5),
         gap: pxToRem(16),
     }),
 );

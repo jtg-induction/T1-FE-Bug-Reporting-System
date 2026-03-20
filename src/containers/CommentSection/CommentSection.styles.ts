@@ -17,14 +17,9 @@ export const LoadingWrapper = styled(Stack)(
 );
 
 export const EmptyStateText = styled(Typography)(
-    ({
-        theme: {
-            typography: { pxToRem },
-            palette,
-        },
-    }) => ({
+    ({ theme: { spacing, palette } }) => ({
         textAlign: 'center',
-        padding: `${pxToRem(8)} 0`,
+        padding: spacing(2, 0),
         color: palette.text.secondary,
     }),
 );
