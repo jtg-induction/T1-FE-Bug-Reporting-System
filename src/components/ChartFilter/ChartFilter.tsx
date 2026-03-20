@@ -1,14 +1,19 @@
 import {
     Checkbox,
-    FormControl,
     InputLabel,
     ListItemText,
     MenuItem,
     Select,
-    Stack,
-    TextField,
 } from '@mui/material';
 
+import {
+    DateInputGroup,
+    FilterDateInput,
+    FilterFormControl,
+    FilterWrapper,
+    SCROLLABLE_MENU_PROPS,
+    SelectGroup,
+} from './ChartFilter.styles';
 import { ChartFilterBarProps } from './ChartFilter.types';
 
 export const ChartFilter = ({
@@ -22,15 +27,22 @@ export const ChartFilter = ({
     onStartDateChange,
     endDate,
     onEndDateChange,
-}: ChartFilterBarProps) => (
-        <Stack
-            direction={{ xs: 'column', lg: 'row' }}
-            spacing={2}
-            sx={{ mt: 1 }}
-        >
-            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+}: ChartFilterBarProps) => {
+    const getRenderValue = (selected: string[]) => {
+        if (selected.length === 0 || selected.includes('all')) {
+            return 'All Users';
+        }
+        return selected
+            .map((id) => users.find((u) => u.id === id)?.name)
+            .filter(Boolean)
+            .join(', ');
+    };
+
+    return (
+        <FilterWrapper>
+            <SelectGroup>
                 {showUserFilter && (
-                    <FormControl size="small" sx={{ width: 200 }}>
+                    <FilterFormControl size="small">
                         <InputLabel id="user-filter">User</InputLabel>
                         <Select
                             labelId="user-filter"
@@ -38,22 +50,8 @@ export const ChartFilter = ({
                             value={selectedUserIds}
                             label="User"
                             onChange={onUserChange}
-                            renderValue={(selected) => {
-                                if (
-                                    selected.length === 0 ||
-                                    selected.includes('all')
-                                ) {
-                                    return 'All Users';
-                                }
-                                return selected
-                                    .map(
-                                        (id) =>
-                                            users.find((u) => u.id === id)
-                                                ?.name,
-                                    )
-                                    .filter(Boolean)
-                                    .join(', ');
-                            }}
+                            renderValue={getRenderValue}
+                            MenuProps={SCROLLABLE_MENU_PROPS}
                         >
                             <MenuItem value="all">
                                 <Checkbox
@@ -76,9 +74,10 @@ export const ChartFilter = ({
                                 </MenuItem>
                             ))}
                         </Select>
-                    </FormControl>
+                    </FilterFormControl>
                 )}
-                <FormControl size="small" sx={{ width: 200 }}>
+
+                <FilterFormControl size="small">
                     <InputLabel id="date-filter">Date Range</InputLabel>
                     <Select
                         labelId="date-filter"
@@ -90,30 +89,29 @@ export const ChartFilter = ({
                         <MenuItem value="week">Current Week</MenuItem>
                         <MenuItem value="custom">Custom Range</MenuItem>
                     </Select>
-                </FormControl>
-            </Stack>
+                </FilterFormControl>
+            </SelectGroup>
 
             {dateRangeType === 'custom' && (
-                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                    <TextField
+                <DateInputGroup>
+                    <FilterDateInput
                         size="small"
                         type="date"
                         label="Start Date"
                         value={startDate}
                         onChange={(e) => onStartDateChange(e.target.value)}
                         InputLabelProps={{ shrink: true }}
-                        sx={{ width: 200 }}
                     />
-                    <TextField
+                    <FilterDateInput
                         size="small"
                         type="date"
                         label="End Date"
                         value={endDate}
                         onChange={(e) => onEndDateChange(e.target.value)}
                         InputLabelProps={{ shrink: true }}
-                        sx={{ width: 200 }}
                     />
-                </Stack>
+                </DateInputGroup>
             )}
-        </Stack>
+        </FilterWrapper>
     );
+};
