@@ -36,7 +36,7 @@ export const CommentItem = ({
                 <CommentInput
                     initialContent={comment.description}
                     isLoading={isUpdating}
-                    onSubmit={() => void handleUpdate}
+                    onSubmit={(e) => void handleUpdate(e)}
                     onCancel={() => setIsEditing(false)}
                     buttonText="Save Changes"
                 />

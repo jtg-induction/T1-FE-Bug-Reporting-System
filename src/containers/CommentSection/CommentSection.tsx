@@ -115,7 +115,7 @@ export const CommentSectionContainer = () => {
                                 key={comment.id}
                                 comment={comment}
                                 onUpdate={handleUpdateComment}
-                                onDelete={() => void handleDeleteComment}
+                                onDelete={(e) => void handleDeleteComment(e)}
                                 isUpdating={isUpdating}
                             />
                         ))}
