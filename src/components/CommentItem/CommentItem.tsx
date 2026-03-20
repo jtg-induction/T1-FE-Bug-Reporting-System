@@ -22,6 +22,7 @@ export const CommentItem = ({
     onUpdate,
     onDelete,
     isUpdating,
+    isActive,
 }: CommentItemProps) => {
     const [isEditing, setIsEditing] = useState(false);
 
@@ -86,7 +87,9 @@ export const CommentItem = ({
                     </Stack>
                 </AuthorInfo>
 
-                {comment.can_edit && <ActionMenu items={menuItems} />}
+                {isActive && comment.can_edit && (
+                    <ActionMenu items={menuItems} />
+                )}
             </HeaderStack>
 
             <ContentWrapper>

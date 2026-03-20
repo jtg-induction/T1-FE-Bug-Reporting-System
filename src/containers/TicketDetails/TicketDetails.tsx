@@ -77,7 +77,7 @@ export const TicketDashboardContainer = () => {
 
     const d = ticket?.data;
     const perm = d?.permission_class;
-
+    const isActive = d?.is_active;
     const canClose = perm === 4 && d.status === 3;
 
     const handleOpenEdit = (statusOnly: boolean) => {
@@ -289,7 +289,7 @@ export const TicketDashboardContainer = () => {
             </TicketContentCard>
 
             <CommentSection>
-                <CommentSectionContainer />
+                <CommentSectionContainer isActive={isActive} />
             </CommentSection>
 
             <TicketEditForm
