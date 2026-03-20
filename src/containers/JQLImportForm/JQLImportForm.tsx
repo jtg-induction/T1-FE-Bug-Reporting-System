@@ -80,7 +80,7 @@ export const JQLImportContainer = ({
             <Box
                 component="form"
                 id="jql-search-form"
-                onSubmit={() => handleSubmit(handleSearch)}
+                onSubmit={(e) => void handleSubmit(handleSearch)(e)}
                 sx={{ mb: 3 }}
             >
                 <FormField

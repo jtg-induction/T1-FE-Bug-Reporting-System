@@ -97,7 +97,7 @@ export const CommentSectionContainer = () => {
             <Typography variant="h6">Discussion</Typography>
 
             <CommentInput
-                onSubmit={() => void handleSaveComment}
+                onSubmit={(e) => void handleSaveComment(e)}
                 isLoading={isPosting}
             />
 

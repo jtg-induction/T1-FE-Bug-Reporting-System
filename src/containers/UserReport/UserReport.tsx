@@ -7,9 +7,9 @@ import {
 } from '@containers';
 
 export const UserReportContainer = () => (
-        <Stack gap={3}>
-            <UserStatusChartContainer />
-            <UserPriorityChartContainer />
-            <UserDeadlineChartContainer />
-        </Stack>
-    );
+    <Stack gap={3}>
+        <UserStatusChartContainer />
+        <UserPriorityChartContainer />
+        <UserDeadlineChartContainer />
+    </Stack>
+);

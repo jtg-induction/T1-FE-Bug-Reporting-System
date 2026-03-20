@@ -37,7 +37,7 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
     const [updateTicket, { isLoading: isUpdating }] = useUpdateTicketMutation();
     const ticket = ticketData?.data;
     const members = usersResponse?.data;
-
+    const perm = ticket?.permission_class;
     const userOptions = [
         { VALUE: '', LABEL: 'Unassigned' },
         ...(members?.results?.map((user) => ({
@@ -107,58 +107,72 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
                 onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}
             >
                 <Stack spacing={3} sx={{ mt: 1 }}>
-                    <FormField
-                        name="title"
-                        label="Title"
-                        control={control}
-                        editStatus={true}
-                    />
-                    <FormField
-                        name="description"
-                        label="Description"
-                        control={control}
-                        editStatus={true}
-                        multiline
-                        rows={3}
-                    />
+                    {perm >= 3 && (
+                        <>
+                            <FormField
+                                name="title"
+                                label="Title"
+                                control={control}
+                                editStatus={true}
+                            />
+                            <FormField
+                                name="description"
+                                label="Description"
+                                control={control}
+                                editStatus={true}
+                                multiline
+                                rows={3}
+                            />
+                        </>
+                    )}
 
                     <Stack direction="row" spacing={2}>
-                        <FormField
-                            name="status"
-                            label="Status"
-                            type="select"
-                            control={control}
-                            editStatus={true}
-                            options={TICKET_STATUS_OPTIONS}
-                            fullWidth
-                        />
-                        <FormField
-                            name="severity"
-                            label="Severity"
-                            type="select"
-                            control={control}
-                            editStatus={true}
-                            options={TICKET_SEVERITY_OPTIONS}
-                            fullWidth
-                        />
+                        {perm >= 2 && (
+                            <FormField
+                                name="status"
+                                label="Status"
+                                type="select"
+                                control={control}
+                                editStatus={true}
+                                options={TICKET_STATUS_OPTIONS.filter(
+                                    (option) => option.VALUE < 4,
+                                )}
+                                fullWidth
+                            />
+                        )}
+                        {perm >= 3 && (
+                            <FormField
+                                name="severity"
+                                label="Severity"
+                                type="select"
+                                control={control}
+                                editStatus={true}
+                                options={TICKET_SEVERITY_OPTIONS}
+                                fullWidth
+                            />
+                        )}
                     </Stack>
 
-                    <FormField
-                        name="assignee"
-                        label="Assignee"
-                        type="select"
-                        control={control}
-                        editStatus={true}
-                        options={userOptions}
-                    />
+                    {perm >= 3 && (
+                        <>
+                            <FormField
+                                name="assignee"
+                                label="Assignee"
+                                type="select"
+                                control={control}
+                                editStatus={true}
+                                options={userOptions}
+                            />
 
-                    <FormField
-                        name="deadline"
-                        label="Deadline"
-                        type="date"
-                        control={control}
-                        editStatus={true}
-                    />
+                            <FormField
+                                name="deadline"
+                                label="Deadline"
+                                type="date"
+                                control={control}
+                                editStatus={true}
+                            />
+                        </>
+                    )}
                 </Stack>
             </form>
         </ModalForm>

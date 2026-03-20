@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import { SelectChangeEvent, Typography } from '@mui/material';
 
-import { ChartFilter,SectionCard, StatusDonutChart } from '@components';
+import { ChartFilter, SectionCard, StatusDonutChart } from '@components';
 import { useGetProjectMembersQuery, useGetProjectSummaryQuery } from '@service';
 import { getEndOfCurrentWeek, getStartOfCurrentWeek } from '@utils';
 
