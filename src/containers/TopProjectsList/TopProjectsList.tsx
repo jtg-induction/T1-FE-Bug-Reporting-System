@@ -91,7 +91,9 @@ export const TopProjectsList = ({ onAddClick }: TopProjectListsProps) => {
                     {!isLoading && projectsData.length > 0 && (
                         <ListFooterContainer>
                             <ViewAllButton
-                                onClick={() => void navigate('/projects')}
+                                onClick={() =>
+                                    void navigate(PRIVATE_PATHS.PROJECTS)
+                                }
                                 color="inherit"
                             >
                                 VIEW ALL PROJECTS

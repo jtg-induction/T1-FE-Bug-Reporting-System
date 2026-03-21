@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { CheckCircleOutline } from '@mui/icons-material';
 import { CircularProgress, Stack, Typography } from '@mui/material';
 
+import { PRIVATE_PATHS } from '@constant';
 import { useAcceptInviteMutation } from '@service';
 
 export const AcceptInvitePage = () => {
@@ -24,7 +25,7 @@ export const AcceptInvitePage = () => {
     useEffect(() => {
         if (isSuccess) {
             const timer = setTimeout(() => {
-                navigate(`/projects/${id}`);
+                navigate(`${PRIVATE_PATHS.PROJECTS}${id}`);
             }, 1000);
             return () => clearTimeout(timer);
         }

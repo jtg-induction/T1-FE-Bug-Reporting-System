@@ -9,7 +9,11 @@ import { ProjectDetailContainer } from '@containers';
 import { NotFoundPage } from '@pages/NotFoundPage';
 import { useGetMeQuery, useGetProjectQuery } from '@service';
 
-import { DASHBOARD_TEXT } from './ProjectDashboard.config';
+import {
+    DASHBOARD_TEXT,
+    PROJECT_TABS,
+    TAB_VALUES,
+} from './ProjectDashboard.config';
 import {
     StyledDashboardContainer,
     StyledTab,
@@ -20,7 +24,7 @@ import {
 
 export const ProjectDashboardContainer = () => {
     const { id: projectId } = useParams<{ id: string }>();
-    const [tabValue, setTabValue] = useState(0);
+    const [tabValue, setTabValue] = useState<number>(TAB_VALUES.TICKETS);
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
         pageSize: 5,
@@ -68,18 +72,22 @@ export const ProjectDashboardContainer = () => {
             <StyledTabsContainer>
                 <StyledTabsWrapper>
                     <Tabs value={tabValue} onChange={handleTabChange}>
-                        <StyledTab label="Tickets" />
-                        <StyledTab label="Users" />
-                        <StyledTab label="Summary" />
+                        {PROJECT_TABS.map((tab) => (
+                            <StyledTab
+                                key={tab.value}
+                                label={tab.label}
+                                value={tab.value}
+                            />
+                        ))}
                     </Tabs>
                 </StyledTabsWrapper>
 
-                {tabValue === 0 && (
+                {tabValue === TAB_VALUES.TICKETS && (
                     <StyledTabPanel>
                         <Typography>Tickets</Typography>
                     </StyledTabPanel>
                 )}
-                {tabValue === 1 && (
+                {tabValue === TAB_VALUES.USERS && (
                     <StyledTabPanel>
                         <ProjectUsers
                             filter={filterModel}
@@ -96,7 +104,7 @@ export const ProjectDashboardContainer = () => {
                         />
                     </StyledTabPanel>
                 )}
-                {tabValue === 2 && (
+                {tabValue === TAB_VALUES.SUMMARY && (
                     <StyledTabPanel>
                         <Box>Summary</Box>
                     </StyledTabPanel>

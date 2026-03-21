@@ -76,14 +76,15 @@ export const projectApi = baseApi.injectEndpoints({
             ProjectMemberData
         >({
             query: ({ projectId, limit, offset, ordering, filter }) => ({
-                url: `projects/${projectId}/members/`,
+                url: `${API_PATHS.PROJECTS}${projectId}/members/`,
                 params: { limit, offset, ordering, ...filter },
             }),
             providesTags: ['ProjectMembers'],
         }),
 
         getUsersToInvite: builder.query<ApiResponse<UserData[]>, string>({
-            query: (projectId) => `projects/${projectId}/available_members/`,
+            query: (projectId) =>
+                `${API_PATHS.PROJECTS}${projectId}/available_members/`,
             providesTags: ['ProjectMembers'],
         }),
 
@@ -92,7 +93,7 @@ export const projectApi = baseApi.injectEndpoints({
             { projectId: string; user_id: string; role: number }
         >({
             query: ({ projectId, ...body }) => ({
-                url: `projects/${projectId}/invite/`,
+                url: `${API_PATHS.PROJECTS}${projectId}/invite/`,
                 method: 'POST',
                 body,
             }),
@@ -100,14 +101,14 @@ export const projectApi = baseApi.injectEndpoints({
         }),
         acceptInvite: builder.mutation<void, string>({
             query: (projectId) => ({
-                url: `projects/${projectId}/accept/`,
+                url: `${API_PATHS.PROJECTS}${projectId}/accept/`,
                 method: 'POST',
             }),
             invalidatesTags: ['Projects'],
         }),
         rejectInvite: builder.mutation<void, string>({
             query: (projectId) => ({
-                url: `projects/${projectId}/reject/`,
+                url: `${API_PATHS.PROJECTS}${projectId}/reject/`,
                 method: 'POST',
             }),
             invalidatesTags: ['Projects'],
@@ -118,7 +119,7 @@ export const projectApi = baseApi.injectEndpoints({
             { projectId: string; user_id: string; role: number }
         >({
             query: ({ projectId, ...body }) => ({
-                url: `projects/${projectId}/role/`,
+                url: `${API_PATHS.PROJECTS}${projectId}/role/`,
                 method: 'POST',
                 body,
             }),
@@ -129,7 +130,7 @@ export const projectApi = baseApi.injectEndpoints({
             { projectId: string; user_id: string }
         >({
             query: ({ projectId, user_id }) => ({
-                url: `projects/${projectId}/revoke/`,
+                url: `${API_PATHS.PROJECTS}${projectId}/revoke/`,
                 method: 'POST',
                 body: { user_id },
             }),
@@ -140,7 +141,7 @@ export const projectApi = baseApi.injectEndpoints({
             ProjectListData
         >({
             query: ({ limit, offset, ordering, filter }) => ({
-                url: 'projects?status=archived',
+                url: `${API_PATHS.PROJECTS}?status=archived`,
                 params: { limit, offset, ordering, ...filter },
             }),
             providesTags: ['Projects'],

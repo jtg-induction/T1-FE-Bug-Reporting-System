@@ -9,6 +9,7 @@ import { Button, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { GridRowParams } from '@mui/x-data-grid';
 
 import { SectionCard, Table } from '@components';
+import { PRIVATE_PATHS } from '@constant';
 import { useGetProjectsQuery } from '@service';
 
 import { columns } from './ActiveProjectSection.configs';
@@ -38,11 +39,11 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
     const projectsCount = projects?.data.count ?? 0;
 
     const handleRowClick = (params: GridRowParams<ProjectListResponse>) => {
-        navigate(`/projects/${params.row.id}`);
+        navigate(`${PRIVATE_PATHS.PROJECTS}${params.row.id}`);
     };
     return (
         <SectionCard
-            TitleContent={
+            titleContent={
                 <HeaderStack>
                     <Typography variant="h2">Active Projects</Typography>
                     <Button
@@ -54,7 +55,7 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
                     </Button>
                 </HeaderStack>
             }
-            MainContent={
+            mainContent={
                 <Table
                     loading={isLoading}
                     rows={projectsData}

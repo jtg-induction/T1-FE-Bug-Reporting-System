@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { MoreVert } from '@mui/icons-material';
 import {
     Divider,
     IconButton,
@@ -31,9 +31,7 @@ export const ActionMenu = ({
 
     const handleItemClick = (onClick?: () => void) => {
         handleClose();
-        if (onClick) {
-            onClick();
-        }
+        onClick?.();
     };
 
     if (!items || items.length === 0) return null;
@@ -49,7 +47,7 @@ export const ActionMenu = ({
                     onClick={handleClick}
                     size="small"
                 >
-                    <MoreVertIcon />
+                    <MoreVert />
                 </IconButton>
             </Tooltip>
             <Menu

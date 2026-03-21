@@ -4,13 +4,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { showSnackbar } from 'redux/features/profileSlice';
 import { useAppDispatch } from 'redux/store';
 
-import ArchiveIcon from '@mui/icons-material/Archive';
-import EditIcon from '@mui/icons-material/Edit';
-import LogoutIcon from '@mui/icons-material/Logout';
-import UnarchiveIcon from '@mui/icons-material/Unarchive';
+import { Archive, Edit, Logout, Unarchive } from '@mui/icons-material';
 import { Chip, Stack, Typography } from '@mui/material';
 
 import { ActionMenu, ActionMenuItem, SectionCard } from '@components';
+import { PRIVATE_PATHS } from '@constant';
 import {
     EditProjectFormContainer,
     TransferOwnershipFormContainer,
@@ -166,7 +164,7 @@ export const ProjectDetailContainer = ({
             }
 
             setOpenLeaveDialog(false);
-            navigate('/');
+            navigate(PRIVATE_PATHS.DASHBOARD);
         } catch {
             dispatch(
                 showSnackbar({
@@ -193,7 +191,7 @@ export const ProjectDetailContainer = ({
             isAdmin && {
                 id: 'edit',
                 label: 'Edit Project',
-                icon: <EditIcon fontSize="small" />,
+                icon: <Edit fontSize="small" />,
                 onClick: () => setOpenEdit(true),
             },
         isAdmin && {
@@ -206,9 +204,9 @@ export const ProjectDetailContainer = ({
                     ? 'Archive'
                     : 'Unarchive',
             icon: isActive ? (
-                <ArchiveIcon fontSize="small" />
+                <Archive fontSize="small" />
             ) : (
-                <UnarchiveIcon fontSize="small" />
+                <Unarchive fontSize="small" />
             ),
             onClick: handleArchiveToggle,
             disabled: isArchiving || isUnarchiving,
@@ -220,7 +218,7 @@ export const ProjectDetailContainer = ({
         isActive && {
             id: 'leave',
             label: isLeaving ? 'Leaving...' : 'Leave Project',
-            icon: <LogoutIcon fontSize="small" />,
+            icon: <Logout fontSize="small" />,
             onClick: handleLeaveClick,
             disabled: isLeaving,
             textColor: 'error.main',
@@ -230,7 +228,7 @@ export const ProjectDetailContainer = ({
     return (
         <>
             <SectionCard
-                TitleContent={
+                titleContent={
                     <StyledHeaderSection>
                         <Stack direction="row" spacing={2} alignItems="center">
                             <Typography variant="h6" fontWeight="bold">
@@ -253,7 +251,7 @@ export const ProjectDetailContainer = ({
                         <ActionMenu items={menuOptions} />
                     </StyledHeaderSection>
                 }
-                MainContent={
+                mainContent={
                     <StyledDetailsCard>
                         <StyledDescriptionWrapper>
                             <StyledDescriptionText

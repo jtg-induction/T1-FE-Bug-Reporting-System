@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { CircularProgress, Stack, Typography } from '@mui/material';
 
+import { PRIVATE_PATHS } from '@constant';
 import { useRejectInviteMutation } from '@service';
 
 export const RejectInvitePage = () => {
@@ -25,7 +26,7 @@ export const RejectInvitePage = () => {
 
     useEffect(() => {
         if (isSuccess) {
-            navigate('/');
+            navigate(PRIVATE_PATHS.DASHBOARD);
         }
     }, [isSuccess, navigate]);
 

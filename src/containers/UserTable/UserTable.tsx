@@ -264,7 +264,7 @@ export const ProjectUsers = ({
     return (
         <Stack spacing={4}>
             <SectionCard
-                MainContent={
+                mainContent={
                     <Table
                         rowCount={membersData?.count ?? 0}
                         paginationModel={paginationModel}
@@ -281,7 +281,7 @@ export const ProjectUsers = ({
                         pageSize={5}
                     />
                 }
-                TitleContent={
+                titleContent={
                     <Stack
                         direction="row"
                         justifyContent="space-between"

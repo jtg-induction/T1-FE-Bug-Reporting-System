@@ -9,7 +9,7 @@ export const handleFilterChange = (
     newModel: GridFilterModel,
     setFilterModel: Dispatch<SetStateAction<object>>,
 ) => {
-    if (newModel.items.length == 0) setFilterModel({});
+    if (newModel.items.length === 0) setFilterModel({});
     else if (newModel.items[0].value !== undefined) {
         const field = newModel.items[0].field;
         const value = newModel.items[0].value as string | number;
@@ -40,8 +40,8 @@ export const handleSortChange = (
     newModel: GridSortModel,
     setSortModel: Dispatch<SetStateAction<string | undefined>>,
 ) => {
-    if (newModel.length == 0) setSortModel(undefined);
-    else if (newModel[0].sort == 'desc') {
+    if (newModel.length === 0) setSortModel(undefined);
+    else if (newModel[0].sort === 'desc') {
         setSortModel(`-${newModel[0].field}`);
     } else {
         setSortModel(newModel[0].field);
