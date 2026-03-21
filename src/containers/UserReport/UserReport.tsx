@@ -2,16 +2,9 @@ import { useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 
-import { Download } from '@mui/icons-material';
-import {
-    Button,
-    CircularProgress,
-    SelectChangeEvent,
-    Stack,
-    Typography,
-} from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 
-import { ChartFilter, Snackbar } from '@components';
+import { ChartFilter, ChartFilterState, Snackbar } from '@components';
 import {
     UserDeadlineChartContainer,
     UserPriorityChartContainer,
@@ -21,7 +14,6 @@ import { useDownloadUserReportMutation, useGetMeQuery } from '@service';
 import { getEndOfCurrentWeek, getStartOfCurrentWeek } from '@utils';
 
 import {
-    ActionWrapper,
     FilterWrapper,
     HeaderContainer,
     TitleWrapper,
@@ -32,12 +24,7 @@ export const UserReportContainer = () => {
 
     const { data: getMeResponse } = useGetMeQuery();
     const currentUser = getMeResponse?.data;
-
     const isCurrentUser = userId === currentUser?.id || !userId;
-
-    const [dateRangeType, setDateRangeType] = useState<string>('week');
-    const [startDate, setStartDate] = useState<string>(getStartOfCurrentWeek());
-    const [endDate, setEndDate] = useState<string>(getEndOfCurrentWeek());
 
     const [downloadReport, { isLoading: isDownloading }] =
         useDownloadUserReportMutation();
@@ -60,34 +47,20 @@ export const UserReportContainer = () => {
         setSnackbar((prev) => ({ ...prev, open: false }));
     };
 
-    const handleDateRangeTypeChange = (event: SelectChangeEvent) => {
-        const type = event.target.value;
-        setDateRangeType(type);
-
-        if (type === 'week') {
-            setStartDate(getStartOfCurrentWeek());
-            setEndDate(getEndOfCurrentWeek());
-        } else if (type === 'all') {
-            setStartDate('');
-            setEndDate('');
-        }
-    };
-
-    const handleDownloadReport = async () => {
+    const handleDownloadReport = async (filters: ChartFilterState) => {
         const targetUserId = userId || currentUser?.id;
         if (!targetUserId) return;
 
         try {
             const blob = await downloadReport({
                 userId: targetUserId,
-                startDate,
-                endDate,
+                startDate: filters.startDate,
+                endDate: filters.endDate,
             }).unwrap();
 
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-
             link.setAttribute('download', 'Performance_Report.pdf');
 
             document.body.appendChild(link);
@@ -109,6 +82,12 @@ export const UserReportContainer = () => {
         }
     };
 
+    const initialFilters: ChartFilterState = {
+        dateRangeType: 'week',
+        startDate: getStartOfCurrentWeek(),
+        endDate: getEndOfCurrentWeek(),
+    };
+
     return (
         <Stack gap={3}>
             <HeaderContainer>
@@ -121,46 +100,17 @@ export const UserReportContainer = () => {
                 </TitleWrapper>
 
                 {isCurrentUser && (
-                    <>
-                        <FilterWrapper>
-                            <ChartFilter
-                                showUserFilter={false}
-                                dateRangeType={dateRangeType}
-                                onDateRangeTypeChange={
-                                    handleDateRangeTypeChange
-                                }
-                                startDate={startDate}
-                                onStartDateChange={setStartDate}
-                                endDate={endDate}
-                                onEndDateChange={setEndDate}
-                            />
-                        </FilterWrapper>
-
-                        <ActionWrapper>
-                            <Button
-                                variant="contained"
-                                startIcon={
-                                    isDownloading ? (
-                                        <CircularProgress
-                                            size={16}
-                                            color="inherit"
-                                        />
-                                    ) : (
-                                        <Download />
-                                    )
-                                }
-                                onClick={() => void handleDownloadReport()}
-                                disabled={
-                                    isDownloading ||
-                                    (dateRangeType === 'custom' &&
-                                        (!startDate || !endDate))
-                                }
-                                sx={{ height: 40 }}
-                            >
-                                {isDownloading ? 'Generating...' : 'Download'}
-                            </Button>
-                        </ActionWrapper>
-                    </>
+                    <FilterWrapper>
+                        <ChartFilter
+                            showUserFilter={false}
+                            initialFilters={initialFilters}
+                            onApply={(filters) =>
+                                void handleDownloadReport(filters)
+                            }
+                            buttonText="Download"
+                            isLoading={isDownloading}
+                        />
+                    </FilterWrapper>
                 )}
             </HeaderContainer>
 

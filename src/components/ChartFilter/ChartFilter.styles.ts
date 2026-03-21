@@ -8,6 +8,7 @@ export const FilterWrapper = styled(Stack)(
         },
     }) => ({
         flexDirection: 'column',
+        alignItems: 'flex-start',
         gap: pxToRem(16),
         [breakpoints.up('lg')]: {
             flexDirection: 'row',

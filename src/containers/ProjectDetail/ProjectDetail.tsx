@@ -91,14 +91,19 @@ export const ProjectDetailContainer = ({
     const projectMembersData = members?.data.results ?? [];
 
     const projectMemberOptions = useMemo(() => {
-        if (projectMembersData.length === 0) {
+        const otherMembers = projectMembersData.filter(
+            (m) => m.member.id !== currentUserData?.id,
+        );
+
+        if (otherMembers.length === 0) {
             return [{ LABEL: 'No other members available', VALUE: '' }];
         }
-        return projectMembersData.map((m) => ({
+
+        return otherMembers.map((m) => ({
             LABEL: `${m.member.first_name} ${m.member.last_name} (${m.role === 1 ? 'Admin' : 'Developer'})`,
             VALUE: m.member.id,
         }));
-    }, [projectMembersData]);
+    }, [projectMembersData, currentUserData?.id]);
 
     const initialEditData: ProjectUpdateFormData = useMemo(() => {
         if (!projectData) return INITIAL_EDIT_STATE;

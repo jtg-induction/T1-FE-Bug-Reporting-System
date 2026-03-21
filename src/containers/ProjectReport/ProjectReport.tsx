@@ -4,21 +4,13 @@ import { useParams } from 'react-router-dom';
 
 import {
     Assignment,
-    Download,
     ErrorOutline,
     Schedule,
     TaskAlt,
 } from '@mui/icons-material';
-import {
-    Box,
-    Button,
-    CircularProgress,
-    SelectChangeEvent,
-    Stack,
-    Typography,
-} from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
-import { ChartFilter, Snackbar, Stats } from '@components';
+import { ChartFilter, ChartFilterState, Snackbar, Stats } from '@components';
 import {
     ProjectDeadlineChartContainer,
     ProjectPriorityChartContainer,
@@ -32,7 +24,6 @@ import {
 import { getEndOfCurrentWeek, getStartOfCurrentWeek } from '@utils';
 
 import {
-    ActionWrapper,
     FilterWrapper,
     HeaderContainer,
     StatsGrid,
@@ -42,12 +33,6 @@ import { ProjectReportProps } from './ProjectReport.types';
 
 export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
     const { id: projectId } = useParams<{ id: string }>();
-
-    const [dateRangeType, setDateRangeType] = useState<string>('week');
-    const [startDate, setStartDate] = useState<string>(getStartOfCurrentWeek());
-    const [endDate, setEndDate] = useState<string>(getEndOfCurrentWeek());
-
-    const [userIds, setUserIds] = useState<string[]>(['all']);
 
     const { data: membersResponse } = useGetProjectMembersQuery(
         { projectId: projectId || '', limit: 100, offset: 0 },
@@ -81,57 +66,30 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
     };
 
     const filterUsers = useMemo(() => {
-        const membersData = membersResponse?.data;
-        const results = membersData?.results ?? [];
-
+        const results = membersResponse?.data?.results ?? [];
         return results.map((row) => ({
             id: row.member.id,
             name: `${row.member.first_name} ${row.member.last_name}`.trim(),
         }));
     }, [membersResponse]);
 
-    const handleUserChange = (event: SelectChangeEvent<typeof userIds>) => {
-        const value = event.target.value;
-        let newSelection = typeof value === 'string' ? value.split(',') : value;
-
-        if (newSelection[newSelection.length - 1] === 'all') {
-            newSelection = ['all'];
-        } else {
-            newSelection = newSelection.filter((id) => id !== 'all');
-        }
-        if (newSelection.length === 0) newSelection = ['all'];
-        setUserIds(newSelection);
-    };
-
-    const handleDateRangeTypeChange = (event: SelectChangeEvent) => {
-        const type = event.target.value;
-        setDateRangeType(type);
-
-        if (type === 'week') {
-            setStartDate(getStartOfCurrentWeek());
-            setEndDate(getEndOfCurrentWeek());
-        } else if (type === 'all') {
-            setStartDate('');
-            setEndDate('');
-        }
-    };
-
-    const handleDownloadReport = async () => {
+    const handleDownloadReport = async (filters: ChartFilterState) => {
         if (!projectId) return;
 
         try {
             const blob = await downloadReport({
                 projectId,
-                startDate,
-                endDate,
-                userIds: userIds.includes('all') ? undefined : userIds,
+                startDate: filters.startDate,
+                endDate: filters.endDate,
+                userIds: filters.selectedUserIds?.includes('all')
+                    ? undefined
+                    : filters.selectedUserIds,
             }).unwrap();
 
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-
-            link.setAttribute('download', 'Project_Report.pdf');
+            link.setAttribute('download', `Project_Report_${projectId}.pdf`);
 
             document.body.appendChild(link);
             link.click();
@@ -155,7 +113,6 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
 
     const projectStats = useMemo(() => {
         const stats = summaryResponse?.data?.ticket_summary;
-
         return {
             total: stats?.total || 0,
             completed: stats?.completed || 0,
@@ -163,6 +120,13 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
             upcomingDeadline: stats?.near_deadline || 0,
         };
     }, [summaryResponse]);
+
+    const initialFilters: ChartFilterState = {
+        selectedUserIds: ['all'],
+        dateRangeType: 'week',
+        startDate: getStartOfCurrentWeek(),
+        endDate: getEndOfCurrentWeek(),
+    };
 
     return (
         <Stack gap={3}>
@@ -174,49 +138,18 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
                 </TitleWrapper>
 
                 {isAdmin && (
-                    <>
-                        <FilterWrapper>
-                            <ChartFilter
-                                showUserFilter={true}
-                                users={filterUsers}
-                                selectedUserIds={userIds}
-                                onUserChange={handleUserChange}
-                                dateRangeType={dateRangeType}
-                                onDateRangeTypeChange={
-                                    handleDateRangeTypeChange
-                                }
-                                startDate={startDate}
-                                onStartDateChange={setStartDate}
-                                endDate={endDate}
-                                onEndDateChange={setEndDate}
-                            />
-                        </FilterWrapper>
-
-                        <ActionWrapper>
-                            <Button
-                                variant="contained"
-                                startIcon={
-                                    isDownloading ? (
-                                        <CircularProgress
-                                            size={16}
-                                            color="inherit"
-                                        />
-                                    ) : (
-                                        <Download />
-                                    )
-                                }
-                                onClick={() => void handleDownloadReport()}
-                                disabled={
-                                    isDownloading ||
-                                    (dateRangeType === 'custom' &&
-                                        (!startDate || !endDate))
-                                }
-                                sx={{ height: 40 }}
-                            >
-                                {isDownloading ? 'Generating...' : 'Download'}
-                            </Button>
-                        </ActionWrapper>
-                    </>
+                    <FilterWrapper>
+                        <ChartFilter
+                            showUserFilter={true}
+                            users={filterUsers}
+                            initialFilters={initialFilters}
+                            onApply={(filters) =>
+                                void handleDownloadReport(filters)
+                            }
+                            buttonText="Download"
+                            isLoading={isDownloading}
+                        />
+                    </FilterWrapper>
                 )}
             </HeaderContainer>
 

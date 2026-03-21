@@ -1,10 +1,16 @@
+import { useState } from 'react';
+
 import {
+    Button,
     Checkbox,
     InputLabel,
     ListItemText,
     MenuItem,
     Select,
+    SelectChangeEvent,
 } from '@mui/material';
+
+import { getEndOfCurrentWeek, getStartOfCurrentWeek } from '@utils';
 
 import {
     DateInputGroup,
@@ -14,20 +20,27 @@ import {
     SCROLLABLE_MENU_PROPS,
     SelectGroup,
 } from './ChartFilter.styles';
-import { ChartFilterBarProps } from './ChartFilter.types';
+import {
+    ChartFilterBarProps,
+    ChartFilterState,
+    DateRangeType,
+} from './ChartFilter.types';
 
 export const ChartFilter = ({
     showUserFilter = false,
     users = [],
-    selectedUserIds = ['all'],
-    onUserChange,
-    dateRangeType,
-    onDateRangeTypeChange,
-    startDate,
-    onStartDateChange,
-    endDate,
-    onEndDateChange,
+    initialFilters,
+    onApply,
+    isLoading,
+    buttonText,
 }: ChartFilterBarProps) => {
+    const [filters, setFilters] = useState<ChartFilterState>({
+        selectedUserIds: initialFilters?.selectedUserIds || ['all'],
+        dateRangeType: initialFilters?.dateRangeType || 'week',
+        startDate: initialFilters?.startDate || '',
+        endDate: initialFilters?.endDate || '',
+    });
+
     const getRenderValue = (selected: string[]) => {
         if (selected.length === 0 || selected.includes('all')) {
             return 'All Users';
@@ -38,6 +51,65 @@ export const ChartFilter = ({
             .join(', ');
     };
 
+    const handleUserChange = (e: SelectChangeEvent<string[]>) => {
+        const value = e.target.value;
+        let newSelection = typeof value === 'string' ? value.split(',') : value;
+
+        if (newSelection[newSelection.length - 1] === 'all') {
+            newSelection = ['all'];
+        } else {
+            newSelection = newSelection.filter((id) => id !== 'all');
+        }
+
+        if (newSelection.length === 0) newSelection = ['all'];
+
+        setFilters({ ...filters, selectedUserIds: newSelection });
+    };
+
+    const handleDateRangeTypeChange = (e: SelectChangeEvent<string>) => {
+        const val = e.target.value as DateRangeType;
+        setFilters({
+            ...filters,
+            dateRangeType: val,
+            ...(val === 'week' && {
+                startDate: getStartOfCurrentWeek(),
+                endDate: getEndOfCurrentWeek(),
+            }),
+        });
+    };
+
+    const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newStart = e.target.value;
+        setFilters({
+            ...filters,
+            startDate: newStart,
+            endDate:
+                newStart && filters.endDate && newStart > filters.endDate
+                    ? newStart
+                    : filters.endDate,
+        });
+    };
+
+    const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newEnd = e.target.value;
+        setFilters({
+            ...filters,
+            endDate: newEnd,
+            startDate:
+                newEnd && filters.startDate && newEnd < filters.startDate
+                    ? newEnd
+                    : filters.startDate,
+        });
+    };
+
+    const handleApply = () => {
+        onApply(filters);
+    };
+
+    const isApplyDisabled =
+        filters.dateRangeType === 'custom' &&
+        (!filters.startDate || !filters.endDate);
+
     return (
         <FilterWrapper>
             <SelectGroup>
@@ -47,17 +119,19 @@ export const ChartFilter = ({
                         <Select
                             labelId="user-filter"
                             multiple
-                            value={selectedUserIds}
+                            value={filters.selectedUserIds}
                             label="User"
-                            onChange={onUserChange}
+                            onChange={handleUserChange}
                             renderValue={getRenderValue}
                             MenuProps={SCROLLABLE_MENU_PROPS}
                         >
                             <MenuItem value="all">
                                 <Checkbox
                                     checked={
-                                        selectedUserIds.includes('all') ||
-                                        selectedUserIds.length === 0
+                                        filters.selectedUserIds?.includes(
+                                            'all',
+                                        ) ||
+                                        filters.selectedUserIds?.length === 0
                                     }
                                 />
                                 <ListItemText primary="All Users" />
@@ -66,7 +140,7 @@ export const ChartFilter = ({
                             {users.map((user) => (
                                 <MenuItem key={user.id} value={user.id}>
                                     <Checkbox
-                                        checked={selectedUserIds.includes(
+                                        checked={filters.selectedUserIds?.includes(
                                             user.id,
                                         )}
                                     />
@@ -81,9 +155,9 @@ export const ChartFilter = ({
                     <InputLabel id="date-filter">Date Range</InputLabel>
                     <Select
                         labelId="date-filter"
-                        value={dateRangeType}
+                        value={filters.dateRangeType}
                         label="Date Range"
-                        onChange={onDateRangeTypeChange}
+                        onChange={handleDateRangeTypeChange}
                     >
                         <MenuItem value="week">Current Week</MenuItem>
                         <MenuItem value="custom">Custom Range</MenuItem>
@@ -91,26 +165,34 @@ export const ChartFilter = ({
                 </FilterFormControl>
             </SelectGroup>
 
-            {dateRangeType === 'custom' && (
+            {filters.dateRangeType === 'custom' && (
                 <DateInputGroup>
                     <FilterDateInput
                         size="small"
                         type="date"
                         label="Start Date"
-                        value={startDate}
-                        onChange={(e) => onStartDateChange(e.target.value)}
+                        value={filters.startDate}
+                        onChange={handleStartDateChange}
                         InputLabelProps={{ shrink: true }}
                     />
                     <FilterDateInput
                         size="small"
                         type="date"
                         label="End Date"
-                        value={endDate}
-                        onChange={(e) => onEndDateChange(e.target.value)}
+                        value={filters.endDate}
+                        onChange={handleEndDateChange}
                         InputLabelProps={{ shrink: true }}
                     />
                 </DateInputGroup>
             )}
+
+            <Button
+                variant="contained"
+                disabled={isApplyDisabled || isLoading}
+                onClick={handleApply}
+            >
+                {isLoading ? 'Generating...' : buttonText || 'Apply Filter'}
+            </Button>
         </FilterWrapper>
     );
 };

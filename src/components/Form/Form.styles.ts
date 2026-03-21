@@ -19,6 +19,7 @@ export const StyledFormComponent = styled(Stack)(
     }),
 );
 
-export const StyledButton = styled(Button)(({ theme }) => ({
-    backgroundColor: theme.palette.success.dark,
+export const StyledButton = styled(Button)(({ theme: { palette } }) => ({
+    backgroundColor: palette.success.main,
+    color: palette.common.white,
 }));

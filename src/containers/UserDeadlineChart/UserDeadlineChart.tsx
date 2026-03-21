@@ -2,20 +2,27 @@ import { useMemo, useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 
-import { SelectChangeEvent, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 
-import { ChartFilter, DeadlineLineChart, SectionCard } from '@components';
+import {
+    ChartFilter,
+    ChartFilterState,
+    DeadlineLineChart,
+    SectionCard,
+} from '@components';
 import { useGetUserSummaryQuery } from '@service';
 import { getEndOfCurrentWeek, getStartOfCurrentWeek } from '@utils';
 
 export const UserDeadlineChartContainer = () => {
-    const { userId: userId } = useParams<{ userId: string }>();
+    const { userId } = useParams<{ userId: string }>();
 
-    const [dateRangeType, setDateRangeType] = useState<string>('week');
-    const [startDate, setStartDate] = useState<string>(getStartOfCurrentWeek());
-    const [endDate, setEndDate] = useState<string>(getEndOfCurrentWeek());
+    const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({
+        dateRangeType: 'week',
+        startDate: getStartOfCurrentWeek(),
+        endDate: getEndOfCurrentWeek(),
+    });
 
-    const isDefaultFilter = dateRangeType === 'week';
+    const isDefaultFilter = appliedFilters.dateRangeType === 'week';
 
     const { data: summaryResponse, isFetching: isSummaryFetching } =
         useGetUserSummaryQuery(
@@ -24,8 +31,8 @@ export const UserDeadlineChartContainer = () => {
                 : {
                       userId: userId || '',
                       section: 'deadline',
-                      startDate,
-                      endDate,
+                      startDate: appliedFilters.startDate,
+                      endDate: appliedFilters.endDate,
                   },
             { skip: !userId },
         );
@@ -43,17 +50,8 @@ export const UserDeadlineChartContainer = () => {
         }));
     }, [summaryResponse]);
 
-    const handleDateRangeTypeChange = (event: SelectChangeEvent) => {
-        const type = event.target.value;
-        setDateRangeType(type);
-
-        if (type === 'week') {
-            setStartDate(getStartOfCurrentWeek());
-            setEndDate(getEndOfCurrentWeek());
-        } else if (type === 'all') {
-            setStartDate('');
-            setEndDate('');
-        }
+    const handleFilterApply = (newFilters: ChartFilterState) => {
+        setAppliedFilters(newFilters);
     };
 
     return (
@@ -65,12 +63,9 @@ export const UserDeadlineChartContainer = () => {
             }
             subheaderContent={
                 <ChartFilter
-                    dateRangeType={dateRangeType}
-                    onDateRangeTypeChange={handleDateRangeTypeChange}
-                    startDate={startDate}
-                    onStartDateChange={setStartDate}
-                    endDate={endDate}
-                    onEndDateChange={setEndDate}
+                    showUserFilter={false}
+                    initialFilters={appliedFilters}
+                    onApply={handleFilterApply}
                 />
             }
             mainContent={

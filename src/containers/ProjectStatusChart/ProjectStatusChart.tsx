@@ -2,9 +2,14 @@ import { useMemo, useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 
-import { SelectChangeEvent, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 
-import { ChartFilter, SectionCard, StatusDonutChart } from '@components';
+import {
+    ChartFilter,
+    ChartFilterState,
+    SectionCard,
+    StatusDonutChart,
+} from '@components';
 import { useGetProjectMembersQuery, useGetProjectSummaryQuery } from '@service';
 import { getEndOfCurrentWeek, getStartOfCurrentWeek } from '@utils';
 
@@ -13,15 +18,17 @@ import { TICKET_STATUS_MAP } from './ProjectStatusChart.config';
 export const ProjectStatusChartContainer = () => {
     const { id: projectId } = useParams<{ id: string }>();
 
-    const [dateRangeType, setDateRangeType] = useState<string>('week');
-    const [startDate, setStartDate] = useState<string>(getStartOfCurrentWeek());
-    const [endDate, setEndDate] = useState<string>(getEndOfCurrentWeek());
-    const [userIds, setUserIds] = useState<string[]>(['all']);
+    const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({
+        selectedUserIds: ['all'],
+        dateRangeType: 'week',
+        startDate: getStartOfCurrentWeek(),
+        endDate: getEndOfCurrentWeek(),
+    });
 
     const isDefaultFilter =
-        dateRangeType === 'week' &&
-        userIds.length === 1 &&
-        userIds[0] === 'all';
+        appliedFilters.dateRangeType === 'week' &&
+        appliedFilters.selectedUserIds?.length === 1 &&
+        appliedFilters.selectedUserIds[0] === 'all';
 
     const { data: membersResponse } = useGetProjectMembersQuery(
         { projectId: projectId || '', limit: 100, offset: 0 },
@@ -35,9 +42,9 @@ export const ProjectStatusChartContainer = () => {
                 : {
                       projectId: projectId || '',
                       section: 'status',
-                      userIds,
-                      startDate,
-                      endDate,
+                      userIds: appliedFilters.selectedUserIds,
+                      startDate: appliedFilters.startDate,
+                      endDate: appliedFilters.endDate,
                   },
             { skip: !projectId },
         );
@@ -79,30 +86,8 @@ export const ProjectStatusChartContainer = () => {
         ];
     }, [summaryResponse]);
 
-    const handleUserChange = (event: SelectChangeEvent<typeof userIds>) => {
-        const value = event.target.value;
-        let newSelection = typeof value === 'string' ? value.split(',') : value;
-
-        if (newSelection[newSelection.length - 1] === 'all') {
-            newSelection = ['all'];
-        } else {
-            newSelection = newSelection.filter((id) => id !== 'all');
-        }
-        if (newSelection.length === 0) newSelection = ['all'];
-        setUserIds(newSelection);
-    };
-
-    const handleDateRangeTypeChange = (event: SelectChangeEvent) => {
-        const type = event.target.value;
-        setDateRangeType(type);
-
-        if (type === 'week') {
-            setStartDate(getStartOfCurrentWeek());
-            setEndDate(getEndOfCurrentWeek());
-        } else if (type === 'all') {
-            setStartDate('');
-            setEndDate('');
-        }
+    const handleFilterApply = (newFilters: ChartFilterState) => {
+        setAppliedFilters(newFilters);
     };
 
     return (
@@ -116,14 +101,8 @@ export const ProjectStatusChartContainer = () => {
                 <ChartFilter
                     showUserFilter={true}
                     users={filterUsers}
-                    selectedUserIds={userIds}
-                    onUserChange={handleUserChange}
-                    dateRangeType={dateRangeType}
-                    onDateRangeTypeChange={handleDateRangeTypeChange}
-                    startDate={startDate}
-                    onStartDateChange={setStartDate}
-                    endDate={endDate}
-                    onEndDateChange={setEndDate}
+                    initialFilters={appliedFilters}
+                    onApply={handleFilterApply}
                 />
             }
             mainContent={
