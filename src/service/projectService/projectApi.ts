@@ -171,20 +171,25 @@ export const projectApi = baseApi.injectEndpoints({
             providesTags: ['ProjectSummary'],
         }),
 
-        downloadProjectReport: builder.mutation<
-            Blob,
-            { projectId: string; startDate?: string; endDate?: string }
-        >({
-            query: ({ projectId, startDate, endDate }) => ({
-                url: `projects/${projectId}/report-generate/`,
-                method: 'GET',
-                params: {
-                    'start-date': startDate,
-                    'end-date': endDate,
-                },
-                responseHandler: (response) => response.blob(),
-                cache: 'no-cache',
-            }),
+        downloadProjectReport: builder.mutation<Blob, ProjectSummaryParams>({
+            query: ({ projectId, startDate, endDate, userIds }) => {
+                const userFilter =
+                    userIds && userIds.length > 0 && !userIds.includes('all')
+                        ? `IN (${userIds.join(', ')})`
+                        : undefined;
+
+                return {
+                    url: `projects/${projectId}/report-generate/`,
+                    method: 'GET',
+                    params: {
+                        'start-date': startDate,
+                        'end-date': endDate,
+                        'user-ids': userFilter,
+                    },
+                    responseHandler: (response) => response.blob(),
+                    cache: 'no-cache',
+                };
+            },
         }),
     }),
 });

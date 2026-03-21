@@ -26,6 +26,7 @@ import {
 } from '@containers';
 import {
     useDownloadProjectReportMutation,
+    useGetProjectMembersQuery,
     useGetProjectSummaryQuery,
 } from '@service';
 import { getEndOfCurrentWeek, getStartOfCurrentWeek } from '@utils';
@@ -45,6 +46,13 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
     const [dateRangeType, setDateRangeType] = useState<string>('week');
     const [startDate, setStartDate] = useState<string>(getStartOfCurrentWeek());
     const [endDate, setEndDate] = useState<string>(getEndOfCurrentWeek());
+
+    const [userIds, setUserIds] = useState<string[]>(['all']);
+
+    const { data: membersResponse } = useGetProjectMembersQuery(
+        { projectId: projectId || '', limit: 100, offset: 0 },
+        { skip: !projectId },
+    );
 
     const { data: summaryResponse, isFetching } = useGetProjectSummaryQuery(
         { projectId: projectId || '' },
@@ -72,6 +80,29 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
         setSnackbar((prev) => ({ ...prev, open: false }));
     };
 
+    const filterUsers = useMemo(() => {
+        const membersData = membersResponse?.data;
+        const results = membersData?.results ?? [];
+
+        return results.map((row) => ({
+            id: row.member.id,
+            name: `${row.member.first_name} ${row.member.last_name}`.trim(),
+        }));
+    }, [membersResponse]);
+
+    const handleUserChange = (event: SelectChangeEvent<typeof userIds>) => {
+        const value = event.target.value;
+        let newSelection = typeof value === 'string' ? value.split(',') : value;
+
+        if (newSelection[newSelection.length - 1] === 'all') {
+            newSelection = ['all'];
+        } else {
+            newSelection = newSelection.filter((id) => id !== 'all');
+        }
+        if (newSelection.length === 0) newSelection = ['all'];
+        setUserIds(newSelection);
+    };
+
     const handleDateRangeTypeChange = (event: SelectChangeEvent) => {
         const type = event.target.value;
         setDateRangeType(type);
@@ -93,6 +124,7 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
                 projectId,
                 startDate,
                 endDate,
+                userIds: userIds.includes('all') ? undefined : userIds,
             }).unwrap();
 
             const url = window.URL.createObjectURL(blob);
@@ -145,7 +177,10 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
                     <>
                         <FilterWrapper>
                             <ChartFilter
-                                showUserFilter={false}
+                                showUserFilter={true}
+                                users={filterUsers}
+                                selectedUserIds={userIds}
+                                onUserChange={handleUserChange}
                                 dateRangeType={dateRangeType}
                                 onDateRangeTypeChange={
                                     handleDateRangeTypeChange
