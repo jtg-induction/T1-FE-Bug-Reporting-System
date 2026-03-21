@@ -102,7 +102,7 @@ export const ProjectDashboardContainer = () => {
                 )}
                 {tabValue === 2 && (
                     <StyledTabPanel>
-                        <ProjectReportContainer />
+                        <ProjectReportContainer isAdmin={isAdmin} />
                     </StyledTabPanel>
                 )}
             </StyledTabsContainer>

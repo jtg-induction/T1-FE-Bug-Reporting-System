@@ -5,4 +5,5 @@ export {
     useUpdateUserMutation,
     useGetUserSummaryQuery,
     useGetUserTicketSummaryQuery,
+    useDownloadUserReportMutation,
 } from './userApi';

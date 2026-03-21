@@ -74,12 +74,12 @@ export const UserStatusChartContainer = () => {
 
     return (
         <SectionCard
-            TitleContent={
+            titleContent={
                 <Typography variant="h6" fontWeight="bold">
                     User Tickets by Status
                 </Typography>
             }
-            SubheaderContent={
+            subheaderContent={
                 <ChartFilter
                     dateRangeType={dateRangeType}
                     onDateRangeTypeChange={handleDateRangeTypeChange}
@@ -89,7 +89,7 @@ export const UserStatusChartContainer = () => {
                     onEndDateChange={setEndDate}
                 />
             }
-            MainContent={
+            mainContent={
                 <StatusDonutChart
                     data={statusChartData}
                     isLoading={isSummaryFetching}

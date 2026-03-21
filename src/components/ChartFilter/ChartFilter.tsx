@@ -85,7 +85,6 @@ export const ChartFilter = ({
                         label="Date Range"
                         onChange={onDateRangeTypeChange}
                     >
-                        <MenuItem value="all">All Time</MenuItem>
                         <MenuItem value="week">Current Week</MenuItem>
                         <MenuItem value="custom">Custom Range</MenuItem>
                     </Select>

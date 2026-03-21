@@ -91,12 +91,12 @@ export const ProjectDeadlineChartContainer = () => {
 
     return (
         <SectionCard
-            TitleContent={
+            titleContent={
                 <Typography variant="h6" fontWeight="bold">
                     Ticket Deadlines
                 </Typography>
             }
-            SubheaderContent={
+            subheaderContent={
                 <ChartFilter
                     showUserFilter={true}
                     users={filterUsers}
@@ -110,7 +110,7 @@ export const ProjectDeadlineChartContainer = () => {
                     onEndDateChange={setEndDate}
                 />
             }
-            MainContent={
+            mainContent={
                 <DeadlineLineChart
                     data={deadlineChartData}
                     isLoading={isSummaryFetching}

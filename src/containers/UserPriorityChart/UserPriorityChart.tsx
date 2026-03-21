@@ -79,12 +79,12 @@ export const UserPriorityChartContainer = () => {
 
     return (
         <SectionCard
-            TitleContent={
+            titleContent={
                 <Typography variant="h6" fontWeight="bold">
                     Tickets by Priority
                 </Typography>
             }
-            SubheaderContent={
+            subheaderContent={
                 <ChartFilter
                     dateRangeType={dateRangeType}
                     onDateRangeTypeChange={handleDateRangeTypeChange}
@@ -94,7 +94,7 @@ export const UserPriorityChartContainer = () => {
                     onEndDateChange={setEndDate}
                 />
             }
-            MainContent={
+            mainContent={
                 <PriorityBarChart
                     data={chartData}
                     isLoading={isSummaryFetching}

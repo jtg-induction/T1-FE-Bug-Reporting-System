@@ -55,7 +55,7 @@ export const JQLImportContainer = ({
         try {
             await importTicket({
                 projectId: projectId,
-                data: { jira_id: ticketKey },
+                data: { jira_key: ticketKey },
             }).unwrap();
             onClose();
         } catch {

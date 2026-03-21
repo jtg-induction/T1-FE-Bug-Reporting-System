@@ -170,6 +170,22 @@ export const projectApi = baseApi.injectEndpoints({
             },
             providesTags: ['ProjectSummary'],
         }),
+
+        downloadProjectReport: builder.mutation<
+            Blob,
+            { projectId: string; startDate?: string; endDate?: string }
+        >({
+            query: ({ projectId, startDate, endDate }) => ({
+                url: `projects/${projectId}/report-generate/`,
+                method: 'GET',
+                params: {
+                    'start-date': startDate,
+                    'end-date': endDate,
+                },
+                responseHandler: (response) => response.blob(),
+                cache: 'no-cache',
+            }),
+        }),
     }),
 });
 
@@ -189,4 +205,5 @@ export const {
     useUnarchiveProjectMutation,
     useUpdateProjectMutation,
     useGetProjectSummaryQuery,
+    useDownloadProjectReportMutation,
 } = projectApi;

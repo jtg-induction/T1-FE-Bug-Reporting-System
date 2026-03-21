@@ -1,32 +1,127 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 
 import {
     Assignment,
+    Download,
     ErrorOutline,
     Schedule,
     TaskAlt,
 } from '@mui/icons-material';
-import { Box, Stack } from '@mui/material';
+import {
+    Box,
+    Button,
+    CircularProgress,
+    SelectChangeEvent,
+    Stack,
+    Typography,
+} from '@mui/material';
 
-import { Stats } from '@components/Stats';
-import { ProjectPriorityChartContainer } from '@containers';
-import { ProjectDeadlineChartContainer } from '@containers/ProjectDeadlineChart';
-import { ProjectStatusChartContainer } from '@containers/ProjectStatusChart';
-import { useGetProjectSummaryQuery } from '@service';
+import { ChartFilter, Snackbar, Stats } from '@components';
+import {
+    ProjectDeadlineChartContainer,
+    ProjectPriorityChartContainer,
+    ProjectStatusChartContainer,
+} from '@containers';
+import {
+    useDownloadProjectReportMutation,
+    useGetProjectSummaryQuery,
+} from '@service';
+import { getEndOfCurrentWeek, getStartOfCurrentWeek } from '@utils';
 
-import { StatsGrid } from './ProjectReport.styles';
+import {
+    ActionWrapper,
+    FilterWrapper,
+    HeaderContainer,
+    StatsGrid,
+    TitleWrapper,
+} from './ProjectReport.styles';
+import { ProjectReportProps } from './ProjectReport.types';
 
-export const ProjectReportContainer = () => {
+export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
     const { id: projectId } = useParams<{ id: string }>();
+
+    const [dateRangeType, setDateRangeType] = useState<string>('week');
+    const [startDate, setStartDate] = useState<string>(getStartOfCurrentWeek());
+    const [endDate, setEndDate] = useState<string>(getEndOfCurrentWeek());
 
     const { data: summaryResponse, isFetching } = useGetProjectSummaryQuery(
         { projectId: projectId || '' },
         { skip: !projectId },
     );
 
-    const kpiStats = useMemo(() => {
+    const [downloadReport, { isLoading: isDownloading }] =
+        useDownloadProjectReportMutation();
+
+    const [snackbar, setSnackbar] = useState<{
+        open: boolean;
+        message: string;
+        severity: 'success' | 'error';
+    }>({
+        open: false,
+        message: '',
+        severity: 'success',
+    });
+
+    const handleCloseSnackbar = (
+        _event?: React.SyntheticEvent | Event,
+        reason?: string,
+    ) => {
+        if (reason === 'clickaway') return;
+        setSnackbar((prev) => ({ ...prev, open: false }));
+    };
+
+    const handleDateRangeTypeChange = (event: SelectChangeEvent) => {
+        const type = event.target.value;
+        setDateRangeType(type);
+
+        if (type === 'week') {
+            setStartDate(getStartOfCurrentWeek());
+            setEndDate(getEndOfCurrentWeek());
+        } else if (type === 'all') {
+            setStartDate('');
+            setEndDate('');
+        }
+    };
+
+    const handleDownloadReport = async () => {
+        if (!projectId) return;
+
+        try {
+            const blob = await downloadReport({
+                projectId,
+                startDate,
+                endDate,
+            }).unwrap();
+
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+
+            link.setAttribute('download', 'Project_Report.pdf');
+
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode?.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            setSnackbar({
+                open: true,
+                message: 'Project Report downloaded successfully!',
+                severity: 'success',
+            });
+        } catch {
+            setSnackbar({
+                open: true,
+                message:
+                    'Failed to download report. Ensure you have Admin privileges.',
+                severity: 'error',
+            });
+        }
+    };
+
+    const projectStats = useMemo(() => {
         const stats = summaryResponse?.data?.ticket_summary;
 
         return {
@@ -39,29 +134,84 @@ export const ProjectReportContainer = () => {
 
     return (
         <Stack gap={3}>
+            <HeaderContainer>
+                <TitleWrapper>
+                    <Typography variant="h2" fontWeight="bold">
+                        Project Report
+                    </Typography>
+                </TitleWrapper>
+
+                {isAdmin && (
+                    <>
+                        <FilterWrapper>
+                            <ChartFilter
+                                showUserFilter={false}
+                                dateRangeType={dateRangeType}
+                                onDateRangeTypeChange={
+                                    handleDateRangeTypeChange
+                                }
+                                startDate={startDate}
+                                onStartDateChange={setStartDate}
+                                endDate={endDate}
+                                onEndDateChange={setEndDate}
+                            />
+                        </FilterWrapper>
+
+                        <ActionWrapper>
+                            <Button
+                                variant="contained"
+                                startIcon={
+                                    isDownloading ? (
+                                        <CircularProgress
+                                            size={16}
+                                            color="inherit"
+                                        />
+                                    ) : (
+                                        <Download />
+                                    )
+                                }
+                                onClick={() => void handleDownloadReport()}
+                                disabled={
+                                    isDownloading ||
+                                    (dateRangeType === 'custom' &&
+                                        (!startDate || !endDate))
+                                }
+                                sx={{ height: 40 }}
+                            >
+                                {isDownloading ? 'Generating...' : 'Download'}
+                            </Button>
+                        </ActionWrapper>
+                    </>
+                )}
+            </HeaderContainer>
+
             <Box>
                 <StatsGrid>
                     <Stats
                         icon={<Assignment color="primary" />}
-                        title={isFetching ? '...' : `${kpiStats.total}`}
+                        title={isFetching ? '...' : `${projectStats.total}`}
                         subtitle="Total Tickets"
                     />
                     <Stats
                         icon={<TaskAlt color="success" />}
-                        title={isFetching ? '...' : `${kpiStats.completed}`}
+                        title={isFetching ? '...' : `${projectStats.completed}`}
                         subtitle="Completed"
                     />
                     <Stats
                         icon={<ErrorOutline color="error" />}
                         title={
-                            isFetching ? '...' : `${kpiStats.missingDeadline}`
+                            isFetching
+                                ? '...'
+                                : `${projectStats.missingDeadline}`
                         }
                         subtitle="Missing Deadline"
                     />
                     <Stats
                         icon={<Schedule color="warning" />}
                         title={
-                            isFetching ? '...' : `${kpiStats.upcomingDeadline}`
+                            isFetching
+                                ? '...'
+                                : `${projectStats.upcomingDeadline}`
                         }
                         subtitle="Due in 7 Days"
                     />
@@ -71,6 +221,13 @@ export const ProjectReportContainer = () => {
             <ProjectStatusChartContainer />
             <ProjectPriorityChartContainer />
             <ProjectDeadlineChartContainer />
+
+            <Snackbar
+                open={snackbar.open}
+                message={snackbar.message}
+                severity={snackbar.severity}
+                onClose={handleCloseSnackbar}
+            />
         </Stack>
     );
 };

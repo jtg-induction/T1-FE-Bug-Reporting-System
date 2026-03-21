@@ -139,7 +139,7 @@ export interface TicketCreateData {
 
 export interface TicketCreateResponse extends TicketCreateData {
     id: string;
-    jira_id: string;
+    jira_key: string;
     key: string;
     reporter: string;
     is_subscribed: boolean;

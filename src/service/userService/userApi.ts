@@ -55,6 +55,22 @@ export const userApi = baseApi.injectEndpoints({
             }),
             providesTags: ['UserSummary'],
         }),
+
+        downloadUserReport: builder.mutation<
+            Blob,
+            { userId: string; startDate?: string; endDate?: string }
+        >({
+            query: ({ userId, startDate, endDate }) => ({
+                url: `users/${userId}/report-generate/`,
+                method: 'GET',
+                params: {
+                    'start-date': startDate,
+                    'end-date': endDate,
+                },
+                responseHandler: (response) => response.blob(),
+                cache: 'no-cache',
+            }),
+        }),
     }),
 });
 
@@ -64,4 +80,5 @@ export const {
     useUpdateUserMutation,
     useGetUserSummaryQuery,
     useGetUserTicketSummaryQuery,
+    useDownloadUserReportMutation,
 } = userApi;

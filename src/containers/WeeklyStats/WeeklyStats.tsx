@@ -30,12 +30,12 @@ export const WeeklyStats = () => {
 
     return (
         <SectionCard
-            TitleContent={
+            titleContent={
                 <Typography variant="h6" fontWeight="bold">
                     Weekly Stats
                 </Typography>
             }
-            MainContent={
+            mainContent={
                 <StatsGrid>
                     <Stats
                         icon={<Assignment color="primary" />}

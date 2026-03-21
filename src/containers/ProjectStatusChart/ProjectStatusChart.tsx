@@ -107,12 +107,12 @@ export const ProjectStatusChartContainer = () => {
 
     return (
         <SectionCard
-            TitleContent={
+            titleContent={
                 <Typography variant="h6" fontWeight="bold">
                     Tickets by Status
                 </Typography>
             }
-            SubheaderContent={
+            subheaderContent={
                 <ChartFilter
                     showUserFilter={true}
                     users={filterUsers}
@@ -126,7 +126,7 @@ export const ProjectStatusChartContainer = () => {
                     onEndDateChange={setEndDate}
                 />
             }
-            MainContent={
+            mainContent={
                 <StatusDonutChart
                     data={statusChartData}
                     isLoading={isSummaryFetching}

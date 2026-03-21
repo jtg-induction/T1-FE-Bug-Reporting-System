@@ -15,4 +15,5 @@ export {
     useUnarchiveProjectMutation,
     useUpdateProjectMutation,
     useGetProjectSummaryQuery,
+    useDownloadProjectReportMutation,
 } from './projectApi';

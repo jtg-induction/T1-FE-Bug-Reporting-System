@@ -5,6 +5,7 @@ export {
     useUpdateUserMutation,
     useGetUserSummaryQuery,
     useGetUserTicketSummaryQuery,
+    useDownloadUserReportMutation,
 } from './userService';
 export {
     authApi,
@@ -31,6 +32,7 @@ export {
     useUnarchiveProjectMutation,
     useUpdateProjectMutation,
     useGetProjectSummaryQuery,
+    useDownloadProjectReportMutation,
 } from './projectService';
 export {
     ticketApi,

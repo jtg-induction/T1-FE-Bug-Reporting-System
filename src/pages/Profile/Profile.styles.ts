@@ -1,7 +1,13 @@
 import { Box, styled } from '@mui/material';
 
 export const MainWrapper = styled(Box)(
-    ({ theme: { breakpoints, spacing, typography: { pxToRem } } }) => ({
+    ({
+        theme: {
+            breakpoints,
+            spacing,
+            typography: { pxToRem },
+        },
+    }) => ({
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
@@ -26,17 +32,12 @@ export const ContentContainer = styled(Box)(
 );
 
 export const ReportContainer = styled(Box)(
-    ({
-        theme: {
-            typography: { pxToRem },
-            breakpoints,
-        },
-    }) => ({
+    ({ theme: { breakpoints, spacing } }) => ({
         width: '100%',
-        padding: `0 ${pxToRem(128)}`,
+        padding: spacing(0, 16),
 
         [breakpoints.down('md')]: {
-            padding: `0 ${pxToRem(12)}`,
+            padding: spacing(0, 3),
         },
     }),
 );
