@@ -134,9 +134,13 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
                                 type="select"
                                 control={control}
                                 editStatus={true}
-                                options={TICKET_STATUS_OPTIONS.filter(
-                                    (option) => option.VALUE < 4,
-                                )}
+                                options={
+                                    ticket.permission_class === 4
+                                        ? TICKET_STATUS_OPTIONS
+                                        : TICKET_STATUS_OPTIONS.filter(
+                                              (option) => option.VALUE < 4,
+                                          )
+                                }
                                 fullWidth
                             />
                         )}

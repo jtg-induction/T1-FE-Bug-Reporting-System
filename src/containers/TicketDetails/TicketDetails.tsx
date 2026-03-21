@@ -7,7 +7,6 @@ import { UserData } from 'types/common';
 
 import {
     AccessAlarm,
-    CheckCircle,
     Delete,
     DriveFileMove,
     Edit,
@@ -33,7 +32,6 @@ import {
     useGetTicketQuery,
     useSubscribeTicketMutation,
     useUnsubscribeTicketMutation,
-    useUpdateTicketMutation,
 } from '@service';
 import { formatDateTime } from '@utils';
 
@@ -65,7 +63,6 @@ export const TicketDashboardContainer = () => {
     );
     const membersData = members?.data.results ?? [];
     const currentUserId = user?.data?.id;
-    const [updateTicket] = useUpdateTicketMutation();
     const [deleteTicket] = useDeleteTicketMutation();
     const [subscribe] = useSubscribeTicketMutation();
     const [unsubscribe] = useUnsubscribeTicketMutation();
@@ -78,7 +75,6 @@ export const TicketDashboardContainer = () => {
     const d = ticket?.data;
     const perm = d?.permission_class;
     const isActive = d?.is_active;
-    const canClose = perm === 4 && d.status === 3;
 
     const handleOpenEdit = (statusOnly: boolean) => {
         setIsStatusOnly(statusOnly);
@@ -95,23 +91,6 @@ export const TicketDashboardContainer = () => {
             dispatch(
                 showSnackbar({
                     message: 'Ticket Deletion Failed',
-                    severity: 'error',
-                }),
-            );
-        }
-    };
-
-    const handleClose = async () => {
-        try {
-            await updateTicket({
-                projectId: projectId!,
-                ticketId: ticketId!,
-                updateData: { status: 4 },
-            }).unwrap();
-        } catch {
-            dispatch(
-                showSnackbar({
-                    message: 'Ticket Close Failed',
                     severity: 'error',
                 }),
             );
@@ -264,18 +243,6 @@ export const TicketDashboardContainer = () => {
                             </Typography>
                         </UserInfo>
                     </MetaItem>
-
-                    {d.is_active && canClose && (
-                        <Button
-                            variant="contained"
-                            color="success"
-                            size="small"
-                            startIcon={<CheckCircle />}
-                            onClick={() => void handleClose}
-                        >
-                            Close
-                        </Button>
-                    )}
                 </MetadataStack>
 
                 <Divider />
