@@ -85,3 +85,25 @@ export interface UpdateUserData {
     date_of_birth: string | null | undefined;
     designation: string | number;
 }
+
+export interface ProjectCreateData {
+    title: string;
+    description: string;
+    status: number;
+    key: string;
+    jira_url: string;
+}
+
+export interface ProjectCreateResponse {
+    id: string;
+    title: string;
+    description: string;
+    status: string | null;
+    key: string;
+    jira_url: string;
+    jira_project_id: string;
+}
+
+export interface ProjectListResponse extends ProjectCreateResponse {
+    project_role: number;
+}

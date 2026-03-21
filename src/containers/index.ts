@@ -6,3 +6,8 @@ export * from './SignupComplete';
 export * from './ProfileForm';
 export * from './ProfileHeader';
 export * from './UserMenu';
+export * from './ProjectForm';
+export * from './DashboardHeader';
+export * from './ActiveProjectSection';
+export * from './TopProjectsList';
+export * from './ProjectHeader';

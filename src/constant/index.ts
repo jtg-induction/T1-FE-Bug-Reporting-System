@@ -8,3 +8,4 @@ export {
 export * from './apiPaths';
 export * from './paths';
 export * from './regex';
+export * from './config';
