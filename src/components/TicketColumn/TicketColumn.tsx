@@ -65,18 +65,22 @@ export const TicketColumn = ({ column }: { column: BoardColumn }) => {
             </StyledColumnHeader>
 
             <StyledTicketStack>
-                {tickets.map((ticket) => (
-                    <TicketCard
-                        key={ticket.id}
-                        ticket={ticket}
-                        onClick={() =>
-                            void navigate(
-                                `${PRIVATE_PATHS.PROJECTS}/${ticket.project_id}${PRIVATE_PATHS.TICKETS}/${ticket.id}`,
-                            )
-                        }
-                        hideDeadline={column.label === 'DONE'}
-                    />
-                ))}
+                {tickets.length > 0 ? (
+                    tickets.map((ticket) => (
+                        <TicketCard
+                            key={ticket.id}
+                            ticket={ticket}
+                            onClick={() =>
+                                void navigate(
+                                    `${PRIVATE_PATHS.PROJECTS}/${ticket.project_id}${PRIVATE_PATHS.TICKETS}/${ticket.id}`,
+                                )
+                            }
+                            hideDeadline={column.label === 'DONE'}
+                        />
+                    ))
+                ) : (
+                    <Typography>No Tickets in this Section</Typography>
+                )}
 
                 {hasMore && (
                     <Button

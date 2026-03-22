@@ -22,7 +22,12 @@ export const ModalForm = ({
         <StyledDialogContent>{children}</StyledDialogContent>
 
         <StyledDialogActions>
-            <Button onClick={onClose} color="inherit" variant="outlined">
+            <Button
+                onClick={onClose}
+                color="inherit"
+                variant="outlined"
+                disabled={isLoading}
+            >
                 Cancel
             </Button>
             <Button

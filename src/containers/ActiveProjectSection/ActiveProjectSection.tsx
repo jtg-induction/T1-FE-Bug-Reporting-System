@@ -23,9 +23,9 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
     const navigate = useNavigate();
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
-        pageSize: 5,
+        pageSize: 10,
     });
-    const [filterModel, setFilterModel] = useState({});
+    const [filterModel, setFilterModel] = useState({ status: 'active' });
     const [sortModel, setSortModel] = useState<string>();
 
     const { data: projects, isLoading } = useGetProjectsQuery({

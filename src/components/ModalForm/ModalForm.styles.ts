@@ -4,6 +4,7 @@ import {
     DialogTitle,
     styled,
 } from '@mui/material';
+import { dialogContentClasses } from '@mui/material/DialogContent';
 
 export const StyledDialogTitle = styled(DialogTitle)(
     ({
@@ -18,12 +19,10 @@ export const StyledDialogTitle = styled(DialogTitle)(
 );
 
 export const StyledDialogContent = styled(DialogContent)(
-    ({
-        theme: {
-            typography: { pxToRem },
+    ({ theme: { spacing } }) => ({
+        [`&.${dialogContentClasses.root}`]: {
+            padding: spacing(2, 6, 4),
         },
-    }) => ({
-        paddingBottom: pxToRem(8),
     }),
 );
 

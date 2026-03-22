@@ -30,11 +30,13 @@ export const CommentInput = ({
     initialContent = '',
     buttonText,
 }: CommentInputProps) => {
-    const [isEmpty, setIsEmpty] = useState(!initialContent);
+    const [isEmpty, setIsEmpty] = useState<boolean>(!initialContent);
 
     const editor = useEditor({
         extensions: [
-            StarterKit,
+            StarterKit.configure({
+                heading: { levels: [3] },
+            }),
             Markdown.configure({
                 tightLists: true,
                 bulletListMarker: '-',
@@ -47,99 +49,99 @@ export const CommentInput = ({
     });
 
     useEffect(() => {
-        if (editor && !editor.isDestroyed && initialContent && editor.isEmpty) {
+        if (editor && initialContent && editor.isEmpty) {
             editor.commands.setContent(initialContent);
         }
     }, [editor, initialContent]);
 
-    const handleAction = () => {
-        if (editor && !editor.isEmpty) {
-            const md = (
-                editor.storage.markdown as { getMarkdown: () => string }
-            ).getMarkdown();
-            onSubmit(md);
+    if (!editor) return null;
 
-            if (!initialContent) {
-                editor.commands.clearContent();
-            }
+    const handleToggle = (command: () => void) => {
+        command();
+        editor.chain().focus().run();
+    };
+
+    const handleAction = () => {
+        const markdownStorage = editor.storage.markdown as {
+            getMarkdown: () => string;
+        };
+        onSubmit(markdownStorage.getMarkdown());
+        if (!initialContent) {
+            editor.commands.clearContent();
         }
     };
-    if (!editor) return null;
 
     return (
         <InputWrapper>
             <StyledToolbar size="small">
                 <ToggleButton
                     value="bold"
-                    selected={editor.isActive('bold')}
-                    onClick={() => editor.chain().focus().toggleBold().run()}
+                    onClick={() =>
+                        handleToggle(() => editor.chain().toggleBold().run())
+                    }
                 >
                     <FormatBold fontSize="small" />
                 </ToggleButton>
-
                 <ToggleButton
                     value="italic"
-                    selected={editor.isActive('italic')}
-                    onClick={() => editor.chain().focus().toggleItalic().run()}
+                    onClick={() =>
+                        handleToggle(() => editor.chain().toggleItalic().run())
+                    }
                 >
                     <FormatItalic fontSize="small" />
                 </ToggleButton>
-
                 <ToggleButton
                     value="heading"
-                    selected={editor.isActive('heading', { level: 3 })}
                     onClick={() =>
-                        editor.chain().focus().toggleHeading({ level: 3 }).run()
+                        handleToggle(() =>
+                            editor.chain().toggleHeading({ level: 3 }).run(),
+                        )
                     }
                 >
                     <Title fontSize="small" />
                 </ToggleButton>
-
                 <ToggleButton
                     value="bulletList"
-                    selected={editor.isActive('bulletList')}
                     onClick={() =>
-                        editor.chain().focus().toggleBulletList().run()
+                        handleToggle(() =>
+                            editor.chain().toggleBulletList().run(),
+                        )
                     }
                 >
                     <FormatListBulleted fontSize="small" />
                 </ToggleButton>
-
                 <ToggleButton
                     value="orderedList"
-                    selected={editor.isActive('orderedList')}
                     onClick={() =>
-                        editor.chain().focus().toggleOrderedList().run()
+                        handleToggle(() =>
+                            editor.chain().toggleOrderedList().run(),
+                        )
                     }
                 >
                     <FormatListNumbered fontSize="small" />
                 </ToggleButton>
-
                 <ToggleButton
                     value="blockquote"
-                    selected={editor.isActive('blockquote')}
                     onClick={() =>
-                        editor.chain().focus().toggleBlockquote().run()
+                        handleToggle(() =>
+                            editor.chain().toggleBlockquote().run(),
+                        )
                     }
                 >
                     <FormatQuote fontSize="small" />
                 </ToggleButton>
-
                 <ToggleButton
                     value="code"
-                    selected={editor.isActive('code')}
-                    onClick={() => editor.chain().focus().toggleCode().run()}
+                    onClick={() =>
+                        handleToggle(() => editor.chain().toggleCode().run())
+                    }
                 >
                     <Code fontSize="small" />
                 </ToggleButton>
             </StyledToolbar>
-
             <Divider />
-
             <StyledEditorContent editor={editor} />
-
             <Divider />
-
             <Stack
                 direction="row"
                 justifyContent="flex-end"
@@ -165,8 +167,7 @@ export const CommentInput = ({
                 >
                     {isLoading
                         ? 'Processing...'
-                        : buttonText ||
-                          (initialContent ? 'Save Changes' : 'Comment')}
+                        : buttonText || (initialContent ? 'Save' : 'Comment')}
                 </Button>
             </Stack>
         </InputWrapper>

@@ -2,7 +2,11 @@ import { ProjectListResponse } from 'types/common';
 
 import { GridColDef } from '@mui/x-data-grid';
 
-import { PROJECT_ROLE_MAP } from '@constant';
+import {
+    PROJECT_ROLE_MAP,
+    PROJECT_STATUS_MAP,
+    PROJECT_STATUS_OPTIONS,
+} from '@constant';
 
 export const columns: GridColDef<ProjectListResponse>[] = [
     {
@@ -19,5 +23,16 @@ export const columns: GridColDef<ProjectListResponse>[] = [
         headerName: 'Role',
         flex: 1,
         valueGetter: (value) => PROJECT_ROLE_MAP[value] || 'Unknown',
+    },
+    {
+        field: 'status',
+        headerName: 'Status',
+        flex: 1,
+        type: 'singleSelect',
+        valueOptions: PROJECT_STATUS_OPTIONS.map((item) => ({
+            value: item.LABEL.toLowerCase(),
+            label: item.LABEL,
+        })),
+        valueFormatter: (params) => PROJECT_STATUS_MAP[params],
     },
 ];

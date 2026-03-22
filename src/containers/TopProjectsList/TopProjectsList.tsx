@@ -35,7 +35,12 @@ export const TopProjectsList = () => {
         <SectionCard
             titleContent={
                 <HeaderStack>
-                    <Stack direction="row" spacing={1} alignItems="center">
+                    <Stack
+                        direction="row"
+                        spacing={1}
+                        alignItems="center"
+                        pb={2}
+                    >
                         <TrendingUp color="primary" />
                         <Typography variant="h2">Top Projects</Typography>
                     </Stack>
