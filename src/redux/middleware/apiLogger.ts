@@ -2,9 +2,26 @@ import { showSnackbar } from 'redux/features/profileSlice';
 
 import { isFulfilled, isRejectedWithValue, Middleware } from '@reduxjs/toolkit';
 
-export const apiLogger: Middleware = (api) => (next) => (action: any) => {
+interface RejectedPayload {
+    data?: {
+        message?: string;
+        errors?: Record<string, string | string[]>;
+    };
+}
+interface FulfilledPayload {
+    message?: string;
+}
+
+interface ActionMeta {
+    arg?: {
+        type?: string;
+    };
+}
+
+export const apiLogger: Middleware = (api) => (next) => (action: unknown) => {
     if (isRejectedWithValue(action)) {
-        const payload = action.payload;
+        const payload = (action as { payload?: RejectedPayload }).payload;
+
         let finalMessage =
             payload?.data?.message || 'An unexpected error occurred';
 
@@ -21,7 +38,7 @@ export const apiLogger: Middleware = (api) => (next) => (action: any) => {
                     typeof detail === 'string' &&
                     detail.toLowerCase().includes(field.toLowerCase())
                         ? detail
-                        : `${formattedField}: ${detail}`;
+                        : `${formattedField}: ${String(detail)}`;
             }
         }
 
@@ -33,9 +50,16 @@ export const apiLogger: Middleware = (api) => (next) => (action: any) => {
         );
     }
 
-    if (isFulfilled(action) && action.meta?.arg?.type === 'mutation') {
-        const payload = action.payload;
-        if (payload?.message) {
+    if (isFulfilled(action)) {
+        const fulfilledAction = action as {
+            payload?: FulfilledPayload;
+            meta?: ActionMeta;
+        };
+
+        const payload = fulfilledAction.payload;
+        const meta = fulfilledAction.meta;
+
+        if (meta?.arg?.type === 'mutation' && payload?.message) {
             api.dispatch(
                 showSnackbar({
                     message: payload.message,
