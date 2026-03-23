@@ -11,7 +11,7 @@ import {
     UserData,
 } from 'types/common';
 
-import { API_PATHS } from '@constant';
+import { API_PATHS, HTTP_METHODS } from '@constant';
 
 export const projectApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -21,7 +21,7 @@ export const projectApi = baseApi.injectEndpoints({
         >({
             query: (data) => ({
                 url: API_PATHS.PROJECTS,
-                method: 'POST',
+                method: HTTP_METHODS.POST,
                 body: data,
             }),
             invalidatesTags: ['Projects'],
@@ -50,7 +50,7 @@ export const projectApi = baseApi.injectEndpoints({
         >({
             query: ({ projectId, updateData }) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}/`,
-                method: 'PATCH',
+                method: HTTP_METHODS.PATCH,
                 body: updateData,
             }),
             invalidatesTags: ['Projects'],
@@ -59,14 +59,14 @@ export const projectApi = baseApi.injectEndpoints({
         archiveProject: builder.mutation<ApiResponse<null>, string>({
             query: (projectId) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}/archive/`,
-                method: 'POST',
+                method: HTTP_METHODS.POST,
             }),
             invalidatesTags: ['Projects'],
         }),
         unarchiveProject: builder.mutation<ApiResponse<null>, string>({
             query: (projectId) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}/unarchive/`,
-                method: 'POST',
+                method: HTTP_METHODS.POST,
             }),
             invalidatesTags: ['Projects'],
         }),
@@ -94,7 +94,7 @@ export const projectApi = baseApi.injectEndpoints({
         >({
             query: ({ projectId, ...body }) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}/invite/`,
-                method: 'POST',
+                method: HTTP_METHODS.POST,
                 body,
             }),
             invalidatesTags: ['ProjectMembers'],
@@ -102,14 +102,14 @@ export const projectApi = baseApi.injectEndpoints({
         acceptInvite: builder.mutation<void, string>({
             query: (projectId) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}/accept/`,
-                method: 'POST',
+                method: HTTP_METHODS.POST,
             }),
             invalidatesTags: ['Projects'],
         }),
         rejectInvite: builder.mutation<void, string>({
             query: (projectId) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}/reject/`,
-                method: 'POST',
+                method: HTTP_METHODS.POST,
             }),
             invalidatesTags: ['Projects'],
         }),
@@ -120,7 +120,7 @@ export const projectApi = baseApi.injectEndpoints({
         >({
             query: ({ projectId, ...body }) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}/role/`,
-                method: 'POST',
+                method: HTTP_METHODS.POST,
                 body,
             }),
             invalidatesTags: ['ProjectMembers'],
@@ -131,7 +131,7 @@ export const projectApi = baseApi.injectEndpoints({
         >({
             query: ({ projectId, user_id }) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}/revoke/`,
-                method: 'POST',
+                method: HTTP_METHODS.POST,
                 body: { user_id },
             }),
             invalidatesTags: ['ProjectMembers', 'Projects'],

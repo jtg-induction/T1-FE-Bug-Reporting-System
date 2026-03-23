@@ -1,14 +1,14 @@
 import { baseApi } from 'service/baseService/baseApi';
 import { ApiResponse, UpdateUserData, UserData } from 'types/common';
 
-import { API_PATHS } from '@constant';
+import { API_PATHS, HTTP_METHODS } from '@constant';
 
 export const userApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getUser: builder.query<ApiResponse<UserData>, string>({
             query: (userId) => ({
                 url: `${API_PATHS.USERS}${userId}/`,
-                method: 'GET',
+                method: HTTP_METHODS.GET,
             }),
         }),
 
@@ -18,7 +18,7 @@ export const userApi = baseApi.injectEndpoints({
         >({
             query: ({ updateData, userId }) => ({
                 url: `${API_PATHS.USERS}${userId}/`,
-                method: 'PATCH',
+                method: HTTP_METHODS.PATCH,
                 body: updateData,
             }),
         }),

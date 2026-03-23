@@ -16,13 +16,7 @@ export interface ProjectMember {
     member: User;
 }
 
-export interface ApiError {
-    data?: {
-        detail?: string;
-    };
-}
-
-export interface ProjectUsersProps {
+export interface UserTableProps {
     isAdmin: boolean;
     isActive: boolean;
     ownerId: string;
@@ -36,12 +30,4 @@ export interface ProjectUsersProps {
     >;
     setFilterModel: Dispatch<SetStateAction<object>>;
     setSortModel: Dispatch<SetStateAction<string | undefined>>;
-}
-
-export interface ProjectUsersProps {
-    isAdmin: boolean;
-    isActive: boolean;
-    ownerId: string;
-    isOwner: boolean;
-    currentUserId: string;
 }

@@ -7,7 +7,7 @@ import {
     VerifyLinkData,
 } from 'types/common';
 
-import { API_PATHS } from '@constant';
+import { API_PATHS, HTTP_METHODS } from '@constant';
 
 export const authApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -17,7 +17,7 @@ export const authApi = baseApi.injectEndpoints({
         >({
             query: (credentials) => ({
                 url: API_PATHS.LOGIN,
-                method: 'POST',
+                method: HTTP_METHODS.POST,
                 body: credentials,
             }),
         }),
@@ -28,7 +28,7 @@ export const authApi = baseApi.injectEndpoints({
         >({
             query: (data) => ({
                 url: API_PATHS.REGISTER,
-                method: 'POST',
+                method: HTTP_METHODS.POST,
                 body: data,
             }),
         }),
@@ -36,14 +36,14 @@ export const authApi = baseApi.injectEndpoints({
         logoutUser: builder.mutation<ApiResponse<null>, void>({
             query: () => ({
                 url: API_PATHS.LOGOUT,
-                method: 'POST',
+                method: HTTP_METHODS.POST,
             }),
         }),
 
         generateEmailLink: builder.mutation<ApiResponse<null>, VerifyLinkData>({
             query: (data) => ({
                 url: API_PATHS.GENERATE_EMAIL_LINK,
-                method: 'POST',
+                method: HTTP_METHODS.POST,
                 body: data,
             }),
         }),

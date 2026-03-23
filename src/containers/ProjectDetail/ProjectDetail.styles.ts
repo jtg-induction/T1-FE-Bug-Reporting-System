@@ -82,11 +82,12 @@ export const StyledInfoRow = styled(Stack)(
             typography: { pxToRem },
             palette,
             shape,
+            spacing,
         },
     }) => ({
         flexDirection: 'row',
         alignItems: 'center',
-        padding: `${pxToRem(10)} ${pxToRem(16)}`,
+        padding: spacing(2, 4),
         backgroundColor: palette.action.hover,
         borderRadius: shape.borderRadius,
         gap: pxToRem(16),

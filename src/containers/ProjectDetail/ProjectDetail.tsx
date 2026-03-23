@@ -8,7 +8,7 @@ import { Archive, Edit, Logout, Unarchive } from '@mui/icons-material';
 import { Chip, Stack, Typography } from '@mui/material';
 
 import { ActionMenu, ActionMenuItem, SectionCard } from '@components';
-import { PRIVATE_PATHS } from '@constant';
+import { PRIVATE_PATHS, ROLE_OWNER } from '@constant';
 import {
     EditProjectFormContainer,
     TransferOwnershipFormContainer,
@@ -39,6 +39,16 @@ import {
     ProjectUpdateFormData,
 } from './ProjectDetail.types';
 
+const getArchiveLabel = (
+    isArchiving: boolean,
+    isUnarchiving: boolean,
+    isActive: boolean,
+) => {
+    if (isArchiving) return 'Archiving...';
+    if (isUnarchiving) return 'Unarchiving...';
+    return isActive ? 'Archive' : 'Unarchive';
+};
+
 export const ProjectDetailContainer = ({
     isActive,
     isAdmin,
@@ -49,12 +59,12 @@ export const ProjectDetailContainer = ({
     const { id: projectId } = useParams<{ id: string }>();
     const navigate = useNavigate();
 
+    const dispatch = useAppDispatch();
+
     const { data: members } = useGetProjectMembersQuery(
         { projectId: projectId, limit: 100, offset: 0 },
         { skip: !projectId },
     );
-
-    const dispatch = useAppDispatch();
     const [updateProject, { isLoading: isUpdating }] =
         useUpdateProjectMutation();
     const [archiveProject, { isLoading: isArchiving }] =
@@ -70,17 +80,17 @@ export const ProjectDetailContainer = ({
     const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
 
-    const membersData = members?.data.results ?? [];
+    const projectMembersData = members?.data.results ?? [];
 
-    const memberOptions = useMemo(() => {
-        if (membersData.length === 0) {
+    const projectMemberOptions = useMemo(() => {
+        if (projectMembersData.length === 0) {
             return [{ LABEL: 'No other members available', VALUE: '' }];
         }
-        return membersData.map((m) => ({
+        return projectMembersData.map((m) => ({
             LABEL: `${m.member.first_name} ${m.member.last_name} (${m.role === 1 ? 'Admin' : 'Developer'})`,
             VALUE: m.member.id,
         }));
-    }, [membersData]);
+    }, [projectMembersData]);
 
     const initialEditData: ProjectUpdateFormData = useMemo(() => {
         if (!projectData) return INITIAL_EDIT_STATE;
@@ -110,26 +120,19 @@ export const ProjectDetailContainer = ({
 
     const handleArchiveToggle = () => {
         void (async () => {
-            const actionText = isActive ? 'archive' : 'unarchive';
-            if (
-                window.confirm(
-                    `Are you sure you want to ${actionText} this project?`,
-                )
-            ) {
-                try {
-                    if (isActive) {
-                        await archiveProject(projectId!).unwrap();
-                    } else {
-                        await unarchiveProject(projectId!).unwrap();
-                    }
-                } catch {
-                    dispatch(
-                        showSnackbar({
-                            message: 'Project Archiving Failed',
-                            severity: 'error',
-                        }),
-                    );
+            try {
+                if (isActive) {
+                    await archiveProject(projectId!).unwrap();
+                } else {
+                    await unarchiveProject(projectId!).unwrap();
                 }
+            } catch {
+                dispatch(
+                    showSnackbar({
+                        message: 'Project Archiving Failed',
+                        severity: 'error',
+                    }),
+                );
             }
         })();
     };
@@ -137,9 +140,7 @@ export const ProjectDetailContainer = ({
     const handleLeaveClick = () => {
         if (isOwner) {
             setOpenLeaveDialog(true);
-        } else if (
-            window.confirm('Are you sure you want to leave this project?')
-        ) {
+        } else {
             executeLeaveProject();
         }
     };
@@ -152,7 +153,7 @@ export const ProjectDetailContainer = ({
                 await changeRole({
                     projectId: projectId!,
                     user_id: newOwnerId,
-                    role: 2,
+                    role: ROLE_OWNER,
                 }).unwrap();
             }
 
@@ -187,22 +188,16 @@ export const ProjectDetailContainer = ({
     const isLongDescription = descriptionText.length > 150;
 
     const menuOptions: ActionMenuItem[] = [
-        isActive &&
-            isAdmin && {
-                id: 'edit',
-                label: 'Edit Project',
-                icon: <Edit fontSize="small" />,
-                onClick: () => setOpenEdit(true),
-            },
-        isAdmin && {
+        {
+            id: 'edit',
+            label: 'Edit Project',
+            icon: <Edit fontSize="small" />,
+            onClick: () => setOpenEdit(true),
+            display: isActive && isAdmin,
+        },
+        {
             id: 'archive-toggle',
-            label: isArchiving
-                ? 'Archiving...'
-                : isUnarchiving
-                  ? 'Unarchiving...'
-                  : isActive
-                    ? 'Archive'
-                    : 'Unarchive',
+            label: getArchiveLabel(isArchiving, isUnarchiving, isActive),
             icon: isActive ? (
                 <Archive fontSize="small" />
             ) : (
@@ -210,20 +205,23 @@ export const ProjectDetailContainer = ({
             ),
             onClick: handleArchiveToggle,
             disabled: isArchiving || isUnarchiving,
+            display: isAdmin,
         },
-        (isActive || isAdmin) && {
+        {
             id: 'divider-1',
             isDivider: true,
+            display: isActive || isAdmin,
         },
-        isActive && {
+        {
             id: 'leave',
             label: isLeaving ? 'Leaving...' : 'Leave Project',
             icon: <Logout fontSize="small" />,
             onClick: handleLeaveClick,
             disabled: isLeaving,
             textColor: 'error.main',
+            display: isActive,
         },
-    ].filter((item): item is ActionMenuItem => Boolean(item));
+    ];
 
     return (
         <>
@@ -306,7 +304,7 @@ export const ProjectDetailContainer = ({
                 onClose={() => setOpenLeaveDialog(false)}
                 onSubmit={handleTransferSubmit}
                 isLoading={isLeaving}
-                memberOptions={memberOptions}
+                projectMemberOptions={projectMemberOptions}
             />
         </>
     );

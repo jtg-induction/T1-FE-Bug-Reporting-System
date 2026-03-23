@@ -10,6 +10,7 @@ import { PROJECT_STATUS_OPTIONS } from '@constant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateProjectMutation } from '@service';
 
+import { PROJECT_FORM_CONFIG } from './ProjectForm.config';
 import { ProjectFormContainerProps } from './ProjectForm.types';
 
 export const ProjectFormContainer = ({
@@ -17,7 +18,6 @@ export const ProjectFormContainer = ({
     onClose,
     onSubmit,
 }: ProjectFormContainerProps) => {
-    const formId = 'create-project-form';
     const { control, handleSubmit, reset } = useForm<ProjectFormValues>({
         resolver: zodResolver(projectSchema),
         defaultValues: INITIAL_FORM_DATA,
@@ -45,14 +45,14 @@ export const ProjectFormContainer = ({
     return (
         <ModalForm
             open={open}
-            title="Create Project"
-            formId={formId}
+            title={PROJECT_FORM_CONFIG.TITLE}
+            formId={PROJECT_FORM_CONFIG.ID}
             onClose={onClose}
             isLoading={isCreating}
-            submitLabel="Create"
+            submitLabel={PROJECT_FORM_CONFIG.SUBMIT_LABEL}
         >
             <form
-                id={formId}
+                id={PROJECT_FORM_CONFIG.ID}
                 onSubmit={(e) => void handleSubmit(handleCreateProject)(e)}
             >
                 <Stack spacing={3} mt={1}>

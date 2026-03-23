@@ -6,6 +6,7 @@ import { Stack, Typography } from '@mui/material';
 
 import { FormField, ModalForm } from '@components';
 
+import { OWNERSHIP_TRANSFER_FORM_CONFIG } from './OwnershipTransferForm.config';
 import { TransferOwnershipFormContainerProps } from './OwnershipTransferForm.types';
 
 export const TransferOwnershipFormContainer = ({
@@ -13,10 +14,8 @@ export const TransferOwnershipFormContainer = ({
     onClose,
     onSubmit,
     isLoading,
-    memberOptions,
+    projectMemberOptions,
 }: TransferOwnershipFormContainerProps) => {
-    const formId = 'transfer-owner-form';
-
     const { control, handleSubmit, reset } = useForm<{ newOwnerId: string }>({
         defaultValues: { newOwnerId: '' },
     });
@@ -31,14 +30,14 @@ export const TransferOwnershipFormContainer = ({
     return (
         <ModalForm
             open={open}
-            title="Transfer Ownership & Leave"
-            formId={formId}
+            title={OWNERSHIP_TRANSFER_FORM_CONFIG.TITLE}
+            formId={OWNERSHIP_TRANSFER_FORM_CONFIG.ID}
             onClose={onClose}
             isLoading={isLoading}
-            submitLabel="Transfer & Leave"
+            submitLabel={OWNERSHIP_TRANSFER_FORM_CONFIG.SUBMIT_LABEL}
         >
             <form
-                id={formId}
+                id={OWNERSHIP_TRANSFER_FORM_CONFIG.ID}
                 onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}
             >
                 <Stack spacing={3}>
@@ -52,7 +51,7 @@ export const TransferOwnershipFormContainer = ({
                         type="select"
                         control={control}
                         editStatus={true}
-                        options={memberOptions}
+                        options={projectMemberOptions}
                     />
                 </Stack>
             </form>

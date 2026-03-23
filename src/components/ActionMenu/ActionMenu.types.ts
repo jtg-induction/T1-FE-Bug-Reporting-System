@@ -9,6 +9,7 @@ export interface ActionMenuItem {
     textColor?: string;
     iconColor?: string;
     isDivider?: boolean;
+    display: boolean;
 }
 
 export interface ActionMenuProps {

@@ -5,6 +5,12 @@ import { operatorMap } from 'constant/operatorMap';
 import { GridFilterModel } from '@mui/x-data-grid';
 import { GridSortModel } from '@mui/x-data-grid';
 
+/**
+ * Transforms an MUI DataGrid filter model into a backend-compatible filter object
+ * (e.g., converting operators to ORM lookups like `field__operator`) and updates the state.
+ * * @param {GridFilterModel} newModel - The incoming filter model from the MUI DataGrid.
+ * @param {Dispatch<SetStateAction<object>>} setFilterModel - State setter to update the formatted filter object.
+ */
 export const handleFilterChange = (
     newModel: GridFilterModel,
     setFilterModel: Dispatch<SetStateAction<object>>,
@@ -36,6 +42,12 @@ export const handleFilterChange = (
     }
 };
 
+/**
+ * Transforms an MUI DataGrid sort model into a backend-compatible sorting string
+ * (prefixing with `-` for descending order) and updates the state.
+ * * @param {GridSortModel} newModel - The incoming sort model from the MUI DataGrid.
+ * @param {Dispatch<SetStateAction<string | undefined>>} setSortModel - State setter to update the formatted sort string.
+ */
 export const handleSortChange = (
     newModel: GridSortModel,
     setSortModel: Dispatch<SetStateAction<string | undefined>>,

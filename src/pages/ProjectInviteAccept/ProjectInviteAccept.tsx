@@ -24,10 +24,7 @@ export const AcceptInvitePage = () => {
 
     useEffect(() => {
         if (isSuccess) {
-            const timer = setTimeout(() => {
-                navigate(`${PRIVATE_PATHS.PROJECTS}${id}`);
-            }, 1000);
-            return () => clearTimeout(timer);
+            navigate(`${PRIVATE_PATHS.PROJECTS}${id}`);
         }
     }, [isSuccess, id, navigate]);
 

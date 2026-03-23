@@ -20,6 +20,7 @@ export const ActionMenu = ({
 }: ActionMenuProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+    const visibleItems = items?.filter((item) => item.display !== false) || [];
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -34,7 +35,7 @@ export const ActionMenu = ({
         onClick?.();
     };
 
-    if (!items || items.length === 0) return null;
+    if (visibleItems.length === 0) return null;
 
     return (
         <>
@@ -64,7 +65,7 @@ export const ActionMenu = ({
                     },
                 }}
             >
-                {items.map((item) => {
+                {visibleItems.map((item) => {
                     if (item.isDivider) {
                         return <Divider key={item.id} />;
                     }

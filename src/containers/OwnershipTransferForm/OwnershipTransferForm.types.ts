@@ -3,5 +3,5 @@ export interface TransferOwnershipFormContainerProps {
     onClose: () => void;
     onSubmit: (data: { newOwnerId: string }) => Promise<void>;
     isLoading: boolean;
-    memberOptions: { LABEL: string; VALUE: string | number }[];
+    projectMemberOptions: { LABEL: string; VALUE: string | number }[];
 }

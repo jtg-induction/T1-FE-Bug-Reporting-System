@@ -7,6 +7,7 @@ import { Stack } from '@mui/material';
 import { FormField, ModalForm } from '@components';
 import { ProjectUpdateFormData } from '@containers';
 
+import { EDIT_PROJECT_FORM_CONFIG } from './EditProjectForm.config';
 import { EditProjectFormContainerProps } from './EditProjectForm.types';
 
 export const EditProjectFormContainer = ({
@@ -16,8 +17,6 @@ export const EditProjectFormContainer = ({
     isLoading,
     initialData,
 }: EditProjectFormContainerProps) => {
-    const formId = 'edit-project-form';
-
     const { control, handleSubmit, reset } = useForm<ProjectUpdateFormData>({
         defaultValues: initialData,
     });
@@ -34,14 +33,14 @@ export const EditProjectFormContainer = ({
     return (
         <ModalForm
             open={open}
-            title="Edit Project"
-            formId={formId}
+            title={EDIT_PROJECT_FORM_CONFIG.TITLE}
+            formId={EDIT_PROJECT_FORM_CONFIG.ID}
             onClose={onClose}
             isLoading={isLoading}
-            submitLabel="Save Changes"
+            submitLabel={EDIT_PROJECT_FORM_CONFIG.SUBMIT_LABEL}
         >
             <form
-                id={formId}
+                id={EDIT_PROJECT_FORM_CONFIG.ID}
                 onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}
             >
                 <Stack spacing={3}>
