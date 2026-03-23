@@ -14,6 +14,6 @@ export const INITIAL_FORM_DATA: ProjectFormValues = {
     title: '',
     description: '',
     key: '',
-    status: 1,
+    status: 2,
     jira_url: '',
 };

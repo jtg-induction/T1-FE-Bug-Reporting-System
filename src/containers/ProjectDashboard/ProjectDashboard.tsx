@@ -51,8 +51,8 @@ export const ProjectDashboardContainer = () => {
     }
     const currentUserData = currentUser?.data;
     const projectData = project?.data;
-    const isAdmin = projectData?.project_role === 1;
-    const isActive = projectData?.status === 1;
+    const isAdmin = projectData?.project_role === 2;
+    const isActive = projectData?.status === 2;
     const isOwner = projectData?.owner === currentUserData?.id;
 
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {

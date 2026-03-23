@@ -1,6 +1,4 @@
 import { useForm } from 'react-hook-form';
-import { showSnackbar } from 'redux/features/profileSlice';
-import { useAppDispatch } from 'redux/store';
 import { INITIAL_FORM_DATA, ProjectFormValues, projectSchema } from 'schemas';
 
 import { Stack } from '@mui/material';
@@ -22,7 +20,6 @@ export const ProjectFormContainer = ({
         resolver: zodResolver(projectSchema),
         defaultValues: INITIAL_FORM_DATA,
     });
-    const dispatch = useAppDispatch();
 
     const [createProject, { isLoading: isCreating }] =
         useCreateProjectMutation();
@@ -32,14 +29,7 @@ export const ProjectFormContainer = ({
             await createProject(formData).unwrap();
             onSubmit();
             reset();
-        } catch {
-            dispatch(
-                showSnackbar({
-                    message: 'Project Creation Failed',
-                    severity: 'error',
-                }),
-            );
-        }
+        } catch {}
     };
 
     const handleClose = () => {

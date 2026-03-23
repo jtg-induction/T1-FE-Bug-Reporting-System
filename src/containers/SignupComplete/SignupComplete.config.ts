@@ -4,9 +4,9 @@ import { SignupFormData } from './SignupComplete.types';
 
 export const DESIGNATIONS = [
     { VALUE: 'INTERN', LABEL: 'Intern' },
-    { VALUE: 'SD', LABEL: 'SD' },
-    { VALUE: 'SSD', LABEL: 'SSD' },
-    { VALUE: 'TL', LABEL: 'TL' },
+    { VALUE: 'SD', LABEL: 'Software Developer' },
+    { VALUE: 'SSD', LABEL: 'Senior Software Developer' },
+    { VALUE: 'TL', LABEL: 'Team Lead' },
     { VALUE: 'M', LABEL: 'Manager' },
 ];
 

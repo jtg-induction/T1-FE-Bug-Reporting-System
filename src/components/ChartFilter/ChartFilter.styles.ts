@@ -3,6 +3,7 @@ import { Box, FormControl, Stack, styled, TextField } from '@mui/material';
 export const FilterWrapper = styled(Stack)(
     ({
         theme: {
+            spacing,
             typography: { pxToRem },
             breakpoints,
         },
@@ -10,6 +11,7 @@ export const FilterWrapper = styled(Stack)(
         flexDirection: 'column',
         alignItems: 'flex-start',
         gap: pxToRem(16),
+        padding: spacing(2, 0),
         [breakpoints.up('lg')]: {
             flexDirection: 'row',
             alignItems: 'center',

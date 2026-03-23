@@ -5,6 +5,7 @@ import { baseApi } from '@service';
 
 import authReducer from './features/authSlice';
 import profileReducer from './features/profileSlice';
+import { apiLogger } from './middleware/apiLogger';
 
 export const store = configureStore({
     reducer: {
@@ -13,7 +14,7 @@ export const store = configureStore({
         [baseApi.reducerPath]: baseApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(baseApi.middleware),
+        getDefaultMiddleware().concat(baseApi.middleware, apiLogger),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
