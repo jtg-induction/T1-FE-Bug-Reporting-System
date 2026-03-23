@@ -7,6 +7,8 @@ export const PUBLIC_PATHS = {
 export const PRIVATE_PATHS = {
     DASHBOARD: '/',
     PROFILE: '/profile',
-    PROJECTS: '/projects',
-    PROJECT_DASHBOARD: 'projects/:id',
+    PROJECTS: '/projects/',
+    PROJECT_DASHBOARD: '/projects/:id',
+    PROJECT_ACCEPT_INVITE: '/projects/:id/accept',
+    PROJECT_REJECT_INVITE: '/projects/:id/reject',
 };

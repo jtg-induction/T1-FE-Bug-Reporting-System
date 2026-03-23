@@ -1,0 +1,152 @@
+import { useMemo, useState } from 'react';
+
+import { useParams } from 'react-router-dom';
+import { handleFilterChange, handleSortChange } from 'utils/utils';
+
+import { Add } from '@mui/icons-material';
+import { Button, Stack, Typography } from '@mui/material';
+
+import { SectionCard, Table } from '@components';
+import {
+    ProjectUserInviteFormContainer,
+    ProjectUserInviteFormData,
+} from '@containers';
+import {
+    useGetProjectMembersQuery,
+    useGetUsersToInviteQuery,
+    useInviteMemberMutation,
+} from '@service';
+
+import { getUserTableColumns, MEMBER_ROLES } from './UserTable.config';
+import { UserTableProps } from './UserTable.types';
+
+export const UserTable = ({
+    isAdmin,
+    isActive,
+    ownerId,
+    isOwner,
+    currentUserId,
+    paginationModel,
+    ordering,
+    filter,
+    setPaginationModel,
+    setFilterModel,
+    setSortModel,
+}: UserTableProps) => {
+    const { id: projectId } = useParams<{ id: string }>();
+
+    const { data: members, isLoading: isLoadingMembers } =
+        useGetProjectMembersQuery(
+            {
+                projectId: projectId || '',
+                limit: paginationModel.pageSize,
+                offset: paginationModel.pageSize * paginationModel.page,
+                ordering: ordering,
+                filter: filter,
+            },
+            { skip: !projectId },
+        );
+
+    const { data: availableUsers } = useGetUsersToInviteQuery(projectId!, {
+        skip: !isAdmin,
+    });
+
+    const [inviteMember, { isLoading: isInviting }] = useInviteMemberMutation();
+    const [openInvite, setOpenInvite] = useState(false);
+
+    const membersData = members?.data;
+    const availableUsersData = availableUsers?.data ?? [];
+
+    const userOptions = useMemo(() => {
+        if (availableUsersData.length === 0) {
+            return [{ LABEL: 'No users available to invite', VALUE: '' }];
+        }
+        return availableUsersData.map((user) => ({
+            LABEL: `${user.first_name} ${user.last_name} (${user.email})`,
+            VALUE: user.id,
+        }));
+    }, [availableUsersData]);
+
+    const roleOptions = useMemo(
+        () =>
+            MEMBER_ROLES.map((role) => ({
+                LABEL: role.label,
+                VALUE: role.value,
+            })),
+        [],
+    );
+
+    const handleInviteSubmit = async (data: ProjectUserInviteFormData) => {
+        if (!data.user_id || !projectId) return;
+        const { error } = await inviteMember({ projectId, ...data });
+        if (!error) {
+            setOpenInvite(false);
+        }
+    };
+
+    const columns = useMemo(
+        () =>
+            getUserTableColumns({
+                ownerId,
+                isAdmin,
+                isActive,
+                currentUserId,
+                isOwner,
+            }),
+        [ownerId, isAdmin, isActive, currentUserId, isOwner],
+    );
+
+    return (
+        <Stack spacing={4}>
+            <SectionCard
+                mainContent={
+                    <Table
+                        rowCount={membersData?.count ?? 0}
+                        paginationModel={paginationModel}
+                        onPaginationModelChange={setPaginationModel}
+                        onFilterModelChange={(newModel) =>
+                            handleFilterChange(newModel, setFilterModel)
+                        }
+                        onSortModelChange={(newModel) =>
+                            handleSortChange(newModel, setSortModel)
+                        }
+                        loading={isLoadingMembers}
+                        rows={membersData?.results ?? []}
+                        columns={columns}
+                        pageSize={5}
+                    />
+                }
+                titleContent={
+                    <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                    >
+                        <Typography variant="h6" fontWeight="bold">
+                            Project Members
+                        </Typography>
+                        {isAdmin && isActive && (
+                            <Button
+                                variant="contained"
+                                startIcon={<Add />}
+                                onClick={() => setOpenInvite(true)}
+                                size="small"
+                            >
+                                Invite Member
+                            </Button>
+                        )}
+                    </Stack>
+                }
+            />
+
+            <ProjectUserInviteFormContainer
+                open={openInvite}
+                onClose={() => setOpenInvite(false)}
+                onSubmit={handleInviteSubmit}
+                isLoading={isInviting}
+                userOptions={userOptions}
+                roleOptions={roleOptions}
+            />
+        </Stack>
+    );
+};

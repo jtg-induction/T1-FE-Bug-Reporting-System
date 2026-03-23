@@ -4,6 +4,7 @@ import { RootState } from 'redux/store';
 import { ApiResponse } from 'types/common';
 import { LoginSignupRefreshResponse } from 'types/common';
 
+import { HTTP_METHODS } from '@constant';
 import type {
     BaseQueryFn,
     FetchArgs,
@@ -35,7 +36,7 @@ const baseQueryWithReauth: BaseQueryFn<
         !PUBLIC_MUTATIONS.includes(api.endpoint)
     ) {
         const refreshResult = await baseQuery(
-            { url: API_PATHS.REFRESH, method: 'POST' },
+            { url: API_PATHS.REFRESH, method: HTTP_METHODS.POST },
             api,
             extraOptions,
         );
@@ -56,5 +57,5 @@ export const baseApi = createApi({
     reducerPath: 'api',
     baseQuery: baseQueryWithReauth,
     endpoints: () => ({}),
-    tagTypes: ['Projects'],
+    tagTypes: ['Projects', 'ProjectMembers'],
 });

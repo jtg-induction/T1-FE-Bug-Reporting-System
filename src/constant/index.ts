@@ -5,7 +5,13 @@ export {
     BOXSHADOW,
     COMPONENTWIDTH,
 } from './theme';
-export * from './apiPaths';
-export * from './paths';
-export * from './regex';
-export * from './config';
+export { API_PATHS, PUBLIC_MUTATIONS } from './apiPaths';
+export { PUBLIC_PATHS, PRIVATE_PATHS } from './paths';
+export { VALIDATION_REGEX } from './regex';
+export {
+    DESIGNATION_MAP,
+    PROJECT_ROLE_MAP,
+    PROJECT_STATUS_OPTIONS,
+    ROLE_OWNER,
+} from './config';
+export { HTTP_METHODS } from './httpMethods';

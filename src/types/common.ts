@@ -9,23 +9,18 @@ export interface ApiResponse<T> {
 
 /** * LIMIT-OFFSET PAGINATION METADATA
  */
-export interface PaginationMeta {
+export interface PaginationMeta<T> {
     count: number;
     next: string | null;
     previous: string | null;
-    limit: number;
-    offset: number;
+    results: T[];
 }
 
 /** * PAGINATED RESPONSE
  * Matches the 'metadata' key we used in StandardResultsSetPagination
  */
-export interface PaginatedResponse<T> {
-    success: boolean;
-    message: string;
-    metadata: PaginationMeta;
-    data: T[];
-    errors: null;
+export interface PaginatedResponse<T> extends Omit<ApiResponse<T>, 'data'> {
+    data: PaginationMeta<T>;
 }
 
 /** * ERROR STRUCTURE
@@ -57,7 +52,8 @@ export interface LoginSignupRefreshResponse {
     access: string;
 }
 
-export interface UserRegistrationData extends Omit<UserData, 'id'> {
+export interface UserRegistrationData
+    extends Omit<UserData, 'id' | 'is_owner'> {
     jiraID: string;
     jira_access_token: string;
     password: string;
@@ -98,7 +94,7 @@ export interface ProjectCreateResponse {
     id: string;
     title: string;
     description: string;
-    status: string | null;
+    status: number;
     key: string;
     jira_url: string;
     jira_project_id: string;
@@ -106,4 +102,26 @@ export interface ProjectCreateResponse {
 
 export interface ProjectListResponse extends ProjectCreateResponse {
     project_role: number;
+    owner: string;
+}
+
+export interface ProjectListData {
+    limit: number;
+    offset: number;
+    ordering: string | undefined;
+    filter: Record<string, string> | undefined;
+}
+
+export interface ProjectMemberData {
+    projectId: string;
+    limit: number;
+    offset: number;
+    ordering: string | undefined;
+    filter: Record<string, string> | undefined;
+}
+
+export interface ProjectMemberResponse {
+    id: string;
+    member: UserData;
+    role: number;
 }

@@ -1,4 +1,4 @@
-import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
+import { MarkEmailRead } from '@mui/icons-material';
 import { Stack, styled, Typography } from '@mui/material';
 
 export const SuccessContainer = styled(Stack)({
@@ -8,7 +8,7 @@ export const SuccessContainer = styled(Stack)({
     minHeight: '100vh',
 });
 
-export const SuccessIcon = styled(MarkEmailReadIcon)(
+export const SuccessIcon = styled(MarkEmailRead)(
     ({
         theme: {
             palette,
@@ -20,7 +20,6 @@ export const SuccessIcon = styled(MarkEmailReadIcon)(
         marginBottom: pxToRem(16),
     }),
 );
-
 export const SpamWarningText = styled(Typography)(
     ({
         theme: {
