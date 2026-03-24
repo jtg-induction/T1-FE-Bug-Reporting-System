@@ -2,7 +2,7 @@ export interface DeadlineChartData {
     date: string;
     missed: number;
     completedBefore: number;
-    closed: number;
+    completedOnTime: number;
 }
 
 export interface DeadlineLineChartProps {

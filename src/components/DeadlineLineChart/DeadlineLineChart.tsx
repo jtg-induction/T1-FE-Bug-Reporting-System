@@ -85,7 +85,7 @@ export const DeadlineLineChart = ({
                     <Line
                         type="monotone"
                         dataKey="completedBefore"
-                        name="Deadline Met"
+                        name="Completed Before Time"
                         stroke="#2e7d32"
                         strokeWidth={3}
                         dot={{ r: 4 }}
@@ -93,8 +93,8 @@ export const DeadlineLineChart = ({
                     />
                     <Line
                         type="monotone"
-                        dataKey="closed"
-                        name="Closed Today"
+                        dataKey="completedOnTime"
+                        name="Completed On Time"
                         stroke="#0288d1"
                         strokeWidth={3}
                         dot={{ r: 4 }}

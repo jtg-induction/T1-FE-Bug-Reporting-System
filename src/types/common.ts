@@ -193,8 +193,8 @@ export interface TicketSeveritySummary {
 export interface DeadlineSummaryItem {
     day: string;
     missed: number;
-    completedBefore?: number;
-    closed?: number;
+    completed_before_time?: number;
+    completed_on_time?: number;
 }
 
 export interface UserSummaryParams {

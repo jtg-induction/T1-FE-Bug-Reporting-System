@@ -45,8 +45,8 @@ export const UserDeadlineChartContainer = () => {
         return deadlineData.map((item) => ({
             date: item.day ? item.day.split('T')[0] : 'Unknown Date',
             missed: item.missed || 0,
-            completedBefore: item.completedBefore || 0,
-            closed: item.closed || 0,
+            completedBefore: item.completed_before_time || 0,
+            completedOnTime: item.completed_on_time || 0,
         }));
     }, [summaryResponse]);
 

@@ -14,7 +14,7 @@ export const Table = ({
     rowCount,
     ...props
 }: TableProps & DataGridProps) => (
-    <Box>
+    <Box height="60vh">
         <DataGrid
             autoHeight
             rows={rows}
