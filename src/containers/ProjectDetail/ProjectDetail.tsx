@@ -100,7 +100,7 @@ export const ProjectDetailContainer = ({
         }
 
         return otherMembers.map((m) => ({
-            LABEL: `${m.member.first_name} ${m.member.last_name} (${m.role === 1 ? 'Admin' : 'Developer'})`,
+            LABEL: `${m.member.first_name} ${m.member.last_name} (${m.role === 2 ? 'Admin' : 'Developer'})`,
             VALUE: m.member.id,
         }));
     }, [projectMembersData, currentUserData?.id]);
