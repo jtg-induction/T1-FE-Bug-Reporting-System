@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { Tabs, Typography } from '@mui/material';
 
@@ -13,7 +13,7 @@ import { ProjectDetailContainer } from '@containers';
 import { NotFoundPage } from '@pages/NotFoundPage';
 import { useGetMeQuery, useGetProjectQuery } from '@service';
 
-import { DASHBOARD_TEXT } from './ProjectDashboard.config';
+import { DASHBOARD_TEXT, TAB_MAP } from './ProjectDashboard.config';
 import {
     StyledDashboardContainer,
     StyledTab,
@@ -23,12 +23,13 @@ import {
 } from './ProjectDashboard.styles';
 
 export const ProjectDashboardContainer = () => {
-    const { id: projectId } = useParams<{ id: string }>();
-    const [tabValue, setTabValue] = useState(0);
+    const { id: projectId, tab } = useParams<{ id: string; tab?: string }>();
+    const navigate = useNavigate();
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
         pageSize: 5,
     });
+    const tabValue = tab ? TAB_MAP.indexOf(tab) : 0;
     const [filterModel, setFilterModel] = useState({});
     const [sortModel, setSortModel] = useState<string>();
 
@@ -37,6 +38,12 @@ export const ProjectDashboardContainer = () => {
         projectId as string,
         { skip: !projectId },
     );
+
+    useEffect(() => {
+        if (!tab) {
+            navigate(`/projects/${projectId}/tickets`, { replace: true });
+        }
+    }, [tab, projectId, navigate]);
 
     if (isLoading) {
         return (
@@ -56,7 +63,8 @@ export const ProjectDashboardContainer = () => {
     const isOwner = projectData?.owner === currentUserData?.id;
 
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-        setTabValue(newValue);
+        const tabName = TAB_MAP[newValue];
+        navigate(`/projects/${projectId}/${tabName}`);
     };
 
     return (

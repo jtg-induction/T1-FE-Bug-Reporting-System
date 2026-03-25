@@ -1,19 +1,26 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAppSelector } from 'redux/store';
 
 import { PUBLIC_PATHS } from '@constant';
 import { useGetMeQuery } from '@service';
 
-/**
- * Route guard component that restricts access to authenticated users.
- * Redirects to login if no user data is found or the session is invalid.
- */
 export const ProtectedRoute = () => {
     const { data, isLoading } = useGetMeQuery();
     const access = useAppSelector((state) => state.auth.access);
+    const location = useLocation();
 
     if (isLoading) return null;
-    if (!data && !access) return <Navigate to={PUBLIC_PATHS.LOGIN} replace />;
+
+    if (!data && !access) {
+        const targetUrl = `${location.pathname}${location.search}`;
+        const continueParam = encodeURIComponent(targetUrl);
+        return (
+            <Navigate
+                to={`${PUBLIC_PATHS.LOGIN}?continue=${continueParam}`}
+                replace
+            />
+        );
+    }
 
     return <Outlet />;
 };

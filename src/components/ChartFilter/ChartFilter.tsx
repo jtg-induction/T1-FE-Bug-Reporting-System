@@ -152,11 +152,11 @@ export const ChartFilter = ({
                 )}
 
                 <FilterFormControl size="small">
-                    <InputLabel id="date-filter">Date Range</InputLabel>
+                    <InputLabel id="date-filter">Deadline Range</InputLabel>
                     <Select
                         labelId="date-filter"
                         value={filters.dateRangeType}
-                        label="Date Range"
+                        label="Deadline Range"
                         onChange={handleDateRangeTypeChange}
                     >
                         <MenuItem value="week">Current Week</MenuItem>
