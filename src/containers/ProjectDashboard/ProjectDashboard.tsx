@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -25,13 +25,7 @@ import {
 export const ProjectDashboardContainer = () => {
     const { id: projectId, tab } = useParams<{ id: string; tab?: string }>();
     const navigate = useNavigate();
-    const [paginationModel, setPaginationModel] = useState({
-        page: 0,
-        pageSize: 5,
-    });
     const tabValue = tab ? TAB_MAP.indexOf(tab) : 0;
-    const [filterModel, setFilterModel] = useState({});
-    const [sortModel, setSortModel] = useState<string>();
 
     const { data: currentUser } = useGetMeQuery();
     const { data: project, isLoading } = useGetProjectQuery(
@@ -94,12 +88,6 @@ export const ProjectDashboardContainer = () => {
                 {tabValue === 1 && (
                     <StyledTabPanel>
                         <ProjectUsers
-                            filter={filterModel}
-                            ordering={sortModel}
-                            paginationModel={paginationModel}
-                            setPaginationModel={setPaginationModel}
-                            setFilterModel={setFilterModel}
-                            setSortModel={setSortModel}
                             isAdmin={isAdmin}
                             isActive={isActive}
                             ownerId={projectData?.owner}

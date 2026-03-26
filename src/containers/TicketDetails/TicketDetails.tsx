@@ -15,7 +15,15 @@ import {
     Person,
     Speed,
 } from '@mui/icons-material';
-import { Box, Button, Chip, Divider, Stack, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Chip,
+    Divider,
+    Stack,
+    Tooltip,
+    Typography,
+} from '@mui/material';
 
 import { ActionMenu } from '@components';
 import { TICKET_SEVERITY_MAP, TICKET_STATUS_MAP } from '@constant';
@@ -84,8 +92,8 @@ export const TicketDashboardContainer = () => {
     const handleDelete = async () => {
         try {
             await deleteTicket({
-                projectId: projectId,
-                ticketId: ticketId,
+                projectId: projectId!,
+                ticketId: ticketId!,
             }).unwrap();
         } catch {
             dispatch(
@@ -140,18 +148,18 @@ export const TicketDashboardContainer = () => {
                             color="primary"
                             sx={{ lineHeight: 1 }}
                         >
-                            {d.key}
+                            {d?.key}
                         </Typography>
-                        <TruncatedTitle variant="h4">{d.title}</TruncatedTitle>
+                        <TruncatedTitle variant="h4">{d?.title}</TruncatedTitle>
                     </Stack>
 
-                    {d.is_active && (
+                    {d?.is_active && (
                         <Stack direction="row" spacing={1} alignItems="center">
                             <Button
                                 size="small"
                                 onClick={() =>
                                     void (
-                                        d.is_subscribed
+                                        d?.is_subscribed
                                             ? unsubscribe
                                             : subscribe
                                     )({
@@ -188,24 +196,28 @@ export const TicketDashboardContainer = () => {
                         <Typography variant="caption" className="label">
                             Assignee
                         </Typography>
-                        <UserInfo>
-                            <Person fontSize="inherit" />
-                            <Typography variant="body2" noWrap>
-                                {d.assignee || 'Unassigned'}
-                            </Typography>
-                        </UserInfo>
+                        <Tooltip title={d?.assignee_email}>
+                            <UserInfo>
+                                <Person fontSize="inherit" />
+                                <Typography variant="body2" noWrap>
+                                    {d?.assignee_name || 'Unassigned'}
+                                </Typography>
+                            </UserInfo>
+                        </Tooltip>
                     </MetaItem>
 
                     <MetaItem>
                         <Typography variant="caption" className="label">
                             Reporter
                         </Typography>
-                        <UserInfo>
-                            <Person fontSize="inherit" />
-                            <Typography variant="body2" noWrap>
-                                {d.reporter}
-                            </Typography>
-                        </UserInfo>
+                        <Tooltip title={d?.reporter_email}>
+                            <UserInfo>
+                                <Person fontSize="inherit" />
+                                <Typography variant="body2" noWrap>
+                                    {d?.reporter_name}
+                                </Typography>
+                            </UserInfo>
+                        </Tooltip>
                     </MetaItem>
 
                     <MetaItem>
@@ -219,13 +231,22 @@ export const TicketDashboardContainer = () => {
                         >
                             <Speed
                                 fontSize="inherit"
-                                color={TICKET_SEVERITY_MAP[d.severity][1]}
+                                color={
+                                    d?.severity
+                                        ? TICKET_SEVERITY_MAP[d.severity][1]
+                                        : 'primary'
+                                }
                             />
                             <Typography
-                                color={TICKET_SEVERITY_MAP[d.severity][1]}
+                                color={
+                                    d?.severity
+                                        ? TICKET_SEVERITY_MAP[d.severity][1]
+                                        : 'primary'
+                                }
                                 variant="body2"
                             >
-                                {TICKET_SEVERITY_MAP[d.severity][0]}
+                                {d?.severity &&
+                                    TICKET_SEVERITY_MAP[d.severity][0]}
                             </Typography>
                         </Stack>
                     </MetaItem>
@@ -251,7 +272,7 @@ export const TicketDashboardContainer = () => {
                     <Typography variant="subtitle2" gutterBottom>
                         Description
                     </Typography>
-                    <BodyText variant="body1">{d.description}</BodyText>
+                    <BodyText variant="body1">{d?.description}</BodyText>
                 </Box>
             </TicketContentCard>
 

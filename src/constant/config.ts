@@ -6,6 +6,12 @@ export const PROJECT_ROLE_MAP: Record<number, string> = {
 };
 
 export const ROLE_OWNER = 3;
+
+export const PROJECT_ROLE_OPTIONS = [
+    { LABEL: 'Developer', VALUE: 1 },
+    { LABEL: 'Admin', VALUE: 2 },
+];
+
 export const PROJECT_STATUS_MAP: Record<number, string> = {
     1: 'Archived',
     2: 'Active',

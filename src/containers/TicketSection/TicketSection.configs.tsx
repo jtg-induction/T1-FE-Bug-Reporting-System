@@ -1,5 +1,6 @@
 import { TicketCreateResponse } from 'types/common';
 
+import { Tooltip } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
 
 export const columns: GridColDef<TicketCreateResponse>[] = [
@@ -9,8 +10,16 @@ export const columns: GridColDef<TicketCreateResponse>[] = [
         width: 80,
         align: 'center',
         headerAlign: 'center',
-        renderCell: (params) =>
-            params.api.getRowIndexRelativeToVisibleRows(params.id) + 1,
+        sortable: false,
+        filterable: false,
+        renderCell: (params) => {
+            const paginationModel = params.api.state.pagination.paginationModel;
+            const page = paginationModel.page;
+            const pageSize = paginationModel.pageSize;
+            const relativeIndex =
+                params.api.getRowIndexRelativeToVisibleRows(params.id) + 1;
+            return page * pageSize + relativeIndex;
+        },
     },
     {
         field: 'title',
@@ -19,14 +28,36 @@ export const columns: GridColDef<TicketCreateResponse>[] = [
         minWidth: 200,
     },
     {
-        field: 'reporter',
+        field: 'reporter_name',
         headerName: 'Reporter',
         width: 280,
+        renderCell: (params) => {
+            const displayValue = params.row.reporter_name;
+
+            const hoverValue = params.row.reporter_email;
+
+            return (
+                <Tooltip title={hoverValue}>
+                    <span>{displayValue}</span>
+                </Tooltip>
+            );
+        },
     },
     {
-        field: 'assignee',
+        field: 'assignee_name',
         headerName: 'Assignee',
         width: 320,
+        renderCell: (params) => {
+            const displayValue = params.row.assignee_name || 'Unassigned';
+
+            const hoverValue = params.row.assignee_email;
+
+            return (
+                <Tooltip title={hoverValue}>
+                    <span>{displayValue}</span>
+                </Tooltip>
+            );
+        },
     },
     {
         field: 'severity',

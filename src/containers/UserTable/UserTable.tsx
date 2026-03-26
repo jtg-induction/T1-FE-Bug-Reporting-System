@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { handleFilterChange, handleSortChange } from 'utils/utils';
 
 import { Add } from '@mui/icons-material';
@@ -25,6 +25,7 @@ import {
 
 import { getUserTableColumns, MEMBER_ROLES } from './UserTable.config';
 import { UserTableProps } from './UserTable.types';
+import { useAppDispatch } from 'redux/store';
 
 export const UserTable = ({
     isAdmin,
@@ -32,23 +33,24 @@ export const UserTable = ({
     ownerId,
     isOwner,
     currentUserId,
-    paginationModel,
-    ordering,
-    filter,
-    setPaginationModel,
-    setFilterModel,
-    setSortModel,
-}: UserTableProps) => {
+}: ProjectUsersProps) => {
     const { id: projectId } = useParams<{ id: string }>();
-
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const [paginationModel, setPaginationModel] = useState({
+        page: 0,
+        pageSize: 5,
+    });
+    const [filterModel, setFilterModel] = useState({});
+    const [sortModel, setSortModel] = useState<string>();
     const { data: members, isLoading: isLoadingMembers } =
         useGetProjectMembersQuery(
             {
-                projectId: projectId || '',
+                projectId: projectId!,
                 limit: paginationModel.pageSize,
                 offset: paginationModel.pageSize * paginationModel.page,
-                ordering: ordering,
-                filter: filter,
+                ordering: sortModel,
+                filter: filterModel,
             },
             { skip: !projectId },
         );

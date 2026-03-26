@@ -75,11 +75,11 @@ export interface VerifyLinkData {
 }
 
 export interface UpdateUserData {
-    first_name: string;
-    last_name: string;
-    phone: string | null;
-    date_of_birth: string | null | undefined;
-    designation: string | number;
+    first_name?: string;
+    last_name?: string;
+    phone?: string | null;
+    date_of_birth?: string | null;
+    designation?: string | number;
 }
 
 export interface ProjectCreateData {
@@ -110,7 +110,7 @@ export interface ProjectListData {
     limit: number;
     offset: number;
     ordering: string | undefined;
-    filter: Record<string, string> | undefined;
+    filter: object | undefined;
 }
 
 export interface ProjectMemberData {
@@ -137,11 +137,16 @@ export interface TicketCreateData {
     deadline?: string;
 }
 
-export interface TicketCreateResponse extends TicketCreateData {
+export interface TicketCreateResponse
+    extends Omit<TicketCreateData, 'assignee'> {
     id: string;
     jira_key: string;
     key: string;
-    reporter: string;
+    reporter_email: string;
+    reporter_name: string;
+    assignee_id: string;
+    assignee_email: string;
+    assignee_name: string;
     is_subscribed: boolean;
     is_active: boolean;
     project: string;

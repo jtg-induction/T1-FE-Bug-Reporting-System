@@ -5,7 +5,7 @@ import { ProjectListResponse } from 'types/common';
 import { handleFilterChange, handleSortChange } from 'utils/utils';
 
 import { Add } from '@mui/icons-material';
-import { Button, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Button, useMediaQuery, useTheme } from '@mui/material';
 import { GridRowParams } from '@mui/x-data-grid';
 
 import { SectionCard, Table } from '@components';
@@ -25,7 +25,7 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
         page: 0,
         pageSize: 10,
     });
-    const [filterModel, setFilterModel] = useState({ status: 'active' });
+    const [filterModel, setFilterModel] = useState<object>({ status: 2 });
     const [sortModel, setSortModel] = useState<string>();
 
     const { data: projects, isLoading } = useGetProjectsQuery({
@@ -45,7 +45,6 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
         <SectionCard
             titleContent={
                 <HeaderStack>
-                    <Typography variant="h2">Active Projects</Typography>
                     <Button
                         variant="contained"
                         startIcon={!isMobile && <Add />}
@@ -71,6 +70,19 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
                     onPaginationModelChange={setPaginationModel}
                     onRowClick={handleRowClick}
                     sx={{ cursor: 'pointer' }}
+                    initialState={{
+                        filter: {
+                            filterModel: {
+                                items: [
+                                    {
+                                        field: 'status',
+                                        operator: 'is',
+                                        value: 2,
+                                    },
+                                ],
+                            },
+                        },
+                    }}
                 />
             }
         />

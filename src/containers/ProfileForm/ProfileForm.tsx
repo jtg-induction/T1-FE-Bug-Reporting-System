@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import {
     resetCancelTrigger,
     resetSubmitTrigger,
@@ -47,6 +47,11 @@ export const ProfileFormContainer = ({
         mode: 'onTouched',
     });
 
+    const [dateOfBirth, phone] = useWatch({
+        control,
+        name: ['date_of_birth', 'phone'],
+    });
+
     useEffect(() => {
         dispatch(setFormDirty(isDirty));
     }, [isDirty, dispatch]);
@@ -56,7 +61,7 @@ export const ProfileFormContainer = ({
             reset({
                 first_name: activeUser.first_name || '',
                 last_name: activeUser.last_name || '',
-                date_of_birth: activeUser.date_of_birth ?? '',
+                date_of_birth: activeUser.date_of_birth ?? null,
                 phone: activeUser.phone || '',
                 designation: activeUser.designation || '',
                 jiraID: activeUser.jiraID || '',
@@ -179,19 +184,23 @@ export const ProfileFormContainer = ({
                             direction={{ xs: 'column', md: 'row' }}
                             spacing={4}
                         >
-                            <FormField
-                                name="date_of_birth"
-                                label="Date of Birth"
-                                type="date"
-                                control={control}
-                                editStatus={editStatus}
-                            />
-                            <FormField
-                                name="phone"
-                                label="Phone Number"
-                                control={control}
-                                editStatus={editStatus}
-                            />
+                            {(editStatus || dateOfBirth) && (
+                                <FormField
+                                    name="date_of_birth"
+                                    label="Date of Birth"
+                                    type="date"
+                                    control={control}
+                                    editStatus={editStatus}
+                                />
+                            )}
+                            {(editStatus || phone) && (
+                                <FormField
+                                    name="phone"
+                                    label="Phone Number"
+                                    control={control}
+                                    editStatus={editStatus}
+                                />
+                            )}
                         </Stack>
                     </Box>
                     {isEditable && editStatus && (

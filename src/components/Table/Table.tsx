@@ -1,7 +1,63 @@
-import Box from '@mui/material/Box';
-import { DataGrid, DataGridProps } from '@mui/x-data-grid';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import { Badge, Box } from '@mui/material';
+import {
+    DataGrid,
+    DataGridProps,
+    FilterPanelTrigger,
+    gridFilterModelSelector,
+    Toolbar,
+    ToolbarButton,
+    useGridApiContext,
+    useGridSelector,
+} from '@mui/x-data-grid';
 
+import { StyledBox } from './Table.styles';
 import { TableProps } from './Table.types';
+
+const CustomFilterButton = () => {
+    const apiRef = useGridApiContext();
+    const filterModel = useGridSelector(apiRef, gridFilterModelSelector);
+
+    const activeFiltersCount = filterModel.items.filter(
+        (item) =>
+            item.value !== undefined &&
+            item.value !== null &&
+            item.value !== '',
+    ).length;
+
+    const hasActiveFilters = activeFiltersCount > 0;
+
+    return (
+        <FilterPanelTrigger
+            render={
+                <ToolbarButton color={hasActiveFilters ? 'primary' : 'inherit'}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Badge
+                            badgeContent={activeFiltersCount}
+                            color="primary"
+                            variant="dot"
+                            invisible={!hasActiveFilters}
+                            sx={{
+                                '& .MuiBadge-badge': {
+                                    top: 2,
+                                    right: 2,
+                                },
+                            }}
+                        >
+                            <FilterListIcon fontSize="medium" />
+                        </Badge>
+                    </Box>
+                </ToolbarButton>
+            }
+        />
+    );
+};
+
+const CustomToolbar = () => (
+    <Toolbar>
+        <CustomFilterButton />
+    </Toolbar>
+);
 
 export const Table = ({
     loading,
@@ -14,7 +70,7 @@ export const Table = ({
     rowCount,
     ...props
 }: TableProps & DataGridProps) => (
-    <Box height="60vh">
+    <StyledBox>
         <DataGrid
             autoHeight
             rows={rows}
@@ -30,7 +86,12 @@ export const Table = ({
             sortingMode="server"
             pageSizeOptions={[10]}
             disableRowSelectionOnClick
+            disableColumnMenu
+            showToolbar
+            slots={{
+                toolbar: CustomToolbar,
+            }}
             {...props}
         />
-    </Box>
+    </StyledBox>
 );

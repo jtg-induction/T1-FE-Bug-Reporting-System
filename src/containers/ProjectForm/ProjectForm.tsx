@@ -52,12 +52,14 @@ export const ProjectFormContainer = ({
             >
                 <Stack spacing={3} mt={1}>
                     <FormField
+                        required
                         name="title"
                         label="Title"
                         control={control}
                         editStatus={true}
                     />
                     <FormField
+                        required
                         name="description"
                         label="Description"
                         control={control}
@@ -66,12 +68,14 @@ export const ProjectFormContainer = ({
                         rows={3}
                     />
                     <FormField
+                        required
                         name="key"
                         label="Project Key"
                         control={control}
                         editStatus={true}
                     />
                     <FormField
+                        required
                         name="status"
                         label="Status"
                         type="select"
@@ -80,6 +84,7 @@ export const ProjectFormContainer = ({
                         options={PROJECT_STATUS_OPTIONS}
                     />
                     <FormField
+                        required
                         name="jira_url"
                         label="Jira URL"
                         control={control}

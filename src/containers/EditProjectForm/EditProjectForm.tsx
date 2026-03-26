@@ -45,12 +45,14 @@ export const EditProjectFormContainer = ({
             >
                 <Stack spacing={3}>
                     <FormField
+                        required
                         name="title"
                         label="Title"
                         control={control}
                         editStatus={true}
                     />
                     <FormField
+                        required
                         name="description"
                         label="Description"
                         control={control}

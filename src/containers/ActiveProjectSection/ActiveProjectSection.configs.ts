@@ -4,6 +4,7 @@ import { GridColDef } from '@mui/x-data-grid';
 
 import {
     PROJECT_ROLE_MAP,
+    PROJECT_ROLE_OPTIONS,
     PROJECT_STATUS_MAP,
     PROJECT_STATUS_OPTIONS,
 } from '@constant';
@@ -15,8 +16,16 @@ export const columns: GridColDef<ProjectListResponse>[] = [
         width: 80,
         align: 'center',
         headerAlign: 'center',
-        renderCell: (params) =>
-            params.api.getRowIndexRelativeToVisibleRows(params.id) + 1,
+        sortable: false,
+        filterable: false,
+        renderCell: (params) => {
+            const paginationModel = params.api.state.pagination.paginationModel;
+            const page = paginationModel.page;
+            const pageSize = paginationModel.pageSize;
+            const relativeIndex =
+                params.api.getRowIndexRelativeToVisibleRows(params.id) + 1;
+            return page * pageSize + relativeIndex;
+        },
     },
     {
         field: 'key',
@@ -33,7 +42,12 @@ export const columns: GridColDef<ProjectListResponse>[] = [
         field: 'project_role',
         headerName: 'Role',
         width: 160,
-        valueGetter: (value) => PROJECT_ROLE_MAP[value] || 'Unknown',
+        type: 'singleSelect',
+        valueOptions: PROJECT_ROLE_OPTIONS.map((item) => ({
+            value: item.VALUE,
+            label: item.LABEL,
+        })),
+        valueFormatter: (value) => PROJECT_ROLE_MAP[value],
     },
     {
         field: 'status',
@@ -41,7 +55,7 @@ export const columns: GridColDef<ProjectListResponse>[] = [
         width: 160,
         type: 'singleSelect',
         valueOptions: PROJECT_STATUS_OPTIONS.map((item) => ({
-            value: item.LABEL.toLowerCase(),
+            value: item.VALUE,
             label: item.LABEL,
         })),
         valueFormatter: (params) => PROJECT_STATUS_MAP[params],

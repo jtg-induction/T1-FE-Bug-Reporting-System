@@ -81,12 +81,14 @@ export const TicketFormContainer = ({
             >
                 <Stack spacing={3} sx={{ mt: 1 }}>
                     <FormField
+                        required
                         name="title"
                         label="Title"
                         control={control}
                         editStatus={true}
                     />
                     <FormField
+                        required
                         name="description"
                         label="Description"
                         control={control}
@@ -97,6 +99,7 @@ export const TicketFormContainer = ({
 
                     <Stack direction="row" spacing={2}>
                         <FormField
+                            required
                             name="status"
                             label="Status"
                             type="select"
@@ -106,6 +109,7 @@ export const TicketFormContainer = ({
                             fullWidth
                         />
                         <FormField
+                            required
                             name="severity"
                             label="Severity"
                             type="select"

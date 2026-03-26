@@ -27,7 +27,7 @@ export const TicketSection = ({ isAdmin, isActive }: TicketSectionProps) => {
 
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
-        pageSize: 5,
+        pageSize: 10,
     });
     const [filterModel, setFilterModel] = useState({});
     const [sortModel, setSortModel] = useState<string>();

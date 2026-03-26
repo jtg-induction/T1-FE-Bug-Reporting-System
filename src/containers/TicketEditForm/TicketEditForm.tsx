@@ -58,7 +58,14 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
 
     useEffect(() => {
         if (ticket && open) {
-            reset(ticket);
+            const mappedValues = {
+                ...ticket,
+                assignee: ticket.assignee_id ?? '',
+                deadline: ticket.deadline
+                    ? ticket.deadline.split('T')[0]
+                    : null,
+            };
+            reset(mappedValues);
         }
     }, [ticket, reset, open]);
 
@@ -110,12 +117,14 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
                     {perm >= 3 && (
                         <>
                             <FormField
+                                required
                                 name="title"
                                 label="Title"
                                 control={control}
                                 editStatus={true}
                             />
                             <FormField
+                                required
                                 name="description"
                                 label="Description"
                                 control={control}
@@ -129,6 +138,7 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
                     <Stack direction="row" spacing={2}>
                         {perm >= 2 && (
                             <FormField
+                                required
                                 name="status"
                                 label="Status"
                                 type="select"
@@ -146,6 +156,7 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
                         )}
                         {perm >= 3 && (
                             <FormField
+                                required
                                 name="severity"
                                 label="Severity"
                                 type="select"
