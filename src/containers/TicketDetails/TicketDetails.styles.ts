@@ -56,6 +56,7 @@ export const TruncatedTitle = styled(Typography)(
         [breakpoints.up('md')]: {
             fontSize: pxToRem(36),
         },
+        maxWidth: 180,
     }),
 );
 
@@ -63,10 +64,15 @@ export const MetadataStack = styled(Stack)(
     ({
         theme: {
             typography: { pxToRem },
+            breakpoints,
         },
     }) => ({
         flexDirection: 'row',
         flexWrap: 'wrap',
+        [breakpoints.down('md')]: {
+            flexDirection: 'column',
+            flexWrap: 'nowrap',
+        },
         gap: pxToRem(20),
         alignItems: 'start',
     }),
@@ -81,6 +87,7 @@ export const MetaItem = styled(Stack)(
     }) => ({
         gap: pxToRem(4),
         minWidth: 0,
+        maxWidth: 160,
         '& .label': {
             textTransform: 'uppercase',
             fontSize: pxToRem(12),
@@ -102,9 +109,20 @@ export const UserInfo = styled(Stack)(
     }),
 );
 
-export const BodyText = styled(Typography)(({ theme }) => ({
-    color: theme.palette.text.secondary,
-}));
+export const BodyText = styled(Typography, {
+    shouldForwardProp: (prop) => prop !== 'isExpanded',
+})<{ isExpanded: boolean }>(
+    ({
+        isExpanded,
+        theme: {
+            mixins: { lineClamp },
+            palette,
+        },
+    }) => ({
+        color: palette.text.secondary,
+        ...(!isExpanded ? lineClamp(1) : {}),
+    }),
+);
 
 export const CommentSection = styled(Stack)(
     ({

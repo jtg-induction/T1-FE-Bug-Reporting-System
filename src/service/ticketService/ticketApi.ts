@@ -41,10 +41,23 @@ export const ticketApi = baseApi.injectEndpoints({
             PaginatedResponse<TicketCreateResponse>,
             TicketListData
         >({
-            query: ({ projectId, limit, offset, ordering, filter }) => ({
-                url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}`,
-                params: { limit, offset, ordering, ...filter },
-            }),
+            query: ({ projectId, limit, offset, ordering, filter }) => {
+                const cleanFilter = filter
+                    ? Object.fromEntries(
+                          Object.entries(filter).map(([key, value]) => [
+                              key,
+                              value instanceof Date
+                                  ? value.toISOString().split('T')[0]
+                                  : value,
+                          ]),
+                      )
+                    : {};
+
+                return {
+                    url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}`,
+                    params: { limit, offset, ordering, ...cleanFilter },
+                };
+            },
             providesTags: ['Tickets'],
         }),
         getTicket: builder.query<

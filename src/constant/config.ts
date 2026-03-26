@@ -58,3 +58,5 @@ export const TICKET_SEVERITY_MAP: Record<number, [string, AlertColor]> = {
     4: ['High', 'error'],
     5: ['Highest', 'error'],
 };
+
+export const PROJECT_TITLE = 'Bug Reporting System';

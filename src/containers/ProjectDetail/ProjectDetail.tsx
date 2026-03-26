@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 import { showSnackbar } from 'redux/features/profileSlice';
@@ -11,10 +11,11 @@ import {
     Logout,
     Unarchive,
 } from '@mui/icons-material';
-import { Chip, Stack, Typography } from '@mui/material';
+import { Chip, Stack, Typography, Tooltip } from '@mui/material';
 
 import { ActionMenu, ActionMenuItem, SectionCard } from '@components';
-import { PRIVATE_PATHS, ROLE_OWNER } from '@constant';
+import { PRIVATE_PATHS, ROLE_OWNER, PROJECT_TITLE } from '@constant';
+
 import {
     EditProjectFormContainer,
     JQLImportContainer,
@@ -69,7 +70,7 @@ export const ProjectDetailContainer = ({
     const dispatch = useAppDispatch();
 
     const { data: members } = useGetProjectMembersQuery(
-        { projectId: projectId, limit: 100, offset: 0 },
+        { projectId: projectId!, limit: 100, offset: 0 },
         { skip: !projectId },
     );
     const [updateProject, { isLoading: isUpdating }] =
@@ -113,6 +114,16 @@ export const ProjectDetailContainer = ({
             status: projectData.status,
         };
     }, [projectData]);
+
+    useEffect(() => {
+        document.title = projectData
+            ? `Project: ${projectData?.key}`
+            : PROJECT_TITLE;
+
+        return () => {
+            document.title = PROJECT_TITLE;
+        };
+    }, []);
 
     const handleEditSubmit = async (data: ProjectUpdateFormData) => {
         try {
@@ -249,15 +260,22 @@ export const ProjectDetailContainer = ({
                 titleContent={
                     <StyledHeaderSection>
                         <Stack direction="row" spacing={2} alignItems="center">
-                            <Typography variant="h6" fontWeight="bold">
-                                {projectData?.title}
+                            <Tooltip title={projectData.title}>
                                 <Typography
-                                    component="span"
-                                    variant="subtitle1"
-                                    color="text.secondary"
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    noWrap
+                                    maxWidth={180}
                                 >
-                                    [{projectData?.key}]
+                                    {projectData?.title}
                                 </Typography>
+                            </Tooltip>
+                            <Typography
+                                component="span"
+                                variant="subtitle1"
+                                color="text.secondary"
+                            >
+                                [{projectData?.key}]
                             </Typography>
                             <Chip
                                 label={isActive ? 'Active' : 'Archived'}
@@ -274,7 +292,7 @@ export const ProjectDetailContainer = ({
                         <StyledDescriptionWrapper>
                             <StyledDescriptionText
                                 variant="body1"
-                                $isExpanded={isExpanded}
+                                isExpanded={isExpanded}
                             >
                                 {descriptionText}
                             </StyledDescriptionText>

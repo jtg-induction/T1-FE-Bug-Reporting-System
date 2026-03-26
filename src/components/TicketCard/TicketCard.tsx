@@ -25,6 +25,8 @@ export const TicketCard = ({ ticket, onClick }: TicketCardProps) => (
                 variant="caption"
                 color="text.disabled"
                 sx={{ fontWeight: 700 }}
+                maxWidth={80}
+                noWrap
             >
                 {ticket.jira_key}
             </Typography>

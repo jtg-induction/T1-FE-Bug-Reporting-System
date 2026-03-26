@@ -43,16 +43,20 @@ export const StyledDescriptionWrapper = styled(Box)(
 );
 
 export const StyledDescriptionText = styled(Typography, {
-    shouldForwardProp: (prop) => prop !== '$isExpanded',
-})<{ $isExpanded: boolean }>(({ $isExpanded, theme: { palette } }) => ({
-    lineHeight: 1.6,
-    color: palette.text.secondary,
-    display: '-webkit-box',
-    WebkitLineClamp: $isExpanded ? 'unset' : 1,
-    WebkitBoxOrient: 'vertical',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-}));
+    shouldForwardProp: (prop) => prop !== 'isExpanded',
+})<{ isExpanded: boolean }>(
+    ({
+        isExpanded,
+        theme: {
+            palette,
+            mixins: { lineClamp },
+        },
+    }) => ({
+        lineHeight: 1.6,
+        color: palette.text.secondary,
+        ...(!isExpanded ? lineClamp(1) : {}),
+    }),
+);
 
 export const StyledShowMoreButton = styled(Button)(
     ({

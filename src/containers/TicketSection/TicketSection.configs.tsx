@@ -87,10 +87,15 @@ export const columns: GridColDef<TicketCreateResponse>[] = [
     {
         field: 'deadline',
         headerName: 'Deadline',
+        type: 'date',
         width: 160,
         valueGetter: (value) => {
+            if (!value) return null;
+            return new Date(value);
+        },
+        valueFormatter: (value: Date | null) => {
             if (!value) return 'None';
-            return new Date(value).toDateString();
+            return value.toDateString();
         },
     },
 ];

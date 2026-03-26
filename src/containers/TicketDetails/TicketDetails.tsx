@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 import { showSnackbar } from 'redux/features/profileSlice';
@@ -26,12 +26,17 @@ import {
 } from '@mui/material';
 
 import { ActionMenu } from '@components';
-import { TICKET_SEVERITY_MAP, TICKET_STATUS_MAP } from '@constant';
+import {
+    PROJECT_TITLE,
+    TICKET_SEVERITY_MAP,
+    TICKET_STATUS_MAP,
+} from '@constant';
 import {
     CommentSectionContainer,
     MoveTicketContainer,
     TicketEditForm,
 } from '@containers';
+import { StyledShowMoreButton } from '@containers/ProjectDetail/ProjectDetail.styles';
 import * as Pages from '@pages';
 import {
     useDeleteTicketMutation,
@@ -75,14 +80,25 @@ export const TicketDashboardContainer = () => {
     const [subscribe] = useSubscribeTicketMutation();
     const [unsubscribe] = useUnsubscribeTicketMutation();
     const [isMoveOpen, setIsMoveOpen] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
     const dispatch = useAppDispatch();
+
+    const d = ticket?.data;
+
+    useEffect(() => {
+        document.title = d ? `Ticket: ${d.jira_key}` : PROJECT_TITLE;
+
+        return () => {
+            document.title = PROJECT_TITLE;
+        };
+    }, [d]);
 
     if (isLoading) return <>Loading...</>;
     if (isError) return <Pages.NotFoundPage />;
 
-    const d = ticket?.data;
     const perm = d?.permission_class;
     const isActive = d?.is_active;
+    const isLongDescription = d?.description.length > 150;
 
     const handleOpenEdit = (statusOnly: boolean) => {
         setIsStatusOnly(statusOnly);
@@ -150,7 +166,9 @@ export const TicketDashboardContainer = () => {
                         >
                             {d?.key}
                         </Typography>
-                        <TruncatedTitle variant="h4">{d?.title}</TruncatedTitle>
+                        <TruncatedTitle variant="h4" noWrap>
+                            {d?.title}
+                        </TruncatedTitle>
                     </Stack>
 
                     {d?.is_active && (
@@ -196,28 +214,38 @@ export const TicketDashboardContainer = () => {
                         <Typography variant="caption" className="label">
                             Assignee
                         </Typography>
-                        <Tooltip title={d?.assignee_email}>
-                            <UserInfo>
-                                <Person fontSize="inherit" />
-                                <Typography variant="body2" noWrap>
+                        <UserInfo>
+                            <Person fontSize="inherit" />
+                            <Tooltip title={d?.assignee_email || 'Unassigned'}>
+                                <Typography
+                                    variant="body2"
+                                    noWrap
+                                    overflow={'hidden'}
+                                    textOverflow={'ellipsis'}
+                                >
                                     {d?.assignee_name || 'Unassigned'}
                                 </Typography>
-                            </UserInfo>
-                        </Tooltip>
+                            </Tooltip>
+                        </UserInfo>
                     </MetaItem>
 
                     <MetaItem>
                         <Typography variant="caption" className="label">
                             Reporter
                         </Typography>
-                        <Tooltip title={d?.reporter_email}>
-                            <UserInfo>
-                                <Person fontSize="inherit" />
-                                <Typography variant="body2" noWrap>
+                        <UserInfo>
+                            <Person fontSize="inherit" />
+                            <Tooltip title={d?.reporter_email}>
+                                <Typography
+                                    variant="body2"
+                                    noWrap
+                                    overflow={'hidden'}
+                                    textOverflow={'ellipsis'}
+                                >
                                     {d?.reporter_name}
                                 </Typography>
-                            </UserInfo>
-                        </Tooltip>
+                            </Tooltip>
+                        </UserInfo>
                     </MetaItem>
 
                     <MetaItem>
@@ -272,7 +300,18 @@ export const TicketDashboardContainer = () => {
                     <Typography variant="subtitle2" gutterBottom>
                         Description
                     </Typography>
-                    <BodyText variant="body1">{d?.description}</BodyText>
+                    <BodyText variant="body1" isExpanded={isExpanded}>
+                        {d?.description}
+                    </BodyText>
+                    {isLongDescription && (
+                        <StyledShowMoreButton
+                            size="small"
+                            onClick={() => setIsExpanded(!isExpanded)}
+                            disableRipple
+                        >
+                            {isExpanded ? 'Show less' : 'Show more'}
+                        </StyledShowMoreButton>
+                    )}
                 </Box>
             </TicketContentCard>
 

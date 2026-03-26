@@ -17,6 +17,9 @@ export {
     TICKET_SEVERITY_OPTIONS,
     TICKET_STATUS_MAP,
     TICKET_STATUS_OPTIONS,
+    PROJECT_ROLE_OPTIONS,
+    PROJECT_STATUS_MAP,
+    PROJECT_TITLE,
 } from './config';
 export { HTTP_METHODS } from './httpMethods';
 export * from './externalUrls';
