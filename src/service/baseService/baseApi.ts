@@ -20,6 +20,8 @@ const baseQuery = fetchBaseQuery({
         if (token) {
             headers.set('Authorization', `Bearer ${token}`);
         }
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        headers.set('x-timezone', userTimezone);
         return headers;
     },
 });
