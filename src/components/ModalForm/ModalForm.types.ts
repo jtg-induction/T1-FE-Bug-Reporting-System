@@ -1,6 +1,6 @@
 export interface ModalFormProps {
     open: boolean;
-    title: string;
+    title: React.ReactNode;
     formId: string;
     onClose: () => void;
     isLoading: boolean;

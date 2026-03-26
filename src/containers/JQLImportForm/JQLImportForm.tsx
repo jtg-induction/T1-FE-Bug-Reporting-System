@@ -3,16 +3,20 @@ import { useParams } from 'react-router-dom';
 import { showSnackbar } from 'redux/features/profileSlice';
 import { useAppDispatch } from 'redux/store';
 
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import {
     Box,
     Button,
     Card,
     CardContent,
     CircularProgress,
+    IconButton,
+    Tooltip,
     Typography,
 } from '@mui/material';
 
 import { FormField, ModalForm } from '@components';
+import { EXTERNAL_URLS } from '@constant';
 import { useGetJQLTicketsMutation, useImportTicketMutation } from '@service';
 
 import { JQLFormValues } from './JQLImportForm.types';
@@ -72,7 +76,23 @@ export const JQLImportContainer = ({
         <ModalForm
             open={open}
             onClose={onClose}
-            title="Import Tickets via JQL"
+            title={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    Import Tickets via JQL
+                    <Tooltip title="Learn more about JQL">
+                        <IconButton
+                            component="a"
+                            href={EXTERNAL_URLS.JQL_GUIDE}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            size="small"
+                            sx={{ color: 'text.secondary' }}
+                        >
+                            <InfoOutlinedIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+            }
             formId="jql-search-form"
             isLoading={isImporting}
             submitLabel="Search"

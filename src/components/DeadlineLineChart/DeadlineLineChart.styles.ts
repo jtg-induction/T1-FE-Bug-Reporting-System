@@ -11,5 +11,6 @@ export const ChartContainer = styled(Box)(
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        paddingBottom: pxToRem(20),
     }),
 );

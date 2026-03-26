@@ -293,7 +293,7 @@ export const ProjectDetailContainer = ({
                             <StyledInfoRow>
                                 <StyledLabel>Jira URL</StyledLabel>
                                 <StyledLink
-                                    to={projectData?.jira_url}
+                                    to={`${projectData?.jira_url}/projects/${projectData?.key}`}
                                     target="_blank"
                                 >
                                     {projectData?.jira_url}

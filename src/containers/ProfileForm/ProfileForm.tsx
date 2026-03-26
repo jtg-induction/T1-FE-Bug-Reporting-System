@@ -107,14 +107,7 @@ export const ProfileFormContainer = ({
                         }),
                     );
                     dispatch(setEditStatus(false));
-                } catch {
-                    dispatch(
-                        showSnackbar({
-                            message: 'Update failed',
-                            severity: 'error',
-                        }),
-                    );
-                }
+                } catch {}
             })(),
         [userId, updateUser, reset, dispatch, handleSubmit, dirtyFields],
     );

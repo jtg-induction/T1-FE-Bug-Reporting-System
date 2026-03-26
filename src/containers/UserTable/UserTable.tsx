@@ -4,7 +4,13 @@ import { useParams } from 'react-router-dom';
 import { handleFilterChange, handleSortChange } from 'utils/utils';
 
 import { Add } from '@mui/icons-material';
-import { Button, Stack, Typography } from '@mui/material';
+import {
+    Button,
+    Stack,
+    Typography,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
 
 import { SectionCard, Table } from '@components';
 import {
@@ -56,6 +62,8 @@ export const UserTable = ({
 
     const membersData = members?.data;
     const availableUsersData = availableUsers?.data ?? [];
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const userOptions = useMemo(() => {
         if (availableUsersData.length === 0) {
@@ -129,11 +137,10 @@ export const UserTable = ({
                         {isAdmin && isActive && (
                             <Button
                                 variant="contained"
-                                startIcon={<Add />}
+                                startIcon={!isMobile && <Add />}
                                 onClick={() => setOpenInvite(true)}
-                                size="small"
                             >
-                                Invite Member
+                                {isMobile ? <Add /> : 'Invite Member'}
                             </Button>
                         )}
                     </Stack>

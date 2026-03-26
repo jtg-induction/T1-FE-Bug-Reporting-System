@@ -19,3 +19,4 @@ export {
     TICKET_STATUS_OPTIONS,
 } from './config';
 export { HTTP_METHODS } from './httpMethods';
+export * from './externalUrls';
