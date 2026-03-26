@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useNavigate } from 'react-router-dom';
+import { operatorMap } from 'constant/operatorMap';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ProjectListResponse } from 'types/common';
 import { handleFilterChange, handleSortChange } from 'utils/utils';
 
@@ -21,11 +22,61 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const pageQuery = searchParams.get('page');
+    const filterQuery = searchParams.get('filter');
+
     const [paginationModel, setPaginationModel] = useState({
-        page: 0,
+        page: pageQuery ? parseInt(pageQuery, 10) : 0,
         pageSize: 10,
     });
-    const [filterModel, setFilterModel] = useState<object>({ status: 2 });
+
+    useEffect(() => {
+        if (!filterQuery) {
+            setSearchParams(
+                (params) => {
+                    params.set('filter', 'status is 2');
+                    return params;
+                },
+                { replace: true },
+            );
+        }
+    }, []);
+
+    const initialGridFilter = (() => {
+        if (!filterQuery)
+            return { items: [{ field: 'status', operator: 'is', value: 2 }] };
+
+        const [field, operator, ...rest] = filterQuery.split(' ');
+        const valueStr = rest.join(' ');
+        const value =
+            valueStr && !isNaN(Number(valueStr)) ? Number(valueStr) : valueStr;
+
+        if (operator === 'isEmpty' || operator === 'isNotEmpty') {
+            return { items: [{ field, operator }] };
+        }
+        return { items: [{ field, operator, value }] };
+    })();
+
+    const [filterModel, setFilterModel] = useState<object>(() => {
+        if (!filterQuery) return { status: 2 };
+
+        const [field, operator, ...rest] = filterQuery.split(' ');
+        const valueStr = rest.join(' ');
+
+        if (operator === 'isEmpty' || operator === 'isNotEmpty') {
+            return { [`${field}__isnull`]: operator === 'isEmpty' };
+        }
+
+        const lookup = operatorMap[operator];
+        const key = lookup ? `${field}__${lookup}` : field;
+        const value =
+            valueStr && !isNaN(Number(valueStr)) ? Number(valueStr) : valueStr;
+
+        return { [key]: value };
+    });
+
     const [sortModel, setSortModel] = useState<string>();
 
     const { data: projects, isLoading } = useGetProjectsQuery({
@@ -41,6 +92,22 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
     const handleRowClick = (params: GridRowParams<ProjectListResponse>) => {
         navigate(`${PRIVATE_PATHS.PROJECTS}${params.row.id}`);
     };
+
+    const handlePaginationChange = (newModel: {
+        page: number;
+        pageSize: number;
+    }) => {
+        setPaginationModel(newModel);
+        setSearchParams((params) => {
+            if (newModel.page === 0) {
+                params.delete('page');
+            } else {
+                params.set('page', newModel.page.toString());
+            }
+            return params;
+        });
+    };
+
     return (
         <SectionCard
             titleContent={
@@ -62,25 +129,21 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
                     rowCount={projectsCount}
                     paginationModel={paginationModel}
                     onFilterModelChange={(newModel) =>
-                        handleFilterChange(newModel, setFilterModel)
+                        handleFilterChange(
+                            newModel,
+                            setFilterModel,
+                            setSearchParams,
+                        )
                     }
                     onSortModelChange={(newModel) =>
                         handleSortChange(newModel, setSortModel)
                     }
-                    onPaginationModelChange={setPaginationModel}
+                    onPaginationModelChange={handlePaginationChange}
                     onRowClick={handleRowClick}
                     sx={{ cursor: 'pointer' }}
                     initialState={{
                         filter: {
-                            filterModel: {
-                                items: [
-                                    {
-                                        field: 'status',
-                                        operator: 'is',
-                                        value: 2,
-                                    },
-                                ],
-                            },
+                            filterModel: initialGridFilter,
                         },
                     }}
                 />
