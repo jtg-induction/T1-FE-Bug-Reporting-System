@@ -138,13 +138,22 @@ export const ChartFilter = ({
                             </MenuItem>
 
                             {users.map((user) => (
-                                <MenuItem key={user.id} value={user.id}>
+                                <MenuItem
+                                    key={user.id}
+                                    value={user.id}
+                                    title={user.email}
+                                >
                                     <Checkbox
                                         checked={filters.selectedUserIds?.includes(
                                             user.id,
                                         )}
                                     />
-                                    <ListItemText primary={user.name} />
+                                    <ListItemText
+                                        primary={user.name}
+                                        slotProps={{
+                                            primary: { noWrap: true },
+                                        }}
+                                    />
                                 </MenuItem>
                             ))}
                         </Select>

@@ -192,13 +192,19 @@ export const ReportDownloadFormContainer = ({
                                     <MenuItem
                                         key={user.VALUE}
                                         value={user.VALUE}
+                                        title={user.LABEL}
                                     >
                                         <Checkbox
                                             checked={selectedUsersArray.includes(
                                                 user.VALUE,
                                             )}
                                         />
-                                        <ListItemText primary={user.LABEL} />
+                                        <ListItemText
+                                            primary={user.LABEL}
+                                            slotProps={{
+                                                primary: { noWrap: true },
+                                            }}
+                                        />
                                     </MenuItem>
                                 ))}
                             </Select>

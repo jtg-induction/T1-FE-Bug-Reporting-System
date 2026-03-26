@@ -72,7 +72,7 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
         const results = membersResponse?.data?.results ?? [];
         return results.map((row) => ({
             VALUE: row.member.id,
-            LABEL: `${row.member.first_name} ${row.member.last_name}`.trim(),
+            LABEL: `${row.member.first_name} ${row.member.last_name} (${row.member.email})`.trim(),
         }));
     }, [membersResponse]);
 

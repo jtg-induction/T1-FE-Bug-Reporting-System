@@ -56,6 +56,7 @@ export const ProjectPriorityChartContainer = () => {
         return results.map((row) => ({
             id: row.member.id,
             name: `${row.member.first_name} ${row.member.last_name}`.trim(),
+            email: row.member.email,
         }));
     }, [membersResponse]);
 

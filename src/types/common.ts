@@ -230,3 +230,15 @@ export interface ProjectSummaryResponse {
     ticket_severity?: TicketSeveritySummary;
     deadline_chart?: DeadlineSummaryItem[];
 }
+
+export interface JiraTicketOption {
+    jira_id: string;
+    jira_key: string;
+    title: string;
+    description: string;
+}
+
+export interface PaginatedJiraResponse {
+    results: JiraTicketOption[];
+    nextPageToken: string | null;
+}

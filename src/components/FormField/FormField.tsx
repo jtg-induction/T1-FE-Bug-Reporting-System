@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { FieldValues, useController } from 'react-hook-form';
 
-import { MenuItem, TextField } from '@mui/material';
+import { ListItemText, MenuItem, TextField } from '@mui/material';
 
 import { FormFieldProps } from './FormField.types';
 
@@ -66,8 +66,15 @@ export const FormField = <T extends FieldValues>({
             {isSelect &&
                 editStatus &&
                 options?.map((option) => (
-                    <MenuItem key={option.VALUE} value={option.VALUE}>
-                        {option.LABEL}
+                    <MenuItem
+                        key={option.VALUE}
+                        value={option.VALUE}
+                        title={option.LABEL}
+                    >
+                        <ListItemText
+                            primary={option.LABEL}
+                            slotProps={{ primary: { noWrap: true } }}
+                        />
                     </MenuItem>
                 ))}
         </TextField>

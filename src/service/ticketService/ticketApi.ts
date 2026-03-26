@@ -1,5 +1,6 @@
 import {
     ApiResponse,
+    PaginatedJiraResponse,
     PaginatedResponse,
     ProjectListResponse,
     TicketCreateData,
@@ -117,8 +118,14 @@ export const ticketApi = baseApi.injectEndpoints({
             }),
         }),
         getJQLTickets: builder.mutation<
-            ApiResponse<{ id: string; title: string; jira_key: string }[]>,
-            { projectId: string; data: Record<'jql', string> }
+            ApiResponse<PaginatedJiraResponse>,
+            {
+                projectId: string;
+                data: {
+                    jql?: string;
+                    nextPageToken?: string | null;
+                };
+            }
         >({
             query: ({ projectId, data }) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}jira-import-list/`,

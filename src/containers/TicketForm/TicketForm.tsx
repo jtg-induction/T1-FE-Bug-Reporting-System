@@ -33,7 +33,7 @@ export const TicketFormContainer = ({
         { VALUE: '', LABEL: 'Unassigned' },
         ...(members?.results?.map((user) => ({
             VALUE: user.member.id,
-            LABEL: `${user.member.first_name} ${user.member.last_name}`,
+            LABEL: `${user.member.first_name} ${user.member.last_name} (${user.member.email})`,
         })) || []),
     ];
 
