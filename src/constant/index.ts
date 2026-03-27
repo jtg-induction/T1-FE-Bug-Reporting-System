@@ -13,5 +13,9 @@ export {
     PROJECT_ROLE_MAP,
     PROJECT_STATUS_OPTIONS,
     ROLE_OWNER,
+    TICKET_SEVERITY_MAP,
+    TICKET_SEVERITY_OPTIONS,
+    TICKET_STATUS_MAP,
+    TICKET_STATUS_OPTIONS,
 } from './config';
 export { HTTP_METHODS } from './httpMethods';

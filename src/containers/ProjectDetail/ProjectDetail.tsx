@@ -6,10 +6,10 @@ import { useAppDispatch } from 'redux/store';
 
 import {
     Archive,
+    Download,
     Edit,
     Logout,
     Unarchive,
-    Download,
 } from '@mui/icons-material';
 import { Chip, Stack, Typography } from '@mui/material';
 

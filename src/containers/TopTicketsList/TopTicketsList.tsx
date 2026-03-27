@@ -33,7 +33,7 @@ export const TopTicketsList = () => {
 
     return (
         <SectionCard
-            TitleContent={
+            titleContent={
                 <HeaderStack>
                     <Stack direction="row" spacing={1} alignItems="center">
                         <TrendingUp color="primary" />
@@ -41,7 +41,7 @@ export const TopTicketsList = () => {
                     </Stack>
                 </HeaderStack>
             }
-            MainContent={
+            mainContent={
                 <Stack sx={{ justifyContent: 'space-between', height: '100%' }}>
                     <Box sx={{ mt: 1 }}>
                         {isLoading ? (

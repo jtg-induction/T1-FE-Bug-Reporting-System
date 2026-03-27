@@ -52,7 +52,7 @@ export const TicketSection = ({ isAdmin, isActive }: TicketSectionProps) => {
     return (
         <>
             <SectionCard
-                TitleContent={
+                titleContent={
                     <HeaderStack>
                         <Typography variant="h2">Tickets</Typography>
                         {isAdmin && isActive && (
@@ -66,7 +66,7 @@ export const TicketSection = ({ isAdmin, isActive }: TicketSectionProps) => {
                         )}
                     </HeaderStack>
                 }
-                MainContent={
+                mainContent={
                     <Table
                         loading={isLoading}
                         rows={ticketsData}
