@@ -10,7 +10,12 @@ export const MainLayout = styled(Stack)(
         gap: pxToRem(24),
     }),
 );
-
+export const TitleWrapper = styled(Stack)(({ theme: { breakpoints } }) => ({
+    maxWidth: '50%',
+    [breakpoints.up('md')]: {
+        maxWidth: '70%',
+    },
+}));
 export const TicketContentCard = styled(Paper)(
     ({
         theme: {
@@ -56,7 +61,7 @@ export const TruncatedTitle = styled(Typography)(
         [breakpoints.up('md')]: {
             fontSize: pxToRem(36),
         },
-        maxWidth: 180,
+        maxWidth: '100%',
     }),
 );
 

@@ -56,6 +56,7 @@ import {
     MetadataStack,
     MetaItem,
     TicketContentCard,
+    TitleWrapper,
     TruncatedTitle,
     UserInfo,
 } from './TicketDetails.styles';
@@ -156,7 +157,7 @@ export const TicketDashboardContainer = () => {
         <MainLayout>
             <TicketContentCard>
                 <FlexHeader>
-                    <Stack>
+                    <TitleWrapper>
                         <Typography
                             variant="overline"
                             color="primary"
@@ -164,10 +165,10 @@ export const TicketDashboardContainer = () => {
                         >
                             {d?.key}
                         </Typography>
-                        <TruncatedTitle variant="h4" noWrap>
+                        <TruncatedTitle variant="h4" noWrap title={d?.title}>
                             {d?.title}
                         </TruncatedTitle>
-                    </Stack>
+                    </TitleWrapper>
 
                     {d?.is_active && (
                         <Stack direction="row" spacing={1} alignItems="center">

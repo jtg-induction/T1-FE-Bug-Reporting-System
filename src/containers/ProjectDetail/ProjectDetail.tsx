@@ -11,7 +11,7 @@ import {
     Logout,
     Unarchive,
 } from '@mui/icons-material';
-import { Chip, Stack, Tooltip, Typography } from '@mui/material';
+import { Chip, Tooltip, Typography } from '@mui/material';
 
 import { ActionMenu, ActionMenuItem, SectionCard } from '@components';
 import { PRIVATE_PATHS, PROJECT_TITLE, ROLE_OWNER } from '@constant';
@@ -40,6 +40,7 @@ import {
     StyledLabel,
     StyledLink,
     StyledShowMoreButton,
+    TitleWrapper,
 } from './ProjectDetail.styles';
 import {
     ProjectDetailProps,
@@ -258,13 +259,13 @@ export const ProjectDetailContainer = ({
             <SectionCard
                 titleContent={
                     <StyledHeaderSection>
-                        <Stack direction="row" spacing={2} alignItems="center">
+                        <TitleWrapper>
                             <Tooltip title={projectData.title}>
                                 <Typography
                                     variant="h6"
                                     fontWeight="bold"
                                     noWrap
-                                    maxWidth={180}
+                                    maxWidth="100%"
                                 >
                                     {projectData?.title}
                                 </Typography>
@@ -281,7 +282,7 @@ export const ProjectDetailContainer = ({
                                 color={isActive ? 'success' : 'default'}
                                 size="small"
                             />
-                        </Stack>
+                        </TitleWrapper>
 
                         <ActionMenu items={menuOptions} />
                     </StyledHeaderSection>

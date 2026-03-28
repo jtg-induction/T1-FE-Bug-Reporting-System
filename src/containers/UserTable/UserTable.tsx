@@ -96,7 +96,7 @@ export const UserTable = ({
             { skip: !projectId },
         );
     const { data: availableUsers } = useGetUsersToInviteQuery(projectId!, {
-        skip: !isAdmin,
+        skip: !isAdmin || !isActive,
     });
 
     const [inviteMember, { isLoading: isInviting, error: inviteError }] =

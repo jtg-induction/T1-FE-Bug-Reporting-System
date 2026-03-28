@@ -17,7 +17,18 @@ export const StyledHeaderSection = styled(Stack)(
         borderBottom: `1px solid ${palette.divider}`,
     }),
 );
-
+export const TitleWrapper = styled(Stack)(
+    ({
+        theme: {
+            typography: { pxToRem },
+        },
+    }) => ({
+        maxWidth: '70%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: pxToRem(16),
+    }),
+);
 export const StyledDetailsCard = styled(Box)(
     ({
         theme: {
