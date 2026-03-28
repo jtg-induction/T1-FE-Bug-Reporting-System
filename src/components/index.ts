@@ -15,3 +15,8 @@ export { ListCard } from './ListCard';
 export { PageHeader } from './PageHeader';
 export { ActionMenu } from './ActionMenu';
 export type { ActionMenuItem, ActionMenuProps } from './ActionMenu';
+export { TicketCard } from './TicketCard';
+export { CommentInput } from './CommentInput';
+export { CommentRenderer } from './CommentRenderer';
+export { CommentItem } from './CommentItem';
+export { TicketColumn } from './TicketColumn';

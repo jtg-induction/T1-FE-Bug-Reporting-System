@@ -42,12 +42,17 @@ export const ProjectFormContainer = ({
         }
     };
 
+    const handleClose = () => {
+        reset();
+        onClose();
+    };
+
     return (
         <ModalForm
             open={open}
             title={PROJECT_FORM_CONFIG.TITLE}
             formId={PROJECT_FORM_CONFIG.ID}
-            onClose={onClose}
+            onClose={handleClose}
             isLoading={isCreating}
             submitLabel={PROJECT_FORM_CONFIG.SUBMIT_LABEL}
         >

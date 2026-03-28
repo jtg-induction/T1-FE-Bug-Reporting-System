@@ -29,3 +29,24 @@ export {
     useUnarchiveProjectMutation,
     useUpdateProjectMutation,
 } from './projectService';
+export {
+    ticketApi,
+    useCreateTicketMutation,
+    useDeleteTicketMutation,
+    useGetProjectTicketsQuery,
+    useGetTicketQuery,
+    useGetUserTicketsQuery,
+    useSubscribeTicketMutation,
+    useUnsubscribeTicketMutation,
+    useUpdateTicketMutation,
+    useGetMovableProjectsQuery,
+    useGetJQLTicketsMutation,
+    useImportTicketMutation,
+} from './ticketService';
+export {
+    commentApi,
+    useCreateCommentMutation,
+    useGetProjectCommentsQuery,
+    useDeleteCommentMutation,
+    useUpdateCommentMutation,
+} from './commentService';

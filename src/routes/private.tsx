@@ -6,6 +6,8 @@ import {
     ProjectDashboard,
     ProjectsPage,
     RejectInvitePage,
+    TicketDashboardPage,
+    TicketPage,
 } from '@pages';
 
 export const privateRoutes = [
@@ -32,5 +34,13 @@ export const privateRoutes = [
     {
         path: PRIVATE_PATHS.PROJECT_REJECT_INVITE,
         element: <RejectInvitePage />,
+    },
+    {
+        path: PRIVATE_PATHS.TICKETS,
+        element: <TicketPage />,
+    },
+    {
+        path: PRIVATE_PATHS.TICKET_DASHBOARD,
+        element: <TicketDashboardPage />,
     },
 ];

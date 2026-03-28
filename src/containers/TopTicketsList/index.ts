@@ -1,0 +1,1 @@
+export { TopTicketsList } from './TopTicketsList';

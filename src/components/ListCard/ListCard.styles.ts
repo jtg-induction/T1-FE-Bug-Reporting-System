@@ -1,20 +1,115 @@
-import { alpha, ListItem, styled } from '@mui/material';
+import { Box, ListItem, styled, Typography } from '@mui/material';
 
 export const StyledListItem = styled(ListItem)(
     ({
         theme: {
-            palette: { primary, secondary },
+            palette,
+            shadows,
+            typography: { pxToRem },
+        },
+    }) => ({
+        display: 'flex',
+        padding: 0,
+        marginBottom: pxToRem(12),
+        backgroundColor: palette.background.paper,
+        borderRadius: pxToRem(12),
+        border: `1px solid ${palette.divider}`,
+        boxShadow: shadows[1],
+        transition: 'all 0.2s ease-in-out',
+
+        '&:hover': {
+            borderColor: palette.primary.main,
+            backgroundColor: palette.action.hover,
+            transform: 'translateY(-2px)',
+            boxShadow: shadows[4],
+        },
+    }),
+);
+
+export const ContentWrapper = styled(Box)(
+    ({
+        theme: {
+            typography: { pxToRem },
             spacing,
         },
     }) => ({
-        padding: spacing(1, 2),
-        borderRadius: 2,
-        transition: '0.2s',
-        '&:nth-of-type(odd)': {
-            backgroundColor: alpha(primary.main, 0.05),
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%',
+        padding: spacing(4, 5),
+        gap: pxToRem(16),
+    }),
+);
+
+export const TextGroup = styled(Box)({
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
+    minWidth: 0,
+});
+
+export const TitleText = styled(Typography)(
+    ({
+        theme: {
+            palette,
+            typography: { pxToRem },
         },
+    }) => ({
+        fontSize: pxToRem(18),
+        fontWeight: 700,
+        color: palette.text.primary,
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+    }),
+);
+
+export const SubInfoText = styled(Typography)(
+    ({
+        theme: {
+            palette,
+            typography: { pxToRem },
+        },
+    }) => ({
+        fontSize: pxToRem(13),
+        color: palette.text.secondary,
+        marginTop: pxToRem(4),
+        fontWeight: 400,
+    }),
+);
+
+export const InfoWrapper = styled(Box)(
+    ({
+        theme: {
+            typography: { pxToRem },
+        },
+    }) => ({
+        display: 'flex',
+        alignItems: 'center',
+        gap: pxToRem(8),
+        flexShrink: 0,
+    }),
+);
+
+export const ActionWrapper = styled(Box)(
+    ({
+        theme: {
+            palette,
+            typography: { pxToRem },
+        },
+    }) => ({
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingLeft: pxToRem(12),
+        borderLeft: `1px solid ${palette.divider}`,
+        marginLeft: pxToRem(4),
+        color: palette.action.active,
+        transition: 'color 0.2s ease',
+        cursor: 'pointer',
+
         '&:hover': {
-            backgroundColor: alpha(secondary.dark, 0.08),
+            color: palette.primary.main,
         },
     }),
 );

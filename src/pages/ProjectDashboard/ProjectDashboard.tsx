@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import { Box, Tabs, Typography } from '@mui/material';
 
-import { UserTable } from '@containers';
+import { TicketSection, UserTable } from '@containers';
 import { ProjectDetailContainer } from '@containers';
 import { NotFoundPage } from '@pages/NotFoundPage';
 import { useGetMeQuery, useGetProjectQuery } from '@service';
@@ -84,7 +84,7 @@ export const ProjectDashboard = () => {
 
                 {tabValue === TAB_VALUES.TICKETS && (
                     <StyledTabPanel>
-                        <Typography>Tickets</Typography>
+                        <TicketSection isAdmin={isAdmin} isActive={isActive} />
                     </StyledTabPanel>
                 )}
                 {tabValue === TAB_VALUES.USERS && (

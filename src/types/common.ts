@@ -103,6 +103,7 @@ export interface ProjectCreateResponse {
 export interface ProjectListResponse extends ProjectCreateResponse {
     project_role: number;
     owner: string;
+    created_at: string;
 }
 
 export interface ProjectListData {
@@ -114,14 +115,62 @@ export interface ProjectListData {
 
 export interface ProjectMemberData {
     projectId: string;
-    limit: number;
-    offset: number;
-    ordering: string | undefined;
-    filter: Record<string, string> | undefined;
+    limit?: number;
+    offset?: number;
+    ordering?: string | undefined;
+    filter?: Record<string, string> | undefined;
 }
 
 export interface ProjectMemberResponse {
     id: string;
     member: UserData;
     role: number;
+}
+
+export interface TicketCreateData {
+    title: string;
+    description: string;
+    status: number;
+    project_id: string;
+    severity: number;
+    assignee?: string;
+    deadline?: string;
+}
+
+export interface TicketCreateResponse extends TicketCreateData {
+    id: string;
+    jira_id: string;
+    key: string;
+    reporter: string;
+    is_subscribed: boolean;
+    is_active: boolean;
+    project: string;
+    created_at: string;
+}
+
+export interface TicketListData {
+    projectId: string;
+    limit: number;
+    offset: number;
+    ordering: string | undefined;
+    filter: Record<string, string | number> | undefined;
+}
+
+export interface TicketDeleteData {
+    projectId: string;
+    ticketId: string;
+}
+
+export interface CommentData {
+    description: string;
+}
+
+export interface CommentResponse {
+    id: string;
+    description: string;
+    author: string;
+    author_name: string;
+    jira_id: string;
+    created_at: string;
+    can_edit: boolean;
 }

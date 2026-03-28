@@ -114,6 +114,7 @@ export const UserTable = ({
                         rows={membersData?.results ?? []}
                         columns={columns}
                         pageSize={5}
+                        sx={{ cursor: 'pointer' }}
                     />
                 }
                 titleContent={
