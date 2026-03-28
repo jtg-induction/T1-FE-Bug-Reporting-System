@@ -16,13 +16,24 @@ export const ModalForm = ({
     children,
     submitLabel = 'Submit',
 }: ModalFormProps) => (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog
+        sx={{ '& .MuiPaper-root': { borderRadius: 4, padding: 2, gap: 2 } }}
+        open={open}
+        onClose={onClose}
+        fullWidth
+        maxWidth="md"
+    >
         <StyledDialogTitle>{title}</StyledDialogTitle>
 
         <StyledDialogContent>{children}</StyledDialogContent>
 
         <StyledDialogActions>
-            <Button onClick={onClose} color="inherit" variant="outlined">
+            <Button
+                onClick={onClose}
+                color="inherit"
+                variant="outlined"
+                disabled={isLoading}
+            >
                 Cancel
             </Button>
             <Button

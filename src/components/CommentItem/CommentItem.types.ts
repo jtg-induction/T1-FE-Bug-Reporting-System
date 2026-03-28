@@ -5,4 +5,5 @@ export interface CommentItemProps {
     onUpdate: (id: string, content: string) => Promise<void>;
     onDelete: (id: string) => void;
     isUpdating: boolean;
+    isActive: boolean;
 }

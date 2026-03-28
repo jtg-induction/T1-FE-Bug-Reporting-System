@@ -18,7 +18,11 @@ import {
     MainStack,
 } from './CommentSection.styles';
 
-export const CommentSectionContainer = () => {
+export const CommentSectionContainer = ({
+    isActive,
+}: {
+    isActive: boolean;
+}) => {
     const { pid: projectId, tid: ticketId } = useParams<{
         pid: string;
         tid: string;
@@ -96,10 +100,12 @@ export const CommentSectionContainer = () => {
         <MainStack spacing={4}>
             <Typography variant="h6">Discussion</Typography>
 
-            <CommentInput
-                onSubmit={() => void handleSaveComment}
-                isLoading={isPosting}
-            />
+            {isActive && (
+                <CommentInput
+                    onSubmit={(e) => void handleSaveComment(e)}
+                    isLoading={isPosting}
+                />
+            )}
 
             <Divider />
 
@@ -115,8 +121,9 @@ export const CommentSectionContainer = () => {
                                 key={comment.id}
                                 comment={comment}
                                 onUpdate={handleUpdateComment}
-                                onDelete={() => void handleDeleteComment}
+                                onDelete={(e) => void handleDeleteComment(e)}
                                 isUpdating={isUpdating}
+                                isActive={isActive}
                             />
                         ))}
 

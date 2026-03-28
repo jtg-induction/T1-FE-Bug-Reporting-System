@@ -1,15 +1,19 @@
 import { AlertColor } from '@mui/material';
 
 export const PROJECT_ROLE_MAP: Record<number, string> = {
-    0: 'Developer',
-    1: 'Admin',
+    1: 'Developer',
+    2: 'Admin',
 };
 
-export const ROLE_OWNER = 2;
+export const ROLE_OWNER = 3;
+export const PROJECT_STATUS_MAP: Record<number, string> = {
+    1: 'Archived',
+    2: 'Active',
+};
 
 export const PROJECT_STATUS_OPTIONS = [
-    { LABEL: 'Archived', VALUE: 0 },
-    { LABEL: 'Active', VALUE: 1 },
+    { LABEL: 'Archived', VALUE: 1 },
+    { LABEL: 'Active', VALUE: 2 },
 ];
 
 export const DESIGNATION_MAP = [
@@ -35,10 +39,10 @@ export const TICKET_STATUS_OPTIONS = [
 ];
 
 export const TICKET_STATUS_MAP: Record<number, [string, AlertColor]> = {
-    1: ['Open', 'error'],
+    1: ['Open', 'info'],
     2: ['In Progress', 'warning'],
-    3: ['Resolved', 'info'],
-    4: ['Closed', 'success'],
+    3: ['Resolved', 'success'],
+    4: ['Closed', ''],
 };
 
 export const TICKET_SEVERITY_MAP: Record<number, [string, AlertColor]> = {

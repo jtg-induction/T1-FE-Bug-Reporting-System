@@ -8,6 +8,8 @@ import {
     ProjectListResponse,
     ProjectMemberData,
     ProjectMemberResponse,
+    ProjectSummaryParams,
+    ProjectSummaryResponse,
     UserData,
 } from 'types/common';
 
@@ -146,6 +148,49 @@ export const projectApi = baseApi.injectEndpoints({
             }),
             providesTags: ['Projects'],
         }),
+        getProjectSummary: builder.query<
+            ApiResponse<ProjectSummaryResponse>,
+            ProjectSummaryParams
+        >({
+            query: ({ projectId, section, userIds, startDate, endDate }) => {
+                const userFilter =
+                    userIds && userIds.length > 0 && !userIds.includes('all')
+                        ? `IN (${userIds.join(', ')})`
+                        : undefined;
+
+                return {
+                    url: `projects/${projectId}/summary/`,
+                    params: {
+                        section,
+                        'user-ids': userFilter,
+                        'start-date': startDate,
+                        'end-date': endDate,
+                    },
+                };
+            },
+            providesTags: ['ProjectSummary'],
+        }),
+
+        downloadProjectReport: builder.mutation<Blob, ProjectSummaryParams>({
+            query: ({ projectId, startDate, endDate, userIds }) => {
+                const userFilter =
+                    userIds && userIds.length > 0 && !userIds.includes('all')
+                        ? `IN (${userIds.join(', ')})`
+                        : undefined;
+
+                return {
+                    url: `projects/${projectId}/report-generate/`,
+                    method: 'GET',
+                    params: {
+                        'start-date': startDate,
+                        'end-date': endDate,
+                        'user-ids': userFilter,
+                    },
+                    responseHandler: (response) => response.blob(),
+                    cache: 'no-cache',
+                };
+            },
+        }),
     }),
 });
 
@@ -164,4 +209,6 @@ export const {
     useRevokeMemberMutation,
     useUnarchiveProjectMutation,
     useUpdateProjectMutation,
+    useGetProjectSummaryQuery,
+    useDownloadProjectReportMutation,
 } = projectApi;

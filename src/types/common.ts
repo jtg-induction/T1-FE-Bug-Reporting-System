@@ -139,7 +139,7 @@ export interface TicketCreateData {
 
 export interface TicketCreateResponse extends TicketCreateData {
     id: string;
-    jira_id: string;
+    jira_key: string;
     key: string;
     reporter: string;
     is_subscribed: boolean;
@@ -173,4 +173,55 @@ export interface CommentResponse {
     jira_id: string;
     created_at: string;
     can_edit: boolean;
+}
+
+export interface TicketStatusSummary {
+    open: number;
+    in_progress: number;
+    resolved: number;
+    closed: number;
+}
+
+export interface TicketSeveritySummary {
+    lowest: number;
+    low: number;
+    medium: number;
+    high: number;
+    highest: number;
+}
+
+export interface DeadlineSummaryItem {
+    day: string;
+    missed: number;
+    completed_before_time?: number;
+    completed_on_time?: number;
+}
+
+export interface UserSummaryParams {
+    userId: string;
+    section?: 'status' | 'priority' | 'deadline';
+    startDate?: string;
+    endDate?: string;
+}
+
+export interface ProjectSummaryParams {
+    projectId: string;
+    section?: 'status' | 'priority' | 'deadline';
+    userIds?: string[];
+    startDate?: string;
+    endDate?: string;
+}
+
+export interface StatusSummary {
+    total: number;
+    completed: number;
+    missed_deadline: number;
+    near_deadline: number;
+}
+
+export interface ProjectSummaryResponse {
+    ticket_summary?: StatusSummary;
+    ticket_status?: TicketStatusSummary;
+    ticket_severity?: TicketSeveritySummary;
+    deadline_chart?: DeadlineSummaryItem[];
 }

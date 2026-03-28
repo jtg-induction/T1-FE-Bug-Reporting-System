@@ -1,7 +1,5 @@
-import { useCallback, useEffect } from 'react';
-
 import Box from '@mui/material/Box';
-import { DataGrid, DataGridProps, useGridApiRef } from '@mui/x-data-grid';
+import { DataGrid, DataGridProps } from '@mui/x-data-grid';
 
 import { TableProps } from './Table.types';
 
@@ -15,44 +13,24 @@ export const Table = ({
     onSortModelChange,
     rowCount,
     ...props
-}: TableProps & DataGridProps) => {
-    const apiRef = useGridApiRef();
-
-    const handleAutosize = useCallback(() => {
-        apiRef.current?.autosizeColumns({
-            includeHeaders: true,
-            includeOutliers: true,
-            expand: true,
-        });
-    }, [apiRef]);
-
-    useEffect(() => {
-        if (!loading) {
-            const timeout = setTimeout(handleAutosize, 50);
-            return () => clearTimeout(timeout);
-        }
-    }, [loading, rows, handleAutosize]);
-
-    return (
-        <Box>
-            <DataGrid
-                apiRef={apiRef}
-                paginationMode="server"
-                filterMode="server"
-                sortingMode="server"
-                rowCount={rowCount}
-                loading={loading}
-                rows={rows}
-                columns={columns}
-                onResize={handleAutosize}
-                pageSizeOptions={[5]}
-                paginationModel={paginationModel}
-                onPaginationModelChange={onPaginationModelChange}
-                onFilterModelChange={onFilterModelChange}
-                onSortModelChange={onSortModelChange}
-                disableRowSelectionOnClick
-                {...props}
-            />
-        </Box>
-    );
-};
+}: TableProps & DataGridProps) => (
+    <Box height="60vh">
+        <DataGrid
+            autoHeight
+            rows={rows}
+            columns={columns}
+            rowCount={rowCount}
+            loading={loading}
+            paginationModel={paginationModel}
+            onPaginationModelChange={onPaginationModelChange}
+            onFilterModelChange={onFilterModelChange}
+            onSortModelChange={onSortModelChange}
+            paginationMode="server"
+            filterMode="server"
+            sortingMode="server"
+            pageSizeOptions={[10]}
+            disableRowSelectionOnClick
+            {...props}
+        />
+    </Box>
+);

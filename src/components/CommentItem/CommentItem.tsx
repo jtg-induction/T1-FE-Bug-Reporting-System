@@ -22,6 +22,7 @@ export const CommentItem = ({
     onUpdate,
     onDelete,
     isUpdating,
+    isActive,
 }: CommentItemProps) => {
     const [isEditing, setIsEditing] = useState(false);
 
@@ -36,7 +37,7 @@ export const CommentItem = ({
                 <CommentInput
                     initialContent={comment.description}
                     isLoading={isUpdating}
-                    onSubmit={() => void handleUpdate}
+                    onSubmit={(e) => void handleUpdate(e)}
                     onCancel={() => setIsEditing(false)}
                     buttonText="Save Changes"
                 />
@@ -86,7 +87,9 @@ export const CommentItem = ({
                     </Stack>
                 </AuthorInfo>
 
-                {comment.can_edit && <ActionMenu items={menuItems} />}
+                {isActive && comment.can_edit && (
+                    <ActionMenu items={menuItems} />
+                )}
             </HeaderStack>
 
             <ContentWrapper>

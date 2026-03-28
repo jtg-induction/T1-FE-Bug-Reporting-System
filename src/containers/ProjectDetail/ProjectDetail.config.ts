@@ -3,7 +3,7 @@ import { ProjectUpdateFormData } from './ProjectDetail.types';
 export const INITIAL_EDIT_STATE: ProjectUpdateFormData = {
     title: '',
     description: '',
-    status: 1,
+    status: 2,
 };
 
 export const DASHBOARD_TEXT = {

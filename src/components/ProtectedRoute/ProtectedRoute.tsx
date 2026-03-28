@@ -1,4 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import { useAppSelector } from 'redux/store';
 
 import { PUBLIC_PATHS } from '@constant';
 import { useGetMeQuery } from '@service';
@@ -9,10 +10,10 @@ import { useGetMeQuery } from '@service';
  */
 export const ProtectedRoute = () => {
     const { data, isLoading } = useGetMeQuery();
+    const access = useAppSelector((state) => state.auth.access);
 
     if (isLoading) return null;
-
-    if (!data) return <Navigate to={PUBLIC_PATHS.LOGIN} replace />;
+    if (!data && !access) return <Navigate to={PUBLIC_PATHS.LOGIN} replace />;
 
     return <Outlet />;
 };

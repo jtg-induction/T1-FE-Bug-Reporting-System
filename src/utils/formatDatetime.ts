@@ -10,7 +10,6 @@ export const formatDateTime = (
     if (!timestamp) return 'N/A';
 
     const date = new Date(timestamp);
-
     if (isNaN(date.getTime())) return 'Invalid Date';
 
     return new Intl.DateTimeFormat('en-US', {

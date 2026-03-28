@@ -26,7 +26,7 @@ export const TicketCard = ({ ticket, onClick }: TicketCardProps) => (
                 color="text.disabled"
                 sx={{ fontWeight: 700 }}
             >
-                {ticket.jira_id}
+                {ticket.jira_key}
             </Typography>
         </TopRow>
 

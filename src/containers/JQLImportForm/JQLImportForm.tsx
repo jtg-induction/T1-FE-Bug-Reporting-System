@@ -55,7 +55,7 @@ export const JQLImportContainer = ({
         try {
             await importTicket({
                 projectId: projectId,
-                data: { jira_id: ticketKey },
+                data: { jira_key: ticketKey },
             }).unwrap();
             onClose();
         } catch {
@@ -80,7 +80,7 @@ export const JQLImportContainer = ({
             <Box
                 component="form"
                 id="jql-search-form"
-                onSubmit={() => handleSubmit(handleSearch)}
+                onSubmit={(e) => void handleSubmit(handleSearch)(e)}
                 sx={{ mb: 3 }}
             >
                 <FormField
