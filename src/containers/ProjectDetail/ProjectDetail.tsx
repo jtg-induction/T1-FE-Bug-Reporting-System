@@ -11,11 +11,10 @@ import {
     Logout,
     Unarchive,
 } from '@mui/icons-material';
-import { Chip, Stack, Typography, Tooltip } from '@mui/material';
+import { Chip, Stack, Tooltip, Typography } from '@mui/material';
 
 import { ActionMenu, ActionMenuItem, SectionCard } from '@components';
-import { PRIVATE_PATHS, ROLE_OWNER, PROJECT_TITLE } from '@constant';
-
+import { PRIVATE_PATHS, PROJECT_TITLE, ROLE_OWNER } from '@constant';
 import {
     EditProjectFormContainer,
     JQLImportContainer,

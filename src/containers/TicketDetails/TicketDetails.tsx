@@ -121,38 +121,36 @@ export const TicketDashboardContainer = () => {
         }
     };
 
-    const menuItems = [];
-    if (perm >= 3) {
-        menuItems.push(
-            {
-                id: 'edit',
-                label: 'Edit Ticket',
-                icon: <Edit />,
-                onClick: () => handleOpenEdit(false),
-            },
-            {
-                id: 'delete',
-                label: 'Delete Ticket',
-                icon: <Delete />,
-                onClick: () => handleDelete(),
-            },
-        );
-    } else if (perm === 2) {
-        menuItems.push({
+    const menuItems = [
+        {
+            id: 'edit',
+            label: 'Edit Ticket',
+            icon: <Edit />,
+            onClick: () => handleOpenEdit(false),
+            display: Boolean((perm ?? 0) >= 3),
+        },
+        {
+            id: 'delete',
+            label: 'Delete Ticket',
+            icon: <Delete />,
+            onClick: () => handleDelete(),
+            display: Boolean((perm ?? 0) >= 3),
+        },
+        {
             id: 'status',
             label: 'Update Status',
             icon: <Speed />,
             onClick: () => handleOpenEdit(true),
-        });
-    }
-    if (perm === 4) {
-        menuItems.push({
+            display: perm === 2,
+        },
+        {
             id: 'move',
             label: 'Move Ticket',
             icon: <DriveFileMove />,
             onClick: () => setIsMoveOpen(true),
-        });
-    }
+            display: perm === 4,
+        },
+    ];
 
     return (
         <MainLayout>

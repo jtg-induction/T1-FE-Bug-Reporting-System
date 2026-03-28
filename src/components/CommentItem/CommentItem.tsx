@@ -51,6 +51,7 @@ export const CommentItem = ({
             label: 'Edit',
             icon: <Edit fontSize="small" />,
             onClick: () => setIsEditing(true),
+            display: isActive && comment.can_edit,
         },
         {
             id: 'delete',
@@ -59,6 +60,7 @@ export const CommentItem = ({
             textColor: 'error.main',
             iconColor: 'error.main',
             onClick: () => onDelete(comment.id),
+            display: isActive && comment.can_edit,
         },
     ];
 
@@ -87,9 +89,7 @@ export const CommentItem = ({
                     </Stack>
                 </AuthorInfo>
 
-                {isActive && comment.can_edit && (
-                    <ActionMenu items={menuItems} />
-                )}
+                <ActionMenu items={menuItems} />
             </HeaderStack>
 
             <ContentWrapper>

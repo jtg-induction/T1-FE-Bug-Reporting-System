@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 
 import { operatorMap } from 'constant/operatorMap';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { showSnackbar } from 'redux/features/profileSlice';
 import { useAppDispatch } from 'redux/store';
 import { handleFilterChange, handleSortChange } from 'utils/utils';
 
@@ -13,11 +14,13 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { SectionCard, Table } from '@components';
 import {
     ProjectUserInviteFormContainer,
     ProjectUserInviteFormData,
+    UserTableActions,
 } from '@containers';
 import {
     useGetProjectMembersQuery,
@@ -25,9 +28,8 @@ import {
     useInviteMemberMutation,
 } from '@service';
 
-import { getUserTableColumns, MEMBER_ROLES } from './UserTable.config';
-import { UserTableProps } from './UserTable.types';
-import { useAppDispatch } from 'redux/store';
+import { MEMBER_ROLES } from './UserTable.config';
+import { ApiError, ProjectMember, ProjectUsersProps } from './UserTable.types';
 
 export const UserTable = ({
     isAdmin,
@@ -37,7 +39,6 @@ export const UserTable = ({
     currentUserId,
 }: ProjectUsersProps) => {
     const { id: projectId } = useParams<{ id: string }>();
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -94,12 +95,13 @@ export const UserTable = ({
             },
             { skip: !projectId },
         );
-
     const { data: availableUsers } = useGetUsersToInviteQuery(projectId!, {
         skip: !isAdmin,
     });
 
-    const [inviteMember, { isLoading: isInviting }] = useInviteMemberMutation();
+    const [inviteMember, { isLoading: isInviting, error: inviteError }] =
+        useInviteMemberMutation();
+
     const [openInvite, setOpenInvite] = useState(false);
 
     const membersData = members?.data;
@@ -127,24 +129,131 @@ export const UserTable = ({
     );
 
     const handleInviteSubmit = async (data: ProjectUserInviteFormData) => {
-        if (!data.user_id || !projectId) return;
-        const { error } = await inviteMember({ projectId, ...data });
-        if (!error) {
+        if (!data.user_id) return;
+        try {
+            await inviteMember({
+                projectId: projectId!,
+                ...data,
+            }).unwrap();
             setOpenInvite(false);
+        } catch {
+            dispatch(
+                showSnackbar({
+                    message: 'User Invite Failed',
+                    severity: 'error',
+                }),
+            );
         }
     };
 
-    const columns = useMemo(
-        () =>
-            getUserTableColumns({
-                ownerId,
-                isAdmin,
-                isActive,
-                currentUserId,
-                isOwner,
-            }),
-        [ownerId, isAdmin, isActive, currentUserId, isOwner],
-    );
+    const handlePaginationChange = (newModel: {
+        page: number;
+        pageSize: number;
+    }) => {
+        setPaginationModel(newModel);
+        setSearchParams((params) => {
+            if (newModel.page === 0) {
+                params.delete('page');
+            } else {
+                params.set('page', newModel.page.toString());
+            }
+            return params;
+        });
+    };
+
+    const columns: GridColDef<ProjectMember>[] = [
+        {
+            field: 'index',
+            headerName: 'ID',
+            width: 80,
+            filterable: false,
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => {
+                const pageModel = params.api.state.pagination.paginationModel;
+                const page = pageModel.page;
+                const pageSize = pageModel.pageSize;
+                const relativeIndex =
+                    params.api.getRowIndexRelativeToVisibleRows(params.id) + 1;
+                return page * pageSize + relativeIndex;
+            },
+        },
+        {
+            field: 'first_name',
+            headerName: 'First Name',
+            width: 160,
+            valueGetter: (_, row) => row.member?.first_name,
+        },
+        {
+            field: 'last_name',
+            headerName: 'Last Name',
+            width: 160,
+            valueGetter: (_, row) => row.member?.last_name,
+        },
+        {
+            field: 'email',
+            headerName: 'Email',
+            flex: 1.5,
+            minWidth: 320,
+            valueGetter: (_, row) => row.member?.email,
+        },
+        {
+            field: 'designation',
+            headerName: 'Designation',
+            width: 160,
+            type: 'singleSelect',
+            valueOptions: [
+                { value: 'M', label: 'Manager' },
+                { value: 'TL', label: 'Team Lead' },
+                { value: 'INTERN', label: 'Intern' },
+                { value: 'SD', label: 'Software Developer' },
+                { value: 'SSD', label: 'Senior Developer' },
+            ],
+            valueGetter: (_, row) => row.member?.designation,
+        },
+        {
+            field: 'role',
+            headerName: 'Role',
+            width: 120,
+            type: 'singleSelect',
+            valueOptions: [
+                { value: 1, label: 'Member' },
+                { value: 2, label: 'Admin' },
+            ],
+            renderCell: (params) => {
+                if (params.row.member?.id === ownerId) {
+                    return 'Owner';
+                }
+                return MEMBER_ROLES.find((r) => r.value === params.value)
+                    ?.label;
+            },
+        },
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            width: 80,
+            sortable: false,
+            filterable: false,
+            align: 'center',
+            renderCell: (params: GridRenderCellParams<ProjectMember>) => {
+                const userId = params.row.member?.id;
+                if (!userId) return null;
+
+                return (
+                    <UserTableActions
+                        userId={userId}
+                        isRowAdmin={params.row.role === 2}
+                        isAdmin={isAdmin}
+                        isActive={isActive}
+                        currentUserId={currentUserId}
+                        ownerId={ownerId}
+                        isOwner={isOwner}
+                    />
+                );
+            },
+        },
+    ];
 
     return (
         <Stack spacing={4}>
@@ -205,6 +314,7 @@ export const UserTable = ({
                 onClose={() => setOpenInvite(false)}
                 onSubmit={handleInviteSubmit}
                 isLoading={isInviting}
+                errorMessage={(inviteError as ApiError)?.data?.detail}
                 userOptions={userOptions}
                 roleOptions={roleOptions}
             />

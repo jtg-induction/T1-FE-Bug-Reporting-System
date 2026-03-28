@@ -19,3 +19,17 @@ export interface UserTableProps {
     isOwner: boolean;
     currentUserId: string;
 }
+
+export interface ApiError {
+    data?: {
+        detail?: string;
+    };
+}
+
+export interface ProjectUsersProps {
+    isAdmin: boolean;
+    isActive: boolean;
+    ownerId: string;
+    isOwner: boolean;
+    currentUserId: string;
+}
