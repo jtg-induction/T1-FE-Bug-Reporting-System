@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { setCredentials } from 'redux/features/authSlice';
@@ -38,18 +38,24 @@ export const SignupCompleteContainer = () => {
     const [signup, { isLoading: isRegistering, error: registerError }] =
         useSignupMutation();
     const dispatch = useDispatch();
-
+    const [isFocused, setIsFocused] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const {
         register,
         handleSubmit,
+        control,
         formState: { errors },
     } = useForm<SignupFormValues>({
         resolver: zodResolver(signupSchema),
         defaultValues: INITIAL_FORM_DATA,
         mode: 'onTouched',
+    });
+
+    const dateOfBirthValue = useWatch({
+        control,
+        name: 'dateOfBirth',
     });
 
     const onSubmit: SubmitHandler<SignupFormValues> = async (data) => {
@@ -69,7 +75,7 @@ export const SignupCompleteContainer = () => {
             };
 
             const response = await signup(submitData).unwrap();
-            if (response.success) {
+            if (response.success && response.data) {
                 dispatch(setCredentials(response.data));
                 navigate(PRIVATE_PATHS.DASHBOARD);
             }
@@ -123,10 +129,23 @@ export const SignupCompleteContainer = () => {
                             fullWidth
                             id="dateOfBirth"
                             label="Date of Birth"
-                            type="date"
+                            type={
+                                isFocused || !!dateOfBirthValue
+                                    ? 'date'
+                                    : 'text'
+                            }
                             variant="outlined"
-                            slotProps={{ inputLabel: { shrink: true } }}
+                            onFocus={() => setIsFocused(true)}
                             {...register('dateOfBirth')}
+                            onBlur={(e) => {
+                                setIsFocused(false);
+                                register('dateOfBirth').onBlur(e);
+                            }}
+                            slotProps={{
+                                inputLabel: {
+                                    shrink: isFocused || !!dateOfBirthValue,
+                                },
+                            }}
                             error={Boolean(errors.dateOfBirth)}
                             helperText={errors.dateOfBirth?.message}
                         />

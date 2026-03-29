@@ -111,7 +111,7 @@ export const UserTable = ({
 
     const userOptions = useMemo(() => {
         if (availableUsersData.length === 0) {
-            return [{ LABEL: 'No users available to invite', VALUE: '' }];
+            return [];
         }
         return availableUsersData.map((user) => ({
             LABEL: `${user.first_name} ${user.last_name} (${user.email})`,
@@ -277,7 +277,6 @@ export const UserTable = ({
                         rows={membersData?.results ?? []}
                         columns={columns}
                         pageSize={5}
-                        sx={{ cursor: 'pointer' }}
                         initialState={{
                             ...(initialGridFilter && {
                                 filter: {

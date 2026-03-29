@@ -33,6 +33,7 @@ export const JQLImportContainer = ({
         defaultValues: { jql: '' },
     });
 
+    const [initialState, setInitialState] = useState(true);
     const [ticketsList, setTicketsList] = useState<TicketOption[]>([]);
     const [nextToken, setNextToken] = useState<string | null>(null);
     const [selectedTicket, setSelectedTicket] = useState<TicketOption | null>(
@@ -49,6 +50,7 @@ export const JQLImportContainer = ({
         token: string | null = null,
         isLoadMore = false,
     ) => {
+        if (!projectId) return null;
         try {
             const response = await getJQLTickets({
                 projectId: projectId,
@@ -57,6 +59,7 @@ export const JQLImportContainer = ({
                     nextPageToken: token,
                 },
             }).unwrap();
+            setInitialState(false);
 
             const newTickets = response.data?.results || [];
             const newNextToken = response.data?.nextPageToken || null;
@@ -84,7 +87,7 @@ export const JQLImportContainer = ({
     };
 
     const handleImport = async () => {
-        if (!selectedTicket) return;
+        if (!projectId || !selectedTicket) return;
 
         await importTicket({
             projectId: projectId,
@@ -115,6 +118,7 @@ export const JQLImportContainer = ({
             infoLink={EXTERNAL_URLS.JQL_GUIDE}
             formId="jql-import-form"
             isLoading={isImporting}
+            showSubmit={!initialState && ticketsList.length > 0}
             submitLabel="Import Selected"
         >
             <Box
@@ -125,7 +129,7 @@ export const JQLImportContainer = ({
                     void handleImport();
                 }}
             >
-                <Box mb={3} display="flex" gap={2} alignItems="flex-start">
+                <Box mb={3} display="flex" gap={2}>
                     <Box flexGrow={1}>
                         <FormField
                             name="jql"
@@ -145,50 +149,50 @@ export const JQLImportContainer = ({
                     </Button>
                 </Box>
 
-                <Autocomplete
-                    options={ticketsList}
-                    getOptionLabel={(option) =>
-                        `[${option.jira_key}] ${option.title}`
-                    }
-                    value={selectedTicket}
-                    onChange={(_, newValue) => setSelectedTicket(newValue)}
-                    isOptionEqualToValue={(option, value) =>
-                        option.jira_key === value.jira_key
-                    }
-                    loading={isFetchingTickets}
-                    slotProps={{
-                        listbox: {
-                            onScroll: handleScroll,
-                        },
-                    }}
-                    renderInput={({ InputProps, ...params }) => (
-                        <TextField
-                            {...params}
-                            label="Select Ticket to Import"
-                            placeholder={
-                                ticketsList.length === 0
-                                    ? 'Click Fetch to load tickets'
-                                    : 'Search loaded tickets...'
-                            }
-                            slotProps={{
-                                input: {
-                                    ...InputProps,
-                                    endAdornment: (
-                                        <React.Fragment>
-                                            {isFetchingTickets ? (
-                                                <CircularProgress
-                                                    color="inherit"
-                                                    size={20}
-                                                />
-                                            ) : null}
-                                            {InputProps.endAdornment}
-                                        </React.Fragment>
-                                    ),
-                                },
-                            }}
-                        />
-                    )}
-                />
+                {initialState ? null : ticketsList.length > 0 ? (
+                    <Autocomplete
+                        options={ticketsList}
+                        getOptionLabel={(option) =>
+                            `[${option.jira_key}] ${option.title}`
+                        }
+                        value={selectedTicket}
+                        onChange={(_, newValue) => setSelectedTicket(newValue)}
+                        isOptionEqualToValue={(option, value) =>
+                            option.jira_key === value.jira_key
+                        }
+                        loading={isFetchingTickets}
+                        slotProps={{
+                            listbox: {
+                                onScroll: handleScroll,
+                            },
+                        }}
+                        renderInput={({ InputProps, ...params }) => (
+                            <TextField
+                                {...params}
+                                label="Select Ticket to Import"
+                                placeholder={'Search loaded tickets...'}
+                                slotProps={{
+                                    input: {
+                                        ...InputProps,
+                                        endAdornment: (
+                                            <React.Fragment>
+                                                {isFetchingTickets ? (
+                                                    <CircularProgress
+                                                        color="inherit"
+                                                        size={20}
+                                                    />
+                                                ) : null}
+                                                {InputProps.endAdornment}
+                                            </React.Fragment>
+                                        ),
+                                    },
+                                }}
+                            />
+                        )}
+                    />
+                ) : (
+                    <>No Tickets to Display</>
+                )}
             </Box>
         </ModalForm>
     );

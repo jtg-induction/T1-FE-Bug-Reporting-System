@@ -72,7 +72,6 @@ export const Table = ({
 }: TableProps & DataGridProps) => (
     <StyledBox>
         <DataGrid
-            autoHeight
             rows={rows}
             columns={columns}
             rowCount={rowCount}
@@ -84,7 +83,7 @@ export const Table = ({
             paginationMode="server"
             filterMode="server"
             sortingMode="server"
-            pageSizeOptions={[10]}
+            pageSizeOptions={[10, 25, 50]}
             disableRowSelectionOnClick
             disableColumnMenu
             showToolbar

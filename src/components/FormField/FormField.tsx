@@ -59,7 +59,7 @@ export const FormField = <T extends FieldValues>({
                     readOnly: !editStatus,
                 },
                 inputLabel: {
-                    shrink: !!field.value || isFocused || isSelect,
+                    shrink: !!field.value || isFocused,
                 },
             }}
         >

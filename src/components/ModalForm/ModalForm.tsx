@@ -18,6 +18,7 @@ export const ModalForm = ({
     submitLabel = 'Submit',
     infoTooltipText,
     infoLink,
+    showSubmit = true,
 }: ModalFormProps) => (
     <Dialog
         sx={{ '& .MuiPaper-root': { borderRadius: 4, padding: 2, gap: 2 } }}
@@ -64,14 +65,16 @@ export const ModalForm = ({
             >
                 Cancel
             </Button>
-            <Button
-                type="submit"
-                form={formId}
-                variant="contained"
-                disabled={isLoading}
-            >
-                {isLoading ? 'Processing...' : submitLabel}
-            </Button>
+            {showSubmit && (
+                <Button
+                    type="submit"
+                    form={formId}
+                    variant="contained"
+                    disabled={isLoading}
+                >
+                    {isLoading ? 'Processing...' : submitLabel}
+                </Button>
+            )}
         </StyledDialogActions>
     </Dialog>
 );

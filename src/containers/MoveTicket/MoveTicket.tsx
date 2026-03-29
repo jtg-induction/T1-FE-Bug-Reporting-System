@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -5,6 +7,7 @@ import { Alert, Stack, Typography } from '@mui/material';
 
 import { FormField, ModalForm } from '@components';
 import { PRIVATE_PATHS } from '@constant';
+import { skipToken } from '@reduxjs/toolkit/query';
 import { useGetMovableProjectsQuery, useUpdateTicketMutation } from '@service';
 
 import { MoveTicketFormProps, MoveTicketValues } from './MoveTicket.types';
@@ -15,10 +18,11 @@ export const MoveTicketContainer = ({ open, onClose }: MoveTicketFormProps) => {
     const formId = 'move-ticket-form';
     const navigate = useNavigate();
     const { data: projectsResponse, isLoading: isFetchingProjects } =
-        useGetMovableProjectsQuery({
-            projectId: currentPid,
-            ticketId: currentTid,
-        });
+        useGetMovableProjectsQuery(
+            currentPid && currentTid
+                ? { projectId: currentPid, ticketId: currentTid }
+                : skipToken,
+        );
 
     const rawProjects = projectsResponse?.data ?? [];
 
@@ -31,6 +35,12 @@ export const MoveTicketContainer = ({ open, onClose }: MoveTicketFormProps) => {
 
     const { control, handleSubmit, reset } = useForm<MoveTicketValues>({
         defaultValues: { projectId: '' },
+    });
+
+    useEffect(() => {
+        if (projectOptions.length > 0) {
+            reset({ projectId: projectOptions[0].VALUE });
+        }
     });
 
     const [updateTicket, { isLoading: isUpdating }] = useUpdateTicketMutation();

@@ -97,7 +97,7 @@ export const ProjectDetailContainer = ({
         );
 
         if (otherMembers.length === 0) {
-            return [{ LABEL: 'No other members available', VALUE: '' }];
+            return [];
         }
 
         return otherMembers.map((m) => ({

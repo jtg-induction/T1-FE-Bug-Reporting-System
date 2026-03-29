@@ -1,7 +1,11 @@
+import { Link } from 'react-router-dom';
 import { TicketCreateResponse } from 'types/common';
 
-import { Tooltip } from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
+
+import { PRIVATE_PATHS } from '@constant';
+import { formatDateTime } from '@utils';
 
 export const columns: GridColDef<TicketCreateResponse>[] = [
     {
@@ -26,6 +30,19 @@ export const columns: GridColDef<TicketCreateResponse>[] = [
         headerName: 'Title',
         flex: 1.5,
         minWidth: 200,
+        renderCell: (params) => (
+            <Box
+                component={Link}
+                to={`${PRIVATE_PATHS.PROJECTS}${params.row.project_id}${PRIVATE_PATHS.TICKETS}${params.id}`}
+                sx={{
+                    textDecoration: 'none',
+                }}
+                color="primary.main"
+                fontWeight={500}
+            >
+                {params.value}
+            </Box>
+        ),
     },
     {
         field: 'reporter_name',
@@ -38,7 +55,7 @@ export const columns: GridColDef<TicketCreateResponse>[] = [
 
             return (
                 <Tooltip title={hoverValue}>
-                    <span>{displayValue}</span>
+                    <Box component="span">{displayValue}</Box>
                 </Tooltip>
             );
         },
@@ -54,7 +71,12 @@ export const columns: GridColDef<TicketCreateResponse>[] = [
 
             return (
                 <Tooltip title={hoverValue}>
-                    <span>{displayValue}</span>
+                    <Box
+                        component="span"
+                        color={hoverValue ? 'text.primary' : 'text.secondary'}
+                    >
+                        {displayValue}
+                    </Box>
                 </Tooltip>
             );
         },
@@ -95,7 +117,7 @@ export const columns: GridColDef<TicketCreateResponse>[] = [
         },
         valueFormatter: (value: Date | null) => {
             if (!value) return 'None';
-            return value.toDateString();
+            return formatDateTime(value, false);
         },
     },
 ];

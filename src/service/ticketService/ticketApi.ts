@@ -85,7 +85,7 @@ export const ticketApi = baseApi.injectEndpoints({
                 url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}${ticketId}/`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['Tickets', 'Ticket'],
+            invalidatesTags: ['Tickets'],
         }),
         updateTicket: builder.mutation<
             ApiResponse<TicketCreateResponse>,

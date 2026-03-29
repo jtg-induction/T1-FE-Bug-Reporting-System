@@ -17,7 +17,6 @@ export interface PaginationMeta<T> {
 }
 
 /** * PAGINATED RESPONSE
- * Matches the 'metadata' key we used in StandardResultsSetPagination
  */
 export interface PaginatedResponse<T> extends Omit<ApiResponse<T>, 'data'> {
     data: PaginationMeta<T>;
@@ -28,7 +27,7 @@ export interface PaginatedResponse<T> extends Omit<ApiResponse<T>, 'data'> {
 export interface ApiError {
     detail?: string;
     code?: string;
-    [key: string]: string[] | string;
+    [key: string]: string[] | string | undefined;
 }
 
 /** * BASE INTERFACES
@@ -53,7 +52,7 @@ export interface LoginSignupRefreshResponse {
 }
 
 export interface UserRegistrationData
-    extends Omit<UserData, 'id' | 'is_owner'> {
+    extends Omit<UserData, 'id' | 'can_edit'> {
     jiraID: string;
     jira_access_token: string;
     password: string;
@@ -71,7 +70,6 @@ export interface GenerateEmailLinkData {
 
 export interface VerifyLinkData {
     email: string;
-    token: string;
 }
 
 export interface UpdateUserData {
@@ -118,7 +116,7 @@ export interface ProjectMemberData {
     limit?: number;
     offset?: number;
     ordering?: string | undefined;
-    filter?: Record<string, string> | undefined;
+    filter?: object | undefined;
 }
 
 export interface ProjectMemberResponse {
@@ -134,7 +132,7 @@ export interface TicketCreateData {
     project_id: string;
     severity: number;
     assignee?: string;
-    deadline?: string;
+    deadline?: string | null;
 }
 
 export interface TicketCreateResponse
@@ -158,7 +156,7 @@ export interface TicketListData {
     limit: number;
     offset: number;
     ordering: string | undefined;
-    filter: Record<string, string | number> | undefined;
+    filter: object | undefined;
 }
 
 export interface TicketDeleteData {

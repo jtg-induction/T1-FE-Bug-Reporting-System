@@ -32,7 +32,7 @@ export const WeeklyStats = () => {
         <SectionCard
             titleContent={
                 <Typography variant="h6" fontWeight="bold">
-                    Weekly Stats
+                    Weekly Ticket Stats
                 </Typography>
             }
             mainContent={

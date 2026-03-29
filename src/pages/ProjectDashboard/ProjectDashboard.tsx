@@ -23,8 +23,8 @@ export const ProjectDashboard = () => {
     const navigate = useNavigate();
     const tabValue = tab ? TAB_MAP.indexOf(tab) : 0;
 
-    const { data: currentUser } = useGetMeQuery();
-    const { data: project, isLoading } = useGetProjectQuery(
+    const { data: currentUser, isLoading: isUserLoading } = useGetMeQuery();
+    const { data: project, isLoading: isProjectLoading } = useGetProjectQuery(
         projectId as string,
         { skip: !projectId },
     );
@@ -35,7 +35,7 @@ export const ProjectDashboard = () => {
         }
     }, [tab, projectId, navigate]);
 
-    if (isLoading) {
+    if (isProjectLoading || isUserLoading) {
         return (
             <Typography variant="h6" align="center">
                 {DASHBOARD_TEXT.loading}
@@ -43,14 +43,14 @@ export const ProjectDashboard = () => {
         );
     }
 
-    if (!project) {
+    if (!project?.data || !currentUser?.data) {
         return <NotFoundPage />;
     }
-    const currentUserData = currentUser?.data;
-    const projectData = project?.data;
-    const isAdmin = projectData?.project_role === 2;
-    const isActive = projectData?.status === 2;
-    const isOwner = projectData?.owner === currentUserData?.id;
+    const currentUserData = currentUser.data;
+    const projectData = project.data;
+    const isAdmin = projectData.project_role === 2;
+    const isActive = projectData.status === 2;
+    const isOwner = projectData.owner === currentUserData?.id;
 
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
         const tabName = TAB_MAP[newValue];

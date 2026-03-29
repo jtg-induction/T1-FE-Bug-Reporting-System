@@ -47,34 +47,38 @@ export const ProjectUserInviteFormContainer = ({
             isLoading={isLoading}
             submitLabel="Invite"
         >
-            <form
-                id={formId}
-                onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}
-            >
-                <Stack spacing={3}>
-                    {errorMessage && (
-                        <Alert severity="error">{errorMessage}</Alert>
-                    )}
+            {userOptions.length > 0 ? (
+                <form
+                    id={formId}
+                    onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}
+                >
+                    <Stack spacing={3}>
+                        {errorMessage && (
+                            <Alert severity="error">{errorMessage}</Alert>
+                        )}
 
-                    <FormField
-                        name="user_id"
-                        label="Select User"
-                        type="select"
-                        control={control}
-                        editStatus={true}
-                        options={userOptions}
-                    />
+                        <FormField
+                            name="user_id"
+                            label="Select User"
+                            type="select"
+                            control={control}
+                            editStatus={true}
+                            options={userOptions}
+                        />
 
-                    <FormField
-                        name="role"
-                        label="Role"
-                        type="select"
-                        control={control}
-                        editStatus={true}
-                        options={roleOptions}
-                    />
-                </Stack>
-            </form>
+                        <FormField
+                            name="role"
+                            label="Role"
+                            type="select"
+                            control={control}
+                            editStatus={true}
+                            options={roleOptions}
+                        />
+                    </Stack>
+                </form>
+            ) : (
+                <>No Other Users to Invite</>
+            )}
         </ModalForm>
     );
 };

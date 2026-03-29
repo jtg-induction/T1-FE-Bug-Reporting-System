@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react';
 
 import { operatorMap } from 'constant/operatorMap';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ProjectListResponse } from 'types/common';
+import { useSearchParams } from 'react-router-dom';
 import { handleFilterChange, handleSortChange } from 'utils/utils';
 
 import { Add } from '@mui/icons-material';
 import { Button, useMediaQuery, useTheme } from '@mui/material';
-import { GridRowParams } from '@mui/x-data-grid';
 
 import { SectionCard, Table } from '@components';
-import { PRIVATE_PATHS } from '@constant';
 import { useGetProjectsQuery } from '@service';
 
 import { columns } from './ActiveProjectSection.configs';
@@ -21,7 +18,6 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const pageQuery = searchParams.get('page');
@@ -89,10 +85,6 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
     const projectsData = projects?.data.results ?? [];
     const projectsCount = projects?.data.count ?? 0;
 
-    const handleRowClick = (params: GridRowParams<ProjectListResponse>) => {
-        navigate(`${PRIVATE_PATHS.PROJECTS}${params.row.id}`);
-    };
-
     const handlePaginationChange = (newModel: {
         page: number;
         pageSize: number;
@@ -139,8 +131,6 @@ export const ActiveProjectSection = ({ onAddClick }: ProjectsSectionProps) => {
                         handleSortChange(newModel, setSortModel)
                     }
                     onPaginationModelChange={handlePaginationChange}
-                    onRowClick={handleRowClick}
-                    sx={{ cursor: 'pointer' }}
                     initialState={{
                         filter: {
                             filterModel: initialGridFilter,

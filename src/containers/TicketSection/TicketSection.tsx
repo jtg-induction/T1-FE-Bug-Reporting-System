@@ -1,16 +1,13 @@
 import { useState } from 'react';
 
 import { operatorMap } from 'constant/operatorMap';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { TicketCreateResponse } from 'types/common';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { handleFilterChange, handleSortChange } from 'utils/utils';
 
 import { Add } from '@mui/icons-material';
 import { Button, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { GridRowParams } from '@mui/x-data-grid';
 
 import { SectionCard, Table } from '@components';
-import { PRIVATE_PATHS } from '@constant';
 import { TicketFormContainer } from '@containers';
 import { useGetProjectTicketsQuery } from '@service';
 
@@ -24,7 +21,6 @@ export const TicketSection = ({ isAdmin, isActive }: TicketSectionProps) => {
 
     const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
     const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const pageQuery = searchParams.get('page');
@@ -80,12 +76,6 @@ export const TicketSection = ({ isAdmin, isActive }: TicketSectionProps) => {
     const ticketsData = tickets?.data.results ?? [];
     const ticketsCount = tickets?.data.count ?? 0;
 
-    const handleOnRowClick = (params: GridRowParams<TicketCreateResponse>) => {
-        navigate(
-            `${PRIVATE_PATHS.PROJECTS}/${id}${PRIVATE_PATHS.TICKETS}/${params.row.id}`,
-        );
-    };
-
     const handlePaginationChange = (newModel: {
         page: number;
         pageSize: number;
@@ -136,8 +126,6 @@ export const TicketSection = ({ isAdmin, isActive }: TicketSectionProps) => {
                             handleSortChange(newModel, setSortModel)
                         }
                         onPaginationModelChange={handlePaginationChange}
-                        sx={{ cursor: 'pointer' }}
-                        onRowClick={handleOnRowClick}
                         initialState={{
                             ...(initialGridFilter && {
                                 filter: {

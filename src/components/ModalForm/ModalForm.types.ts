@@ -8,4 +8,5 @@ export interface ModalFormProps {
     submitLabel?: string;
     infoTooltipText?: string;
     infoLink?: string;
+    showSubmit?: boolean;
 }

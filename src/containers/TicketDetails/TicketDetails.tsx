@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { showSnackbar } from 'redux/features/profileSlice';
 import { useAppDispatch } from 'redux/store';
-import { UserData } from 'types/common';
 
 import {
     AccessAlarm,
@@ -40,8 +39,6 @@ import { StyledShowMoreButton } from '@containers/ProjectDetail/ProjectDetail.st
 import * as Pages from '@pages';
 import {
     useDeleteTicketMutation,
-    useGetMeQuery,
-    useGetProjectMembersQuery,
     useGetTicketQuery,
     useSubscribeTicketMutation,
     useUnsubscribeTicketMutation,
@@ -64,20 +61,13 @@ import {
 export const TicketDashboardContainer = () => {
     const { pid: projectId, tid: ticketId } = useParams();
     const [isEditOpen, setIsEditOpen] = useState(false);
-    const [isStatusOnly, setIsStatusOnly] = useState(false);
     const {
         data: ticket,
         isLoading,
         isError,
     } = useGetTicketQuery({ projectId: projectId!, ticketId: ticketId! });
-    const { data: user } = useGetMeQuery();
-    const { data: members } = useGetProjectMembersQuery(
-        { projectId: projectId! },
-        { skip: !projectId },
-    );
-    const membersData = members?.data.results ?? [];
-    const currentUserId = user?.data?.id;
-    const [deleteTicket] = useDeleteTicketMutation();
+    const [deleteTicket, { isLoading: isDeleting, isSuccess: isDeleted }] =
+        useDeleteTicketMutation();
     const [subscribe] = useSubscribeTicketMutation();
     const [unsubscribe] = useUnsubscribeTicketMutation();
     const [isMoveOpen, setIsMoveOpen] = useState(false);
@@ -95,22 +85,24 @@ export const TicketDashboardContainer = () => {
     }, [d]);
 
     if (isLoading) return <>Loading...</>;
-    if (isError) return <Pages.NotFoundPage />;
+    if (isError || !d) return <Pages.NotFoundPage />;
+    if (isDeleting) return <>Deleting...</>;
+    if (isDeleted) return <Navigate to={`/projects/${projectId}`} />;
 
-    const perm = d?.permission_class;
-    const isActive = d?.is_active;
-    const isLongDescription = d?.description.length > 150;
+    const perm = d.permission_class;
+    const isActive = d.is_active;
+    const isLongDescription = d.description.length > 150;
 
-    const handleOpenEdit = (statusOnly: boolean) => {
-        setIsStatusOnly(statusOnly);
+    const handleOpenEdit = () => {
         setIsEditOpen(true);
     };
 
     const handleDelete = async () => {
+        if (!projectId || !ticketId) return null;
         try {
             await deleteTicket({
-                projectId: projectId!,
-                ticketId: ticketId!,
+                projectId: projectId,
+                ticketId: ticketId,
             }).unwrap();
         } catch {
             dispatch(
@@ -127,7 +119,7 @@ export const TicketDashboardContainer = () => {
             id: 'edit',
             label: 'Edit Ticket',
             icon: <Edit />,
-            onClick: () => handleOpenEdit(false),
+            onClick: () => handleOpenEdit(),
             display: Boolean((perm ?? 0) >= 3),
         },
         {
@@ -141,7 +133,7 @@ export const TicketDashboardContainer = () => {
             id: 'status',
             label: 'Update Status',
             icon: <Speed />,
-            onClick: () => handleOpenEdit(true),
+            onClick: () => handleOpenEdit(),
             display: perm === 2,
         },
         {
@@ -163,20 +155,20 @@ export const TicketDashboardContainer = () => {
                             color="primary"
                             sx={{ lineHeight: 1 }}
                         >
-                            {d?.key}
+                            {d.jira_key}
                         </Typography>
-                        <TruncatedTitle variant="h4" noWrap title={d?.title}>
-                            {d?.title}
+                        <TruncatedTitle variant="h4" noWrap title={d.title}>
+                            {d.title}
                         </TruncatedTitle>
                     </TitleWrapper>
 
-                    {d?.is_active && (
+                    {d.is_active && (
                         <Stack direction="row" spacing={1} alignItems="center">
                             <Button
                                 size="small"
                                 onClick={() =>
                                     void (
-                                        d?.is_subscribed
+                                        d.is_subscribed
                                             ? unsubscribe
                                             : subscribe
                                     )({
@@ -215,14 +207,14 @@ export const TicketDashboardContainer = () => {
                         </Typography>
                         <UserInfo>
                             <Person fontSize="inherit" />
-                            <Tooltip title={d?.assignee_email || 'Unassigned'}>
+                            <Tooltip title={d.assignee_email || 'Unassigned'}>
                                 <Typography
                                     variant="body2"
                                     noWrap
                                     overflow={'hidden'}
                                     textOverflow={'ellipsis'}
                                 >
-                                    {d?.assignee_name || 'Unassigned'}
+                                    {d.assignee_name || 'Unassigned'}
                                 </Typography>
                             </Tooltip>
                         </UserInfo>
@@ -234,14 +226,14 @@ export const TicketDashboardContainer = () => {
                         </Typography>
                         <UserInfo>
                             <Person fontSize="inherit" />
-                            <Tooltip title={d?.reporter_email}>
+                            <Tooltip title={d.reporter_email}>
                                 <Typography
                                     variant="body2"
                                     noWrap
                                     overflow={'hidden'}
                                     textOverflow={'ellipsis'}
                                 >
-                                    {d?.reporter_name}
+                                    {d.reporter_name}
                                 </Typography>
                             </Tooltip>
                         </UserInfo>
@@ -259,20 +251,20 @@ export const TicketDashboardContainer = () => {
                             <Speed
                                 fontSize="inherit"
                                 color={
-                                    d?.severity
+                                    d.severity
                                         ? TICKET_SEVERITY_MAP[d.severity][1]
                                         : 'primary'
                                 }
                             />
                             <Typography
                                 color={
-                                    d?.severity
+                                    d.severity
                                         ? TICKET_SEVERITY_MAP[d.severity][1]
                                         : 'primary'
                                 }
                                 variant="body2"
                             >
-                                {d?.severity &&
+                                {d.severity &&
                                     TICKET_SEVERITY_MAP[d.severity][0]}
                             </Typography>
                         </Stack>
@@ -286,8 +278,8 @@ export const TicketDashboardContainer = () => {
                             <AccessAlarm fontSize="inherit" />
                             <Typography variant="body2" noWrap>
                                 {d.deadline
-                                    ? formatDateTime(d.deadline).slice(0, 12)
-                                    : 'NA'}
+                                    ? formatDateTime(d.deadline, false)
+                                    : 'N/A'}
                             </Typography>
                         </UserInfo>
                     </MetaItem>
@@ -300,7 +292,7 @@ export const TicketDashboardContainer = () => {
                         Description
                     </Typography>
                     <BodyText variant="body1" isExpanded={isExpanded}>
-                        {d?.description}
+                        {d.description}
                     </BodyText>
                     {isLongDescription && (
                         <StyledShowMoreButton
@@ -319,24 +311,8 @@ export const TicketDashboardContainer = () => {
             </CommentSection>
 
             <TicketEditForm
-                isStatusOnly={isStatusOnly}
                 open={isEditOpen}
                 onClose={() => setIsEditOpen(false)}
-                ticket={d}
-                memberOptions={
-                    (
-                        membersData as {
-                            id: string;
-                            member: UserData;
-                            role: number;
-                        }[]
-                    )
-                        .filter((m) => m.member.id !== currentUserId)
-                        .map((m) => ({
-                            LABEL: `${m.member.first_name} ${m.member.last_name} - (${m.member.email})`,
-                            VALUE: m.member.id,
-                        })) || [{ LABEL: 'No Members to Assign', VALUE: null }]
-                }
             />
 
             <MoveTicketContainer

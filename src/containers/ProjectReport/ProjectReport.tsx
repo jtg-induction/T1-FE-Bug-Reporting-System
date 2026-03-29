@@ -156,7 +156,7 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
                     <Stats
                         icon={<TaskAlt color="success" />}
                         title={isFetching ? '...' : `${projectStats.completed}`}
-                        subtitle="Completed"
+                        subtitle="Tickets Completed"
                     />
                     <Stats
                         icon={<ErrorOutline color="error" />}
@@ -165,7 +165,7 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
                                 ? '...'
                                 : `${projectStats.missingDeadline}`
                         }
-                        subtitle="Missing Deadline"
+                        subtitle="Tickets Missing Deadline"
                     />
                     <Stats
                         icon={<Schedule color="warning" />}
@@ -174,7 +174,7 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
                                 ? '...'
                                 : `${projectStats.upcomingDeadline}`
                         }
-                        subtitle="Due in 7 Days"
+                        subtitle="Tickets Due in 7 Days"
                     />
                 </StatsGrid>
             </Box>

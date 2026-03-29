@@ -21,7 +21,7 @@ export interface SignupFormData {
     lastName: string;
     dateOfBirth: string;
     phone: string;
-    designation: string | number;
+    designation: string;
     jiraId: string;
     password: string;
     confirmPassword: string;

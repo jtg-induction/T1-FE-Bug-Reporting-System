@@ -1,8 +1,11 @@
+import { Link } from 'react-router-dom';
 import { ProjectListResponse } from 'types/common';
 
+import { Box } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
 
 import {
+    PRIVATE_PATHS,
     PROJECT_ROLE_MAP,
     PROJECT_ROLE_OPTIONS,
     PROJECT_STATUS_MAP,
@@ -37,6 +40,19 @@ export const columns: GridColDef<ProjectListResponse>[] = [
         headerName: 'Project Title',
         flex: 1.5,
         minWidth: 200,
+        renderCell: (params) => (
+            <Box
+                component={Link}
+                to={`${PRIVATE_PATHS.PROJECTS}${params.id}`}
+                sx={{
+                    textDecoration: 'none',
+                }}
+                color="primary.main"
+                fontWeight={500}
+            >
+                {params.value}
+            </Box>
+        ),
     },
     {
         field: 'project_role',

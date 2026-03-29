@@ -5,9 +5,11 @@ export const StyledBox = styled(Box)(
     ({
         theme: {
             palette: { primary },
+            typography: { pxToRem },
         },
     }) => ({
         width: '100%',
+        height: pxToRem(684),
 
         [`& .${gridClasses.columnHeader} .${gridClasses.iconButtonContainer}`]:
             {
