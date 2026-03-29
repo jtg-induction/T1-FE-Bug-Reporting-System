@@ -5,7 +5,8 @@ import { useForm } from 'react-hook-form';
 import { Stack } from '@mui/material';
 
 import { FormField, ModalForm } from '@components';
-import { ProjectUpdateFormData } from '@containers';
+import { ProjectUpdateFormData, projectUpdateSchema } from '@containers';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { EDIT_PROJECT_FORM_CONFIG } from './EditProjectForm.config';
 import { EditProjectFormContainerProps } from './EditProjectForm.types';
@@ -18,6 +19,7 @@ export const EditProjectFormContainer = ({
     initialData,
 }: EditProjectFormContainerProps) => {
     const { control, handleSubmit, reset } = useForm<ProjectUpdateFormData>({
+        resolver: zodResolver(projectUpdateSchema),
         defaultValues: initialData,
     });
     useEffect(() => {
@@ -45,16 +47,14 @@ export const EditProjectFormContainer = ({
             >
                 <Stack spacing={3}>
                     <FormField
-                        required
                         name="title"
-                        label="Title"
+                        label="Title *"
                         control={control}
                         editStatus={true}
                     />
                     <FormField
-                        required
                         name="description"
-                        label="Description"
+                        label="Description *"
                         control={control}
                         editStatus={true}
                         multiline

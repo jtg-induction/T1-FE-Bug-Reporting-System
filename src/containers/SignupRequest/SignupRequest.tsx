@@ -81,9 +81,8 @@ export const SignupRequestContainer = () => {
 
                     <TextField
                         fullWidth
-                        required
                         id="email"
-                        label="Email Address"
+                        label="Email Address *"
                         type="email"
                         variant="outlined"
                         autoComplete="email"

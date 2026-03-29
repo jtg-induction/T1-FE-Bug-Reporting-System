@@ -1,7 +1,5 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { showSnackbar } from 'redux/features/profileSlice';
-import { useAppDispatch } from 'redux/store';
 
 import { Alert, Stack, Typography } from '@mui/material';
 
@@ -16,7 +14,6 @@ export const MoveTicketContainer = ({ open, onClose }: MoveTicketFormProps) => {
     const { tid: currentTid } = useParams<{ tid: string }>();
     const formId = 'move-ticket-form';
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
     const { data: projectsResponse, isLoading: isFetchingProjects } =
         useGetMovableProjectsQuery({
             projectId: currentPid,
@@ -38,28 +35,19 @@ export const MoveTicketContainer = ({ open, onClose }: MoveTicketFormProps) => {
 
     const [updateTicket, { isLoading: isUpdating }] = useUpdateTicketMutation();
     const onSubmit = async (data: MoveTicketValues) => {
-        try {
-            await updateTicket({
-                projectId: currentPid!,
-                ticketId: currentTid!,
-                updateData: {
-                    project_id: data.projectId,
-                },
-            }).unwrap();
+        await updateTicket({
+            projectId: currentPid!,
+            ticketId: currentTid!,
+            updateData: {
+                project_id: data.projectId,
+            },
+        }).unwrap();
 
-            reset();
-            onClose();
-            navigate(
-                `${PRIVATE_PATHS.PROJECTS}/${data.projectId}${PRIVATE_PATHS.TICKETS}/${currentTid}`,
-            );
-        } catch {
-            dispatch(
-                showSnackbar({
-                    message: 'Move Ticket Failed',
-                    severity: 'error',
-                }),
-            );
-        }
+        reset();
+        onClose();
+        navigate(
+            `${PRIVATE_PATHS.PROJECTS}/${data.projectId}${PRIVATE_PATHS.TICKETS}/${currentTid}`,
+        );
     };
 
     return (

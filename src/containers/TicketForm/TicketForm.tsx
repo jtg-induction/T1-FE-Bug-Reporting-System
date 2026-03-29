@@ -81,16 +81,14 @@ export const TicketFormContainer = ({
             >
                 <Stack spacing={3} sx={{ mt: 1 }}>
                     <FormField
-                        required
                         name="title"
-                        label="Title"
+                        label="Title *"
                         control={control}
                         editStatus={true}
                     />
                     <FormField
-                        required
                         name="description"
-                        label="Description"
+                        label="Description *"
                         control={control}
                         editStatus={true}
                         multiline

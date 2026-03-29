@@ -98,9 +98,8 @@ export const SignupCompleteContainer = () => {
                     <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
                         <TextField
                             fullWidth
-                            required
                             id="firstName"
-                            label="First Name"
+                            label="First Name *"
                             variant="outlined"
                             autoComplete="given-name"
                             {...register('firstName')}
@@ -109,9 +108,8 @@ export const SignupCompleteContainer = () => {
                         />
                         <TextField
                             fullWidth
-                            required
                             id="lastName"
-                            label="Last Name"
+                            label="Last Name *"
                             variant="outlined"
                             autoComplete="family-name"
                             {...register('lastName')}
@@ -149,9 +147,8 @@ export const SignupCompleteContainer = () => {
                         <TextField
                             fullWidth
                             select
-                            required
                             id="designation"
-                            label="Designation"
+                            label="Designation *"
                             variant="outlined"
                             defaultValue={INITIAL_FORM_DATA.designation}
                             {...register('designation')}
@@ -171,9 +168,8 @@ export const SignupCompleteContainer = () => {
                         </TextField>
                         <TextField
                             fullWidth
-                            required
                             id="jiraId"
-                            label="Jira ID"
+                            label="Jira ID *"
                             type="text"
                             variant="outlined"
                             {...register('jiraId')}
@@ -182,9 +178,8 @@ export const SignupCompleteContainer = () => {
                         />
                         <TextField
                             fullWidth
-                            required
                             id="jiraAccessToken"
-                            label="Jira Access Token"
+                            label="Jira Access Token *"
                             type="text"
                             variant="outlined"
                             {...register('jiraAccessToken')}
@@ -196,9 +191,8 @@ export const SignupCompleteContainer = () => {
                     <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
                         <TextField
                             fullWidth
-                            required
                             id="password"
-                            label="Password"
+                            label="Password *"
                             type={showPassword ? 'text' : 'password'}
                             variant="outlined"
                             autoComplete="new-password"
@@ -235,9 +229,8 @@ export const SignupCompleteContainer = () => {
                         />
                         <TextField
                             fullWidth
-                            required
                             id="confirmPassword"
-                            label="Confirm Password"
+                            label="Confirm Password *"
                             type={showConfirmPassword ? 'text' : 'password'}
                             variant="outlined"
                             autoComplete="new-password"

@@ -117,16 +117,14 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
                     {perm >= 3 && (
                         <>
                             <FormField
-                                required
                                 name="title"
-                                label="Title"
+                                label="Title *"
                                 control={control}
                                 editStatus={true}
                             />
                             <FormField
-                                required
                                 name="description"
-                                label="Description"
+                                label="Description *"
                                 control={control}
                                 editStatus={true}
                                 multiline
@@ -138,9 +136,8 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
                     <Stack direction="row" spacing={2}>
                         {perm >= 2 && (
                             <FormField
-                                required
                                 name="status"
-                                label="Status"
+                                label="Status *"
                                 type="select"
                                 control={control}
                                 editStatus={true}
@@ -156,9 +153,8 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
                         )}
                         {perm >= 3 && (
                             <FormField
-                                required
                                 name="severity"
-                                label="Severity"
+                                label="Severity *"
                                 type="select"
                                 control={control}
                                 editStatus={true}

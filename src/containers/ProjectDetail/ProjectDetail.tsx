@@ -126,20 +126,11 @@ export const ProjectDetailContainer = ({
     }, []);
 
     const handleEditSubmit = async (data: ProjectUpdateFormData) => {
-        try {
-            await updateProject({
-                projectId: projectId!,
-                updateData: data,
-            }).unwrap();
-            setOpenEdit(false);
-        } catch {
-            dispatch(
-                showSnackbar({
-                    message: 'Project Updation Failed',
-                    severity: 'error',
-                }),
-            );
-        }
+        await updateProject({
+            projectId: projectId!,
+            updateData: data,
+        }).unwrap();
+        setOpenEdit(false);
     };
 
     const handleArchiveToggle = () => {

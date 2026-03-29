@@ -85,7 +85,7 @@ export const LoginContainer = () => {
 
                     <TextField
                         fullWidth
-                        label="Email Address"
+                        label="Email Address *"
                         type="email"
                         autoComplete="email"
                         {...register('email')}
@@ -95,7 +95,7 @@ export const LoginContainer = () => {
 
                     <TextField
                         fullWidth
-                        label="Password"
+                        label="Password *"
                         type={showPassword ? 'text' : 'password'}
                         autoComplete="current-password"
                         {...register('password')}

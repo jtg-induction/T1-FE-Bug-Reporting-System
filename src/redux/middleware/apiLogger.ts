@@ -2,12 +2,21 @@ import { showSnackbar } from 'redux/features/profileSlice';
 
 import { isFulfilled, isRejectedWithValue, Middleware } from '@reduxjs/toolkit';
 
-interface RejectedPayload {
-    data?: {
-        message?: string;
-        errors?: Record<string, string | string[]>;
-    };
+interface ErrorData {
+    error?: unknown;
+    detail?: unknown;
+    message?: unknown;
+    errors?: Record<string, unknown>;
 }
+
+interface RejectedPayload {
+    data?: ErrorData;
+    error?: unknown;
+    detail?: unknown;
+    message?: unknown;
+    errors?: Record<string, unknown>;
+}
+
 interface FulfilledPayload {
     message?: string;
 }
@@ -20,31 +29,73 @@ interface ActionMeta {
 
 export const apiLogger: Middleware = (api) => (next) => (action: unknown) => {
     if (isRejectedWithValue(action)) {
-        const payload = (action as { payload?: RejectedPayload }).payload;
+        const rejectedAction = action as { payload?: RejectedPayload };
+        const payload = rejectedAction.payload;
 
-        let finalMessage =
-            payload?.data?.message || 'An unexpected error occurred';
+        const responseData = payload?.data || payload;
 
-        if (payload?.data?.errors && typeof payload.data.errors === 'object') {
-            const errorEntries = Object.entries(payload.data.errors);
-            if (errorEntries.length > 0) {
-                const [field, message] = errorEntries[0];
-                const detail = Array.isArray(message) ? message[0] : message;
+        let finalMessage = 'An unexpected error occurred. Please try again.';
 
-                const formattedField =
-                    field.charAt(0).toUpperCase() + field.slice(1);
+        if (responseData && typeof responseData === 'object') {
+            const errorsObj = responseData.errors;
 
-                finalMessage =
-                    typeof detail === 'string' &&
-                    detail.toLowerCase().includes(field.toLowerCase())
-                        ? detail
-                        : `${formattedField}: ${String(detail)}`;
+            if (
+                errorsObj &&
+                typeof errorsObj === 'object' &&
+                typeof errorsObj.error === 'string'
+            ) {
+                finalMessage = errorsObj.error;
+            } else if (typeof responseData.error === 'string') {
+                finalMessage = responseData.error;
+            } else if (typeof responseData.detail === 'string') {
+                finalMessage = responseData.detail;
+            } else if (
+                typeof responseData.message === 'string' &&
+                responseData.message !== 'Error'
+            ) {
+                finalMessage = responseData.message;
+            } else {
+                const errorFields =
+                    errorsObj && typeof errorsObj === 'object'
+                        ? errorsObj
+                        : (responseData as Record<string, unknown>);
+
+                const errorEntries = Object.entries(errorFields).filter(
+                    ([key]) => key !== 'jira_details',
+                );
+
+                if (errorEntries.length > 0) {
+                    const [field, message] = errorEntries[0];
+                    const detail = Array.isArray(message)
+                        ? (message as unknown[])[0]
+                        : message;
+
+                    if (typeof detail === 'string') {
+                        if (
+                            field === 'non_field_errors' ||
+                            field === 'errorMessages'
+                        ) {
+                            finalMessage = detail;
+                        } else {
+                            const formattedField =
+                                field.charAt(0).toUpperCase() +
+                                field.slice(1).replace(/_/g, ' ');
+                            finalMessage = detail
+                                .toLowerCase()
+                                .includes(field.toLowerCase())
+                                ? detail
+                                : `${formattedField}: ${detail}`;
+                        }
+                    }
+                }
             }
         }
 
+        const formattedMessage = finalMessage.replace(/ \| /g, '\n');
+
         api.dispatch(
             showSnackbar({
-                message: finalMessage,
+                message: formattedMessage,
                 severity: 'error',
             }),
         );
@@ -55,11 +106,13 @@ export const apiLogger: Middleware = (api) => (next) => (action: unknown) => {
             payload?: FulfilledPayload;
             meta?: ActionMeta;
         };
-
         const payload = fulfilledAction.payload;
         const meta = fulfilledAction.meta;
 
-        if (meta?.arg?.type === 'mutation' && payload?.message) {
+        if (
+            meta?.arg?.type === 'mutation' &&
+            typeof payload?.message === 'string'
+        ) {
             api.dispatch(
                 showSnackbar({
                     message: payload.message,
