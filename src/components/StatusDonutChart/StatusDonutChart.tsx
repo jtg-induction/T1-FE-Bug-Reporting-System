@@ -9,7 +9,13 @@ import {
     Tooltip,
 } from 'recharts';
 
-import { CircularProgress, Typography, useTheme } from '@mui/material';
+import {
+    Box,
+    CircularProgress,
+    Stack,
+    Typography,
+    useTheme,
+} from '@mui/material';
 
 import { ChartContainer } from './StatusDonutChart.styles';
 import {
@@ -59,6 +65,41 @@ export const StatusDonutChart = ({
             >
                 {value}
             </text>
+        );
+    };
+
+    const renderCustomLegend = () => {
+        if (!data) return null;
+
+        return (
+            <Stack
+                direction="row"
+                spacing={3}
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mt: 1, flexWrap: 'wrap', gap: 1 }}
+            >
+                {data.map((entry: StatusDataItem, index: number) => (
+                    <Stack
+                        key={`legend-item-${index}`}
+                        direction="row"
+                        spacing={1}
+                        alignItems="center"
+                    >
+                        <Box
+                            sx={{
+                                width: 12,
+                                height: 12,
+                                borderRadius: '50%',
+                                bgcolor: entry.color,
+                            }}
+                        />
+                        <Typography variant="body2" color="text.primary">
+                            {entry.name}
+                        </Typography>
+                    </Stack>
+                ))}
+            </Stack>
         );
     };
 
@@ -115,7 +156,6 @@ export const StatusDonutChart = ({
                         cy="50%"
                         innerRadius={70}
                         outerRadius={100}
-                        paddingAngle={4}
                         dataKey="value"
                         labelLine={false}
                         label={renderCustomizedLabel}
@@ -139,8 +179,7 @@ export const StatusDonutChart = ({
                     />
                     <Legend
                         verticalAlign="bottom"
-                        height={36}
-                        iconType="circle"
+                        content={renderCustomLegend}
                     />
                 </PieChart>
             </ResponsiveContainer>

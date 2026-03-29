@@ -41,7 +41,7 @@ export interface UserData {
     phone: string | null;
     date_of_birth: string | null;
     designation: string;
-    can_edit: boolean;
+    can_edit?: boolean;
     jiraID?: string;
     jira_access_token?: string;
 }

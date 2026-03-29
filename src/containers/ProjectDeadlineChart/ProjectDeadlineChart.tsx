@@ -7,7 +7,7 @@ import { Typography } from '@mui/material';
 import {
     ChartFilter,
     ChartFilterState,
-    DeadlineLineChart,
+    DeadlineChart,
     SectionCard,
 } from '@components';
 import { useGetProjectMembersQuery, useGetProjectSummaryQuery } from '@service';
@@ -63,12 +63,22 @@ export const ProjectDeadlineChartContainer = () => {
 
         if (!deadlineData) return [];
 
-        return deadlineData.map((item) => ({
-            date: item.day ? item.day.split('T')[0] : 'Unknown Date',
-            missed: item.missed || 0,
-            completedBefore: item.completed_before_time || 0,
-            completedOnTime: item.completed_on_time || 0,
-        }));
+        return deadlineData.map((item) => {
+            let formattedDate = 'Unknown Date';
+
+            if (item.day) {
+                const datePart = item.day.split('T')[0];
+                const [year, month, day] = datePart.split('-');
+                formattedDate = `${month}/${day}/${year}`;
+            }
+
+            return {
+                date: formattedDate,
+                missed: item.missed || 0,
+                completedBefore: item.completed_before_time || 0,
+                completedOnTime: item.completed_on_time || 0,
+            };
+        });
     }, [summaryResponse]);
 
     const handleFilterApply = (newFilters: ChartFilterState) => {
@@ -91,7 +101,7 @@ export const ProjectDeadlineChartContainer = () => {
                 />
             }
             mainContent={
-                <DeadlineLineChart
+                <DeadlineChart
                     data={deadlineChartData}
                     isLoading={isSummaryFetching}
                 />

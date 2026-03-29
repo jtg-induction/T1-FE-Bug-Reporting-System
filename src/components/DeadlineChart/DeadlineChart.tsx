@@ -1,8 +1,8 @@
 import {
+    Bar,
+    BarChart,
     CartesianGrid,
     Legend,
-    Line,
-    LineChart,
     ResponsiveContainer,
     Tooltip,
     XAxis,
@@ -11,13 +11,13 @@ import {
 
 import { CircularProgress, Typography, useTheme } from '@mui/material';
 
-import { ChartContainer } from './DeadlineLineChart.styles';
-import { DeadlineLineChartProps } from './DeadlineLineChart.types';
+import { ChartContainer } from './DeadlineChart.styles';
+import { DeadlineChartProps } from './DeadlineChart.types';
 
-export const DeadlineLineChart = ({
+export const DeadlineChart = ({
     data,
     isLoading = false,
-}: DeadlineLineChartProps) => {
+}: DeadlineChartProps) => {
     const theme = useTheme();
 
     if (isLoading) {
@@ -32,7 +32,7 @@ export const DeadlineLineChart = ({
         return (
             <ChartContainer>
                 <Typography color="text.secondary">
-                    No deadline data found for this period.
+                    No tickets found for this period.
                 </Typography>
             </ChartContainer>
         );
@@ -41,7 +41,7 @@ export const DeadlineLineChart = ({
     return (
         <ChartContainer>
             <ResponsiveContainer width="100%" height="100%">
-                <LineChart
+                <BarChart
                     data={data}
                     margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
                 >
@@ -70,37 +70,32 @@ export const DeadlineLineChart = ({
                             borderColor: theme.palette.divider,
                             color: theme.palette.text.primary,
                         }}
+                        cursor={{ fill: theme.palette.action.hover }}
                     />
                     <Legend verticalAlign="bottom" height={36} />
 
-                    <Line
-                        type="monotone"
+                    <Bar
                         dataKey="missed"
                         name="Deadline Missed"
-                        stroke="#d32f2f"
-                        strokeWidth={3}
-                        dot={{ r: 4 }}
-                        activeDot={{ r: 6 }}
+                        fill="#d32f2f"
+                        stackId="a"
+                        maxBarSize={50}
                     />
-                    <Line
-                        type="monotone"
+                    <Bar
                         dataKey="completedBefore"
                         name="Completed Before Time"
-                        stroke="#2e7d32"
-                        strokeWidth={3}
-                        dot={{ r: 4 }}
-                        activeDot={{ r: 6 }}
+                        fill="#2e7d32"
+                        stackId="a"
+                        maxBarSize={50}
                     />
-                    <Line
-                        type="monotone"
+                    <Bar
                         dataKey="completedOnTime"
                         name="Completed On Time"
-                        stroke="#0288d1"
-                        strokeWidth={3}
-                        dot={{ r: 4 }}
-                        activeDot={{ r: 6 }}
+                        fill="#0288d1"
+                        stackId="a"
+                        maxBarSize={50}
                     />
-                </LineChart>
+                </BarChart>
             </ResponsiveContainer>
         </ChartContainer>
     );

@@ -25,4 +25,4 @@ export { StatusDonutChart } from './StatusDonutChart';
 export { ChartFilter } from './ChartFilter';
 export type { ChartFilterState } from './ChartFilter';
 export { PriorityBarChart } from './PriorityBarChart';
-export { DeadlineLineChart } from './DeadlineLineChart';
+export { DeadlineChart } from './DeadlineChart';

@@ -27,6 +27,7 @@ export const TitleWrapper = styled(Stack)(
         flexDirection: 'row',
         alignItems: 'center',
         padding: pxToRem(16),
+        gap: pxToRem(4),
     }),
 );
 export const StyledDetailsCard = styled(Box)(

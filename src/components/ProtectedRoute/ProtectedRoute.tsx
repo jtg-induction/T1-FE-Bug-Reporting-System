@@ -1,5 +1,8 @@
+import { useEffect } from 'react';
+
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAppSelector } from 'redux/store';
+import { showSnackbar } from 'redux/features/profileSlice';
+import { useAppDispatch, useAppSelector } from 'redux/store';
 
 import { PRIVATE_PATHS, PUBLIC_PATHS } from '@constant';
 import { useGetMeQuery } from '@service';
@@ -12,9 +15,26 @@ export const ProtectedRoute = ({
     const { data, isLoading } = useGetMeQuery();
     const access = useAppSelector((state) => state.auth.access);
     const location = useLocation();
-    if (isLoading) return null;
+    const dispatch = useAppDispatch();
 
     const isAuthenticated = !!(data || access);
+
+    useEffect(() => {
+        if (
+            isPublicRoute &&
+            isAuthenticated &&
+            location.pathname === PUBLIC_PATHS.COMPLETE_REGISTER
+        ) {
+            dispatch(
+                showSnackbar({
+                    message: 'Please logout before registering a new account.',
+                    severity: 'warning',
+                }),
+            );
+        }
+    }, [isPublicRoute, isAuthenticated, location.pathname, dispatch]);
+
+    if (isLoading) return null;
 
     if (isPublicRoute) {
         if (isAuthenticated) {
@@ -30,6 +50,7 @@ export const ProtectedRoute = ({
         }
         return <Outlet />;
     }
+
     if (!isAuthenticated) {
         const targetUrl = `${location.pathname}${location.search}`;
         const continueParam = encodeURIComponent(targetUrl);

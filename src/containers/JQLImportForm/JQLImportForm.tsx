@@ -5,15 +5,12 @@ import { useParams } from 'react-router-dom';
 import { showSnackbar } from 'redux/features/profileSlice';
 import { useAppDispatch } from 'redux/store';
 
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import {
     Autocomplete,
     Box,
     Button,
     CircularProgress,
-    IconButton,
     TextField,
-    Tooltip,
 } from '@mui/material';
 
 import { FormField, ModalForm } from '@components';
@@ -113,23 +110,9 @@ export const JQLImportContainer = ({
         <ModalForm
             open={open}
             onClose={onClose}
-            title={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    Import Tickets via JQL
-                    <Tooltip title="Learn more about JQL">
-                        <IconButton
-                            component="a"
-                            href={EXTERNAL_URLS.JQL_GUIDE}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            size="small"
-                            sx={{ color: 'text.secondary' }}
-                        >
-                            <InfoOutlinedIcon fontSize="small" />
-                        </IconButton>
-                    </Tooltip>
-                </Box>
-            }
+            title="Import Tickets via JQL"
+            infoTooltipText="Learn more about JQL"
+            infoLink={EXTERNAL_URLS.JQL_GUIDE}
             formId="jql-import-form"
             isLoading={isImporting}
             submitLabel="Import Selected"
