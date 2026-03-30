@@ -10,6 +10,8 @@ interface ProfileState {
         open: boolean;
         message: string;
         severity: AlertColor;
+        actionLabel?: string;
+        actionUrl?: string;
     };
     isSubmitting: boolean;
     isFormDirty: boolean;
@@ -19,7 +21,13 @@ interface ProfileState {
 const initialState: ProfileState = {
     editStatus: false,
     formData: null,
-    snackbar: { open: false, message: '', severity: 'success' },
+    snackbar: {
+        open: false,
+        message: '',
+        severity: 'success',
+        actionLabel: undefined,
+        actionUrl: undefined,
+    },
     isSubmitting: false,
     isFormDirty: false,
     isCancelling: false,
@@ -40,12 +48,19 @@ export const profileSlice = createSlice({
         },
         showSnackbar: (
             state,
-            action: PayloadAction<{ message: string; severity: AlertColor }>,
+            action: PayloadAction<{
+                message: string;
+                severity: AlertColor;
+                actionLabel?: string;
+                actionUrl?: string;
+            }>,
         ) => {
             state.snackbar = { open: true, ...action.payload };
         },
         hideSnackbar: (state) => {
             state.snackbar.open = false;
+            state.snackbar.actionLabel = undefined;
+            state.snackbar.actionUrl = undefined;
         },
         triggerSubmit: (state) => {
             state.isSubmitting = true;

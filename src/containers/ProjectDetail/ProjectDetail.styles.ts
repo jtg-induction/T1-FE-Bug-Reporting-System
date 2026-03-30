@@ -17,7 +17,19 @@ export const StyledHeaderSection = styled(Stack)(
         borderBottom: `1px solid ${palette.divider}`,
     }),
 );
-
+export const TitleWrapper = styled(Stack)(
+    ({
+        theme: {
+            typography: { pxToRem },
+        },
+    }) => ({
+        maxWidth: '70%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: pxToRem(16),
+        gap: pxToRem(4),
+    }),
+);
 export const StyledDetailsCard = styled(Box)(
     ({
         theme: {
@@ -41,18 +53,21 @@ export const StyledDescriptionWrapper = styled(Box)(
         marginBottom: pxToRem(24),
     }),
 );
-
 export const StyledDescriptionText = styled(Typography, {
-    shouldForwardProp: (prop) => prop !== '$isExpanded',
-})<{ $isExpanded: boolean }>(({ $isExpanded, theme: { palette } }) => ({
-    lineHeight: 1.6,
-    color: palette.text.secondary,
-    display: '-webkit-box',
-    WebkitLineClamp: $isExpanded ? 'unset' : 1,
-    WebkitBoxOrient: 'vertical',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-}));
+    shouldForwardProp: (prop) => prop !== 'isExpanded',
+})<{ isExpanded: boolean }>(
+    ({
+        isExpanded,
+        theme: {
+            palette,
+            mixins: { lineClamp },
+        },
+    }) => ({
+        lineHeight: 1.6,
+        color: palette.text.secondary,
+        ...(!isExpanded ? lineClamp(3) : {}),
+    }),
+);
 
 export const StyledShowMoreButton = styled(Button)(
     ({

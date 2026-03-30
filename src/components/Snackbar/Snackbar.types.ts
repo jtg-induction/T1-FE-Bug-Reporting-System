@@ -7,4 +7,6 @@ export interface CustomSnackbarProps {
     onClose: () => void;
     autoHideDuration?: number;
     anchorOrigin?: SnackbarProps['anchorOrigin'];
+    actionLabel?: string;
+    actionUrl?: string;
 }

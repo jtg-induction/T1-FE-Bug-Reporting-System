@@ -36,9 +36,9 @@ export const ProfilePage = () => {
 
     const user = getUserResponse?.data;
     const activeUser = userId === currentUser?.id ? currentUser : user;
-    const isEditable = Boolean(user?.can_edit || currentUser?.id === userId);
+    const isEditable = Boolean(user?.can_edit || currentUser?.can_edit);
 
-    if (error) return <NotFoundPage />;
+    if (error || !userId || !activeUser) return <NotFoundPage />;
 
     return (
         <MainWrapper>

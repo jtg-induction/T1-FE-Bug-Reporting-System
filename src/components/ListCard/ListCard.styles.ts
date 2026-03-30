@@ -88,6 +88,7 @@ export const InfoWrapper = styled(Box)(
         alignItems: 'center',
         gap: pxToRem(8),
         flexShrink: 0,
+        maxWidth: 90,
     }),
 );
 

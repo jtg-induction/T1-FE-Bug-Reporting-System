@@ -4,6 +4,7 @@ export const StyledDashboardContainer = styled(Stack)(
     ({
         theme: {
             typography: { pxToRem },
+            breakpoints,
         },
     }) => ({
         padding: pxToRem(32),
@@ -13,6 +14,9 @@ export const StyledDashboardContainer = styled(Stack)(
         overflowY: 'auto',
         scrollbarWidth: 'none',
         '&::-webkit-scrollbar': { display: 'none' },
+        [breakpoints.down('md')]: {
+            padding: pxToRem(8),
+        },
     }),
 );
 

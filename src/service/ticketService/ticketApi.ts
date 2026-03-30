@@ -1,5 +1,6 @@
 import {
     ApiResponse,
+    PaginatedJiraResponse,
     PaginatedResponse,
     ProjectListResponse,
     TicketCreateData,
@@ -40,10 +41,23 @@ export const ticketApi = baseApi.injectEndpoints({
             PaginatedResponse<TicketCreateResponse>,
             TicketListData
         >({
-            query: ({ projectId, limit, offset, ordering, filter }) => ({
-                url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}`,
-                params: { limit, offset, ordering, ...filter },
-            }),
+            query: ({ projectId, limit, offset, ordering, filter }) => {
+                const cleanFilter = filter
+                    ? Object.fromEntries(
+                          Object.entries(filter).map(([key, value]) => [
+                              key,
+                              value instanceof Date
+                                  ? value.toISOString().split('T')[0]
+                                  : value,
+                          ]),
+                      )
+                    : {};
+
+                return {
+                    url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}`,
+                    params: { limit, offset, ordering, ...cleanFilter },
+                };
+            },
             providesTags: ['Tickets'],
         }),
         getTicket: builder.query<
@@ -71,7 +85,7 @@ export const ticketApi = baseApi.injectEndpoints({
                 url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}${ticketId}/`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['Tickets', 'Ticket'],
+            invalidatesTags: ['Tickets'],
         }),
         updateTicket: builder.mutation<
             ApiResponse<TicketCreateResponse>,
@@ -117,8 +131,14 @@ export const ticketApi = baseApi.injectEndpoints({
             }),
         }),
         getJQLTickets: builder.mutation<
-            ApiResponse<{ id: string; title: string; jira_key: string }[]>,
-            { projectId: string; data: Record<'jql', string> }
+            ApiResponse<PaginatedJiraResponse>,
+            {
+                projectId: string;
+                data: {
+                    jql?: string;
+                    nextPageToken?: string | null;
+                };
+            }
         >({
             query: ({ projectId, data }) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}jira-import-list/`,
@@ -128,7 +148,7 @@ export const ticketApi = baseApi.injectEndpoints({
         }),
         importTicket: builder.mutation<
             ApiResponse<TicketCreateResponse>,
-            { projectId: string; data: Record<'jira_key', string> }
+            { projectId: string; data: Record<'jira_keys', string[]> }
         >({
             query: ({ projectId, data }) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}import-ticket/`,

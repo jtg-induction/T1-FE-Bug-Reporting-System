@@ -28,6 +28,12 @@ export const userApi = baseApi.injectEndpoints({
                 method: HTTP_METHODS.PATCH,
                 body: updateData,
             }),
+            invalidatesTags: [
+                'Ticket',
+                'Tickets',
+                'ProjectMembers',
+                'Comments',
+            ],
         }),
 
         getMe: builder.query<ApiResponse<UserData>, void>({

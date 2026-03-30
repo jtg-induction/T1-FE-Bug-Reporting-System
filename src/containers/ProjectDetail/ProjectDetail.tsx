@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 import { showSnackbar } from 'redux/features/profileSlice';
@@ -11,10 +11,10 @@ import {
     Logout,
     Unarchive,
 } from '@mui/icons-material';
-import { Chip, Stack, Typography } from '@mui/material';
+import { Chip, Tooltip, Typography } from '@mui/material';
 
 import { ActionMenu, ActionMenuItem, SectionCard } from '@components';
-import { PRIVATE_PATHS, ROLE_OWNER } from '@constant';
+import { PRIVATE_PATHS, PROJECT_TITLE, ROLE_OWNER } from '@constant';
 import {
     EditProjectFormContainer,
     JQLImportContainer,
@@ -40,6 +40,7 @@ import {
     StyledLabel,
     StyledLink,
     StyledShowMoreButton,
+    TitleWrapper,
 } from './ProjectDetail.styles';
 import {
     ProjectDetailProps,
@@ -65,11 +66,10 @@ export const ProjectDetailContainer = ({
 }: ProjectDetailProps) => {
     const { id: projectId } = useParams<{ id: string }>();
     const navigate = useNavigate();
-
     const dispatch = useAppDispatch();
 
     const { data: members } = useGetProjectMembersQuery(
-        { projectId: projectId, limit: 100, offset: 0 },
+        { projectId: projectId!, limit: 100, offset: 0 },
         { skip: !projectId },
     );
     const [updateProject, { isLoading: isUpdating }] =
@@ -88,6 +88,9 @@ export const ProjectDetailContainer = ({
     const [isExpanded, setIsExpanded] = useState(false);
     const [openImport, setOpenImport] = useState(false);
 
+    const descriptionRef = useRef<HTMLElement>(null);
+    const [needsShowMore, setNeedsShowMore] = useState(false);
+
     const projectMembersData = members?.data.results ?? [];
 
     const projectMemberOptions = useMemo(() => {
@@ -96,7 +99,7 @@ export const ProjectDetailContainer = ({
         );
 
         if (otherMembers.length === 0) {
-            return [{ LABEL: 'No other members available', VALUE: '' }];
+            return [];
         }
 
         return otherMembers.map((m) => ({
@@ -114,21 +117,39 @@ export const ProjectDetailContainer = ({
         };
     }, [projectData]);
 
+    useEffect(() => {
+        document.title = projectData
+            ? `Project: ${projectData?.key}`
+            : PROJECT_TITLE;
+
+        return () => {
+            document.title = PROJECT_TITLE;
+        };
+    }, [projectData]);
+
+    const descriptionText =
+        projectData?.description || 'No description provided.';
+
+    useEffect(() => {
+        const el = descriptionRef.current;
+        if (!el) return;
+
+        const observer = new ResizeObserver(() => {
+            if (!isExpanded) {
+                setNeedsShowMore(el.scrollHeight > el.clientHeight);
+            }
+        });
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [descriptionText, isExpanded]);
+
     const handleEditSubmit = async (data: ProjectUpdateFormData) => {
-        try {
-            await updateProject({
-                projectId: projectId!,
-                updateData: data,
-            }).unwrap();
-            setOpenEdit(false);
-        } catch {
-            dispatch(
-                showSnackbar({
-                    message: 'Project Updation Failed',
-                    severity: 'error',
-                }),
-            );
-        }
+        await updateProject({
+            projectId: projectId!,
+            updateData: data,
+        }).unwrap();
+        setOpenEdit(false);
     };
 
     const handleArchiveToggle = () => {
@@ -154,7 +175,7 @@ export const ProjectDetailContainer = ({
         if (isOwner) {
             setOpenLeaveDialog(true);
         } else {
-            executeLeaveProject();
+            void executeLeaveProject();
         }
     };
 
@@ -195,10 +216,6 @@ export const ProjectDetailContainer = ({
     };
 
     if (!projectData) return null;
-
-    const descriptionText =
-        projectData.description || 'No description provided.';
-    const isLongDescription = descriptionText.length > 150;
 
     const menuOptions: ActionMenuItem[] = [
         {
@@ -248,23 +265,30 @@ export const ProjectDetailContainer = ({
             <SectionCard
                 titleContent={
                     <StyledHeaderSection>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                            <Typography variant="h6" fontWeight="bold">
-                                {projectData?.title}
+                        <TitleWrapper>
+                            <Tooltip title={projectData.title}>
                                 <Typography
-                                    component="span"
-                                    variant="subtitle1"
-                                    color="text.secondary"
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    noWrap
+                                    maxWidth="100%"
                                 >
-                                    [{projectData?.key}]
+                                    {projectData?.title}
                                 </Typography>
+                            </Tooltip>
+                            <Typography
+                                component="span"
+                                variant="subtitle1"
+                                color="text.secondary"
+                            >
+                                [{projectData?.key}]
                             </Typography>
                             <Chip
                                 label={isActive ? 'Active' : 'Archived'}
                                 color={isActive ? 'success' : 'default'}
                                 size="small"
                             />
-                        </Stack>
+                        </TitleWrapper>
 
                         <ActionMenu items={menuOptions} />
                     </StyledHeaderSection>
@@ -273,12 +297,13 @@ export const ProjectDetailContainer = ({
                     <StyledDetailsCard>
                         <StyledDescriptionWrapper>
                             <StyledDescriptionText
+                                ref={descriptionRef}
                                 variant="body1"
-                                $isExpanded={isExpanded}
+                                isExpanded={isExpanded}
                             >
                                 {descriptionText}
                             </StyledDescriptionText>
-                            {isLongDescription && (
+                            {needsShowMore && (
                                 <StyledShowMoreButton
                                     size="small"
                                     onClick={() => setIsExpanded(!isExpanded)}
@@ -293,7 +318,7 @@ export const ProjectDetailContainer = ({
                             <StyledInfoRow>
                                 <StyledLabel>Jira URL</StyledLabel>
                                 <StyledLink
-                                    to={projectData?.jira_url}
+                                    to={`${projectData?.jira_url}/projects/${projectData?.key}`}
                                     target="_blank"
                                 >
                                     {projectData?.jira_url}

@@ -14,4 +14,8 @@ export const operatorMap: Record<string, string> = {
     is: '',
     not: 'ne',
     isAnyOf: 'in',
+    after: 'gt',
+    onOrAfter: 'gte',
+    before: 'lt',
+    onOrBefore: 'lte',
 };

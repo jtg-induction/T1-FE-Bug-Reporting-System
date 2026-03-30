@@ -8,20 +8,21 @@ import {
     Schedule,
     TaskAlt,
 } from '@mui/icons-material';
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 
-import { ChartFilter, ChartFilterState, Snackbar, Stats } from '@components';
+import { Snackbar, Stats } from '@components';
 import {
     ProjectDeadlineChartContainer,
     ProjectPriorityChartContainer,
     ProjectStatusChartContainer,
+    ReportDownloadFormContainer,
+    ReportFormValues,
 } from '@containers';
 import {
     useDownloadProjectReportMutation,
     useGetProjectMembersQuery,
     useGetProjectSummaryQuery,
 } from '@service';
-import { getEndOfCurrentWeek, getStartOfCurrentWeek } from '@utils';
 
 import {
     FilterWrapper,
@@ -33,6 +34,8 @@ import { ProjectReportProps } from './ProjectReport.types';
 
 export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
     const { id: projectId } = useParams<{ id: string }>();
+
+    const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
 
     const { data: membersResponse } = useGetProjectMembersQuery(
         { projectId: projectId || '', limit: 100, offset: 0 },
@@ -65,15 +68,15 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
         setSnackbar((prev) => ({ ...prev, open: false }));
     };
 
-    const filterUsers = useMemo(() => {
+    const userOptions = useMemo(() => {
         const results = membersResponse?.data?.results ?? [];
         return results.map((row) => ({
-            id: row.member.id,
-            name: `${row.member.first_name} ${row.member.last_name}`.trim(),
+            VALUE: row.member.id,
+            LABEL: `${row.member.first_name} ${row.member.last_name} (${row.member.email})`.trim(),
         }));
     }, [membersResponse]);
 
-    const handleDownloadReport = async (filters: ChartFilterState) => {
+    const handleDownloadReport = async (filters: ReportFormValues) => {
         if (!projectId) return;
 
         try {
@@ -96,6 +99,7 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
             link.parentNode?.removeChild(link);
             window.URL.revokeObjectURL(url);
 
+            setIsDownloadModalOpen(false);
             setSnackbar({
                 open: true,
                 message: 'Project Report downloaded successfully!',
@@ -121,13 +125,6 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
         };
     }, [summaryResponse]);
 
-    const initialFilters: ChartFilterState = {
-        selectedUserIds: ['all'],
-        dateRangeType: 'week',
-        startDate: getStartOfCurrentWeek(),
-        endDate: getEndOfCurrentWeek(),
-    };
-
     return (
         <Stack gap={3}>
             <HeaderContainer>
@@ -139,16 +136,12 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
 
                 {isAdmin && (
                     <FilterWrapper>
-                        <ChartFilter
-                            showUserFilter={true}
-                            users={filterUsers}
-                            initialFilters={initialFilters}
-                            onApply={(filters) =>
-                                void handleDownloadReport(filters)
-                            }
-                            buttonText="Download"
-                            isLoading={isDownloading}
-                        />
+                        <Button
+                            variant="contained"
+                            onClick={() => setIsDownloadModalOpen(true)}
+                        >
+                            Download Report
+                        </Button>
                     </FilterWrapper>
                 )}
             </HeaderContainer>
@@ -163,7 +156,7 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
                     <Stats
                         icon={<TaskAlt color="success" />}
                         title={isFetching ? '...' : `${projectStats.completed}`}
-                        subtitle="Completed"
+                        subtitle="Tickets Completed"
                     />
                     <Stats
                         icon={<ErrorOutline color="error" />}
@@ -172,7 +165,7 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
                                 ? '...'
                                 : `${projectStats.missingDeadline}`
                         }
-                        subtitle="Missing Deadline"
+                        subtitle="Tickets Missing Deadline"
                     />
                     <Stats
                         icon={<Schedule color="warning" />}
@@ -181,7 +174,7 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
                                 ? '...'
                                 : `${projectStats.upcomingDeadline}`
                         }
-                        subtitle="Due in 7 Days"
+                        subtitle="Tickets Due in 7 Days"
                     />
                 </StatsGrid>
             </Box>
@@ -189,6 +182,15 @@ export const ProjectReportContainer = ({ isAdmin }: ProjectReportProps) => {
             <ProjectStatusChartContainer />
             <ProjectPriorityChartContainer />
             <ProjectDeadlineChartContainer />
+
+            <ReportDownloadFormContainer
+                open={isDownloadModalOpen}
+                onClose={() => setIsDownloadModalOpen(false)}
+                onSubmit={handleDownloadReport}
+                isLoading={isDownloading}
+                userOptions={userOptions}
+                showUserFilter={true}
+            />
 
             <Snackbar
                 open={snackbar.open}

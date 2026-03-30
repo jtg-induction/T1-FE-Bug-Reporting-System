@@ -9,7 +9,7 @@ export interface ChartFilterState {
 
 export interface ChartFilterBarProps {
     showUserFilter?: boolean;
-    users?: { id: string; name: string }[];
+    users?: { id: string; name: string; email: string }[];
     initialFilters?: ChartFilterState;
     onApply: (filters: ChartFilterState) => void;
     buttonText?: string;

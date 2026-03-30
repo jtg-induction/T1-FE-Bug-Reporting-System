@@ -5,7 +5,7 @@ export interface DeadlineChartData {
     completedOnTime: number;
 }
 
-export interface DeadlineLineChartProps {
+export interface DeadlineChartProps {
     data: DeadlineChartData[];
     isLoading?: boolean;
 }

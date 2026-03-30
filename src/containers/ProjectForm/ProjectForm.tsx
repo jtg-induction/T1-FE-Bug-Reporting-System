@@ -53,13 +53,13 @@ export const ProjectFormContainer = ({
                 <Stack spacing={3} mt={1}>
                     <FormField
                         name="title"
-                        label="Title"
+                        label="Title *"
                         control={control}
                         editStatus={true}
                     />
                     <FormField
                         name="description"
-                        label="Description"
+                        label="Description *"
                         control={control}
                         editStatus={true}
                         multiline
@@ -67,13 +67,13 @@ export const ProjectFormContainer = ({
                     />
                     <FormField
                         name="key"
-                        label="Project Key"
+                        label="Project Key *"
                         control={control}
                         editStatus={true}
                     />
                     <FormField
                         name="status"
-                        label="Status"
+                        label="Status *"
                         type="select"
                         control={control}
                         editStatus={true}
@@ -81,7 +81,7 @@ export const ProjectFormContainer = ({
                     />
                     <FormField
                         name="jira_url"
-                        label="Jira URL"
+                        label="Jira URL *"
                         control={control}
                         editStatus={true}
                     />

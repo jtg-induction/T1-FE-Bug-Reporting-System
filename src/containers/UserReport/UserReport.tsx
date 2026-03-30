@@ -2,16 +2,16 @@ import { useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 
-import { Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 
-import { ChartFilter, ChartFilterState, Snackbar } from '@components';
+import { Snackbar } from '@components';
 import {
     UserDeadlineChartContainer,
     UserPriorityChartContainer,
     UserStatusChartContainer,
 } from '@containers';
+import { ReportDownloadFormContainer, ReportFormValues } from '@containers';
 import { useDownloadUserReportMutation, useGetMeQuery } from '@service';
-import { getEndOfCurrentWeek, getStartOfCurrentWeek } from '@utils';
 
 import {
     FilterWrapper,
@@ -25,6 +25,7 @@ export const UserReportContainer = () => {
     const { data: getMeResponse } = useGetMeQuery();
     const currentUser = getMeResponse?.data;
     const isCurrentUser = userId === currentUser?.id || !userId;
+    const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
 
     const [downloadReport, { isLoading: isDownloading }] =
         useDownloadUserReportMutation();
@@ -47,7 +48,7 @@ export const UserReportContainer = () => {
         setSnackbar((prev) => ({ ...prev, open: false }));
     };
 
-    const handleDownloadReport = async (filters: ChartFilterState) => {
+    const handleDownloadReport = async (filters: ReportFormValues) => {
         const targetUserId = userId || currentUser?.id;
         if (!targetUserId) return;
 
@@ -73,6 +74,7 @@ export const UserReportContainer = () => {
                 message: 'Report downloaded successfully!',
                 severity: 'success',
             });
+            setIsDownloadModalOpen(false);
         } catch {
             setSnackbar({
                 open: true,
@@ -80,12 +82,6 @@ export const UserReportContainer = () => {
                 severity: 'error',
             });
         }
-    };
-
-    const initialFilters: ChartFilterState = {
-        dateRangeType: 'week',
-        startDate: getStartOfCurrentWeek(),
-        endDate: getEndOfCurrentWeek(),
     };
 
     return (
@@ -101,15 +97,12 @@ export const UserReportContainer = () => {
 
                 {isCurrentUser && (
                     <FilterWrapper>
-                        <ChartFilter
-                            showUserFilter={false}
-                            initialFilters={initialFilters}
-                            onApply={(filters) =>
-                                void handleDownloadReport(filters)
-                            }
-                            buttonText="Download"
-                            isLoading={isDownloading}
-                        />
+                        <Button
+                            variant="contained"
+                            onClick={() => setIsDownloadModalOpen(true)}
+                        >
+                            Download Report
+                        </Button>
                     </FilterWrapper>
                 )}
             </HeaderContainer>
@@ -117,6 +110,14 @@ export const UserReportContainer = () => {
             <UserStatusChartContainer />
             <UserPriorityChartContainer />
             <UserDeadlineChartContainer />
+
+            <ReportDownloadFormContainer
+                open={isDownloadModalOpen}
+                onClose={() => setIsDownloadModalOpen(false)}
+                onSubmit={handleDownloadReport}
+                isLoading={isDownloading}
+                showUserFilter={false}
+            />
 
             <Snackbar
                 open={snackbar.open}

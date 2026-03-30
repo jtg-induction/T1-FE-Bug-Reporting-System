@@ -1,19 +1,15 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { Box, Tabs, Typography } from '@mui/material';
+import { Tabs, Typography } from '@mui/material';
 
-import { TicketSection, UserTable } from '@containers';
+import { ProjectReportContainer, TicketSection, UserTable } from '@containers';
 import { ProjectDetailContainer } from '@containers';
 import { NotFoundPage } from '@pages/NotFoundPage';
 import { useGetMeQuery, useGetProjectQuery } from '@service';
 
-import {
-    DASHBOARD_TEXT,
-    PROJECT_TABS,
-    TAB_VALUES,
-} from './ProjectDashboard.config';
+import { DASHBOARD_TEXT, TAB_MAP } from './ProjectDashboard.config';
 import {
     StyledDashboardContainer,
     StyledTab,
@@ -23,22 +19,23 @@ import {
 } from './ProjectDashboard.styles';
 
 export const ProjectDashboard = () => {
-    const { id: projectId } = useParams<{ id: string }>();
-    const [tabValue, setTabValue] = useState<number>(TAB_VALUES.TICKETS);
-    const [paginationModel, setPaginationModel] = useState({
-        page: 0,
-        pageSize: 5,
-    });
-    const [filterModel, setFilterModel] = useState({});
-    const [sortModel, setSortModel] = useState<string>();
+    const { id: projectId, tab } = useParams<{ id: string; tab?: string }>();
+    const navigate = useNavigate();
+    const tabValue = tab ? TAB_MAP.indexOf(tab) : 0;
 
-    const { data: currentUser } = useGetMeQuery();
-    const { data: project, isLoading } = useGetProjectQuery(
+    const { data: currentUser, isLoading: isUserLoading } = useGetMeQuery();
+    const { data: project, isLoading: isProjectLoading } = useGetProjectQuery(
         projectId as string,
         { skip: !projectId },
     );
 
-    if (isLoading) {
+    useEffect(() => {
+        if (!tab) {
+            navigate(`/projects/${projectId}/tickets`, { replace: true });
+        }
+    }, [tab, projectId, navigate]);
+
+    if (isProjectLoading || isUserLoading) {
         return (
             <Typography variant="h6" align="center">
                 {DASHBOARD_TEXT.loading}
@@ -46,17 +43,18 @@ export const ProjectDashboard = () => {
         );
     }
 
-    if (!project) {
+    if (!project?.data || !currentUser?.data) {
         return <NotFoundPage />;
     }
-    const currentUserData = currentUser?.data;
-    const projectData = project?.data;
-    const isAdmin = projectData?.project_role === 1;
-    const isActive = projectData?.status === 1;
-    const isOwner = projectData?.owner === currentUserData?.id;
+    const currentUserData = currentUser.data;
+    const projectData = project.data;
+    const isAdmin = projectData.project_role === 2;
+    const isActive = projectData.status === 2;
+    const isOwner = projectData.owner === currentUserData?.id;
 
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-        setTabValue(newValue);
+        const tabName = TAB_MAP[newValue];
+        navigate(`/projects/${projectId}/${tabName}`);
     };
 
     return (
@@ -72,30 +70,20 @@ export const ProjectDashboard = () => {
             <StyledTabsContainer>
                 <StyledTabsWrapper>
                     <Tabs value={tabValue} onChange={handleTabChange}>
-                        {PROJECT_TABS.map((tab) => (
-                            <StyledTab
-                                key={tab.value}
-                                label={tab.label}
-                                value={tab.value}
-                            />
-                        ))}
+                        <StyledTab label="Tickets" />
+                        <StyledTab label="Users" />
+                        <StyledTab label="Summary" />
                     </Tabs>
                 </StyledTabsWrapper>
 
-                {tabValue === TAB_VALUES.TICKETS && (
+                {tabValue === 0 && (
                     <StyledTabPanel>
                         <TicketSection isAdmin={isAdmin} isActive={isActive} />
                     </StyledTabPanel>
                 )}
-                {tabValue === TAB_VALUES.USERS && (
+                {tabValue === 1 && (
                     <StyledTabPanel>
                         <UserTable
-                            filter={filterModel}
-                            ordering={sortModel}
-                            paginationModel={paginationModel}
-                            setPaginationModel={setPaginationModel}
-                            setFilterModel={setFilterModel}
-                            setSortModel={setSortModel}
                             isAdmin={isAdmin}
                             isActive={isActive}
                             ownerId={projectData?.owner}
@@ -104,9 +92,9 @@ export const ProjectDashboard = () => {
                         />
                     </StyledTabPanel>
                 )}
-                {tabValue === TAB_VALUES.SUMMARY && (
+                {tabValue === 2 && (
                     <StyledTabPanel>
-                        <Box>Summary</Box>
+                        <ProjectReportContainer isAdmin={isAdmin} />
                     </StyledTabPanel>
                 )}
             </StyledTabsContainer>

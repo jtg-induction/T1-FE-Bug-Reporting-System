@@ -1,21 +1,23 @@
+import React, { useState } from 'react';
+
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { showSnackbar } from 'redux/features/profileSlice';
 import { useAppDispatch } from 'redux/store';
 
 import {
+    Autocomplete,
     Box,
     Button,
-    Card,
-    CardContent,
     CircularProgress,
-    Typography,
+    TextField,
 } from '@mui/material';
 
 import { FormField, ModalForm } from '@components';
+import { EXTERNAL_URLS } from '@constant';
 import { useGetJQLTicketsMutation, useImportTicketMutation } from '@service';
 
-import { JQLFormValues } from './JQLImportForm.types';
+import { JQLFormValues, TicketOption } from './JQLImportForm.types';
 
 export const JQLImportContainer = ({
     open,
@@ -26,21 +28,49 @@ export const JQLImportContainer = ({
 }) => {
     const { id: projectId } = useParams<{ id: string }>();
     const dispatch = useAppDispatch();
-    const { control, handleSubmit } = useForm<JQLFormValues>({
+
+    const { control, handleSubmit, getValues } = useForm<JQLFormValues>({
         defaultValues: { jql: '' },
     });
 
-    const [getJQLTickets, { data: tickets, isLoading: isFetchingTickets }] =
+    const [initialState, setInitialState] = useState(true);
+    const [ticketsList, setTicketsList] = useState<TicketOption[]>([]);
+    const [nextToken, setNextToken] = useState<string | null>(null);
+
+    const [selectedTickets, setSelectedTickets] = useState<TicketOption[]>([]);
+
+    const [getJQLTickets, { isLoading: isFetchingTickets }] =
         useGetJQLTicketsMutation();
     const [importTicket, { isLoading: isImporting }] =
         useImportTicketMutation();
 
-    const handleSearch = async (values: JQLFormValues) => {
+    const fetchTickets = async (
+        jqlString: string,
+        token: string | null = null,
+        isLoadMore = false,
+    ) => {
+        if (!projectId) return null;
         try {
-            await getJQLTickets({
+            const response = await getJQLTickets({
                 projectId: projectId,
-                data: { jql: values.jql },
+                data: {
+                    jql: jqlString,
+                    nextPageToken: token,
+                },
             }).unwrap();
+            setInitialState(false);
+
+            const newTickets = response.data?.results || [];
+            const newNextToken = response.data?.nextPageToken || null;
+
+            if (isLoadMore) {
+                setTicketsList((prev) => [...prev, ...newTickets]);
+            } else {
+                setTicketsList(newTickets);
+                setSelectedTickets([]);
+            }
+
+            setNextToken(newNextToken);
         } catch {
             dispatch(
                 showSnackbar({
@@ -51,20 +81,33 @@ export const JQLImportContainer = ({
         }
     };
 
-    const handleImport = async (ticketKey: string) => {
-        try {
-            await importTicket({
-                projectId: projectId,
-                data: { jira_key: ticketKey },
-            }).unwrap();
-            onClose();
-        } catch {
-            dispatch(
-                showSnackbar({
-                    message: 'Import Ticket Failed',
-                    severity: 'error',
-                }),
-            );
+    const handleInitialSearch = (values: JQLFormValues) => {
+        fetchTickets(values.jql, null, false);
+    };
+
+    const handleImport = async () => {
+        if (!projectId || selectedTickets.length === 0) return;
+
+        const jiraKeysArray = selectedTickets.map((ticket) => ticket.jira_key);
+
+        await importTicket({
+            projectId: projectId,
+            data: { jira_keys: jiraKeysArray },
+        }).unwrap();
+
+        setSelectedTickets([]);
+        onClose();
+    };
+
+    const handleScroll = (event: React.SyntheticEvent) => {
+        const listboxNode = event.currentTarget;
+
+        const isAtBottom =
+            listboxNode.scrollTop + listboxNode.clientHeight ===
+            listboxNode.scrollHeight;
+
+        if (isAtBottom && nextToken && !isFetchingTickets) {
+            fetchTickets(getValues('jql'), nextToken, true);
         }
     };
 
@@ -73,95 +116,91 @@ export const JQLImportContainer = ({
             open={open}
             onClose={onClose}
             title="Import Tickets via JQL"
-            formId="jql-search-form"
+            infoTooltipText="Learn more about JQL"
+            infoLink={EXTERNAL_URLS.JQL_GUIDE}
+            formId="jql-import-form"
             isLoading={isImporting}
-            submitLabel="Search"
+            showSubmit={
+                !initialState &&
+                ticketsList.length > 0 &&
+                selectedTickets.length > 0
+            }
+            submitLabel={`Import Selected (${selectedTickets.length})`}
         >
             <Box
                 component="form"
-                id="jql-search-form"
-                onSubmit={(e) => void handleSubmit(handleSearch)(e)}
-                sx={{ mb: 3 }}
-            >
-                <FormField
-                    name="jql"
-                    control={control}
-                    label="Enter JQL"
-                    editStatus={true}
-                    placeholder="Leave empty to fetch all tickets"
-                    disabled={isFetchingTickets}
-                />
-            </Box>
-
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 2,
-                    maxHeight: '400px',
-                    overflowY: 'auto',
-                    pr: 1,
+                id="jql-import-form"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    void handleImport();
                 }}
             >
-                {isFetchingTickets && (
-                    <Box
-                        sx={{ display: 'flex', justifyContent: 'center', p: 4 }}
-                    >
-                        <CircularProgress size={32} />
+                <Box mb={3} display="flex" gap={2}>
+                    <Box flexGrow={1}>
+                        <FormField
+                            name="jql"
+                            control={control}
+                            label="Enter Custom JQL"
+                            editStatus={true}
+                            placeholder="e.g., status = 'In Progress'"
+                            disabled={isFetchingTickets && !nextToken}
+                        />
                     </Box>
+                    <Button
+                        variant="contained"
+                        onClick={() => void handleSubmit(handleInitialSearch)()}
+                        disabled={isFetchingTickets}
+                    >
+                        Fetch
+                    </Button>
+                </Box>
+
+                {initialState ? null : ticketsList.length > 0 ? (
+                    <Autocomplete
+                        multiple
+                        disableCloseOnSelect
+                        options={ticketsList}
+                        getOptionLabel={(option) =>
+                            `[${option.jira_key}] ${option.title}`
+                        }
+                        value={selectedTickets}
+                        onChange={(_, newValue) => setSelectedTickets(newValue)}
+                        isOptionEqualToValue={(option, value) =>
+                            option.jira_key === value.jira_key
+                        }
+                        loading={isFetchingTickets}
+                        slotProps={{
+                            listbox: {
+                                onScroll: handleScroll,
+                            },
+                        }}
+                        renderInput={({ InputProps, ...params }) => (
+                            <TextField
+                                {...params}
+                                label="Select Tickets to Import"
+                                placeholder={'Search loaded tickets...'}
+                                slotProps={{
+                                    input: {
+                                        ...InputProps,
+                                        endAdornment: (
+                                            <React.Fragment>
+                                                {isFetchingTickets ? (
+                                                    <CircularProgress
+                                                        color="inherit"
+                                                        size={20}
+                                                    />
+                                                ) : null}
+                                                {InputProps.endAdornment}
+                                            </React.Fragment>
+                                        ),
+                                    },
+                                }}
+                            />
+                        )}
+                    />
+                ) : (
+                    <>No Tickets to Display</>
                 )}
-
-                {!isFetchingTickets &&
-                    tickets?.data?.map((ticket) => (
-                        <Card
-                            key={ticket.id}
-                            variant="outlined"
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                p: 1.5,
-                                transition: '0.2s',
-                                '&:hover': { borderColor: 'primary.main' },
-                            }}
-                        >
-                            <CardContent sx={{ p: '0 !important' }}>
-                                <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                    sx={{ fontWeight: 'bold' }}
-                                >
-                                    {ticket.jira_key}
-                                </Typography>
-                                <Typography variant="body2" sx={{ mt: 0.5 }}>
-                                    {ticket.title}
-                                </Typography>
-                            </CardContent>
-                            <Button
-                                size="small"
-                                variant="contained"
-                                onClick={() =>
-                                    void handleImport(ticket.jira_key)
-                                }
-                                disabled={isImporting}
-                            >
-                                Import
-                            </Button>
-                        </Card>
-                    ))}
-
-                {!isFetchingTickets &&
-                    tickets?.data &&
-                    tickets.data.length === 0 && (
-                        <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            align="center"
-                            sx={{ py: 4 }}
-                        >
-                            No results found.
-                        </Typography>
-                    )}
             </Box>
         </ModalForm>
     );

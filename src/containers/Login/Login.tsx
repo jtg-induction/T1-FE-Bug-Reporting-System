@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { setCredentials } from 'redux/features/authSlice';
 import { useAppDispatch } from 'redux/store';
 
@@ -29,6 +29,8 @@ export const LoginContainer = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
+    const [searchParams] = useSearchParams();
+
     const [showPassword, setShowPassword] = useState(false);
 
     const {
@@ -49,9 +51,13 @@ export const LoginContainer = () => {
             email: data.email,
             password: data.password,
         }).unwrap();
+
         if (result.success && result.data) {
             dispatch(setCredentials(result.data));
-            navigate(PRIVATE_PATHS.DASHBOARD);
+            const continueUrl =
+                searchParams.get('continue') || PRIVATE_PATHS.DASHBOARD;
+
+            navigate(continueUrl, { replace: true });
         }
     };
 
@@ -79,7 +85,7 @@ export const LoginContainer = () => {
 
                     <TextField
                         fullWidth
-                        label="Email Address"
+                        label="Email Address *"
                         type="email"
                         autoComplete="email"
                         {...register('email')}
@@ -89,7 +95,7 @@ export const LoginContainer = () => {
 
                     <TextField
                         fullWidth
-                        label="Password"
+                        label="Password *"
                         type={showPassword ? 'text' : 'password'}
                         autoComplete="current-password"
                         {...register('password')}

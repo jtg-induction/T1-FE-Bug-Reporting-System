@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 
 import { operatorMap } from 'constant/operatorMap';
+import { SetURLSearchParams } from 'react-router-dom';
 
 import { GridFilterModel } from '@mui/x-data-grid';
 import { GridSortModel } from '@mui/x-data-grid';
@@ -14,12 +15,24 @@ import { GridSortModel } from '@mui/x-data-grid';
 export const handleFilterChange = (
     newModel: GridFilterModel,
     setFilterModel: Dispatch<SetStateAction<object>>,
+    setSearchParams: SetURLSearchParams,
 ) => {
-    if (newModel.items.length === 0) setFilterModel({});
-    else if (newModel.items[0].value !== undefined) {
+    if (newModel.items.length == 0) {
+        setFilterModel({});
+        setSearchParams((params) => {
+            params.delete('filter');
+            return params;
+        });
+    } else if (newModel.items[0].value !== undefined) {
         const field = newModel.items[0].field;
         const value = newModel.items[0].value as string | number;
         const operator = newModel.items[0].operator;
+
+        setSearchParams((params) => {
+            params.set('filter', `${field} ${operator} ${value}`);
+            return params;
+        });
+
         const lookup = operatorMap[operator];
         let key = `${field}`;
         if (lookup) {
@@ -31,6 +44,12 @@ export const handleFilterChange = (
     } else if ('value' in newModel.items[0]) {
         const field = newModel.items[0].field;
         const operator = newModel.items[0].operator;
+
+        setSearchParams((params) => {
+            params.set('filter', `${field} ${operator}`);
+            return params;
+        });
+
         const filter: Record<string, boolean> = {};
         const key = `${field}__isnull`;
         if (operator === 'isNotEmpty') {

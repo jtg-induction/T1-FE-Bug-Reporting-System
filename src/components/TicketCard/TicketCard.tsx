@@ -1,7 +1,7 @@
 import { formatDateTime } from 'utils/formatDatetime';
 
 import { AccessAlarm } from '@mui/icons-material';
-import { Avatar, Typography } from '@mui/material';
+import { Avatar, Tooltip, Typography } from '@mui/material';
 
 import { TICKET_STATUS_MAP } from '@constant';
 
@@ -25,6 +25,8 @@ export const TicketCard = ({ ticket, onClick }: TicketCardProps) => (
                 variant="caption"
                 color="text.disabled"
                 sx={{ fontWeight: 700 }}
+                maxWidth={80}
+                noWrap
             >
                 {ticket.jira_key}
             </Typography>
@@ -40,21 +42,34 @@ export const TicketCard = ({ ticket, onClick }: TicketCardProps) => (
                 </Typography>
             </DeadlineInfo>
 
-            <AssigneeInfo>
-                <Avatar
-                    sx={{
-                        width: 20,
-                        height: 20,
-                        fontSize: 10,
-                        bgcolor: 'primary.main',
-                    }}
-                >
-                    {ticket.assignee?.charAt(0).toUpperCase()}
-                </Avatar>
-                <AssigneeName color="text.primary">
-                    {ticket.assignee ? ticket.assignee : 'N/A'}
-                </AssigneeName>
-            </AssigneeInfo>
+            <Tooltip title={ticket.assignee_email}>
+                <AssigneeInfo>
+                    <Avatar
+                        sx={{
+                            width: 20,
+                            height: 20,
+                            fontSize: 10,
+                            bgcolor: ticket.assignee_name
+                                ? 'primary.main'
+                                : 'grey[50]',
+                        }}
+                    >
+                        {ticket.assignee_name &&
+                            `${ticket.assignee_name?.charAt(0).toUpperCase()}${ticket.assignee_name.split(' ')[1].charAt(0).toUpperCase()}`}
+                    </Avatar>
+                    <AssigneeName
+                        color={
+                            ticket.assignee_name
+                                ? 'text.primary'
+                                : 'text.secondary'
+                        }
+                    >
+                        {ticket.assignee_name
+                            ? ticket.assignee_name
+                            : 'Unassigned'}
+                    </AssigneeName>
+                </AssigneeInfo>
+            </Tooltip>
         </MetaFooter>
     </StyledTicketCard>
 );

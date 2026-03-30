@@ -37,7 +37,7 @@ export const UserTableActions = ({
 
     const handlePromote = () => {
         if (!projectId) return;
-        void changeRole({ projectId, user_id: userId, role: 1 });
+        void changeRole({ projectId, user_id: userId, role: 2 });
     };
 
     const handleRevoke = () => {

@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { showSnackbar } from 'redux/features/profileSlice';
 import { useAppDispatch } from 'redux/store';
-import { UserData } from 'types/common';
 
 import {
     AccessAlarm,
@@ -15,20 +14,31 @@ import {
     Person,
     Speed,
 } from '@mui/icons-material';
-import { Box, Button, Chip, Divider, Stack, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Chip,
+    Divider,
+    Stack,
+    Tooltip,
+    Typography,
+} from '@mui/material';
 
 import { ActionMenu } from '@components';
-import { TICKET_SEVERITY_MAP, TICKET_STATUS_MAP } from '@constant';
+import {
+    PROJECT_TITLE,
+    TICKET_SEVERITY_MAP,
+    TICKET_STATUS_MAP,
+} from '@constant';
 import {
     CommentSectionContainer,
     MoveTicketContainer,
     TicketEditForm,
 } from '@containers';
+import { StyledShowMoreButton } from '@containers/ProjectDetail/ProjectDetail.styles';
 import * as Pages from '@pages';
 import {
     useDeleteTicketMutation,
-    useGetMeQuery,
-    useGetProjectMembersQuery,
     useGetTicketQuery,
     useSubscribeTicketMutation,
     useUnsubscribeTicketMutation,
@@ -43,6 +53,7 @@ import {
     MetadataStack,
     MetaItem,
     TicketContentCard,
+    TitleWrapper,
     TruncatedTitle,
     UserInfo,
 } from './TicketDetails.styles';
@@ -50,38 +61,60 @@ import {
 export const TicketDashboardContainer = () => {
     const { pid: projectId, tid: ticketId } = useParams();
     const [isEditOpen, setIsEditOpen] = useState(false);
-    const [isStatusOnly, setIsStatusOnly] = useState(false);
     const {
         data: ticket,
         isLoading,
         isError,
     } = useGetTicketQuery({ projectId: projectId!, ticketId: ticketId! });
-    const { data: user } = useGetMeQuery();
-    const { data: members } = useGetProjectMembersQuery(
-        { projectId: projectId! },
-        { skip: !projectId },
-    );
-    const membersData = members?.data.results ?? [];
-    const currentUserId = user?.data?.id;
-    const [deleteTicket] = useDeleteTicketMutation();
+    const [deleteTicket, { isLoading: isDeleting, isSuccess: isDeleted }] =
+        useDeleteTicketMutation();
     const [subscribe] = useSubscribeTicketMutation();
     const [unsubscribe] = useUnsubscribeTicketMutation();
     const [isMoveOpen, setIsMoveOpen] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
     const dispatch = useAppDispatch();
 
-    if (isLoading) return <>Loading...</>;
-    if (isError) return <Pages.NotFoundPage />;
+    const descriptionRef = useRef<HTMLElement>(null);
+    const [needsShowMore, setNeedsShowMore] = useState(false);
 
     const d = ticket?.data;
-    const perm = d?.permission_class;
-    const isActive = d?.is_active;
 
-    const handleOpenEdit = (statusOnly: boolean) => {
-        setIsStatusOnly(statusOnly);
+    useEffect(() => {
+        document.title = d ? `Ticket: ${d.jira_key}` : PROJECT_TITLE;
+
+        return () => {
+            document.title = PROJECT_TITLE;
+        };
+    }, [d]);
+
+    useEffect(() => {
+        const el = descriptionRef.current;
+        if (!el) return;
+
+        const observer = new ResizeObserver(() => {
+            if (!isExpanded) {
+                setNeedsShowMore(el.scrollHeight > el.clientHeight);
+            }
+        });
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [d?.description, isExpanded]);
+
+    if (isLoading) return <>Loading...</>;
+    if (isError || !d) return <Pages.NotFoundPage />;
+    if (isDeleting) return <>Deleting...</>;
+    if (isDeleted) return <Navigate to={`/projects/${projectId}`} />;
+
+    const perm = d.permission_class;
+    const isActive = d.is_active;
+
+    const handleOpenEdit = () => {
         setIsEditOpen(true);
     };
 
     const handleDelete = async () => {
+        if (!projectId || !ticketId) return null;
         try {
             await deleteTicket({
                 projectId: projectId,
@@ -97,53 +130,53 @@ export const TicketDashboardContainer = () => {
         }
     };
 
-    const menuItems = [];
-    if (perm >= 3) {
-        menuItems.push(
-            {
-                id: 'edit',
-                label: 'Edit Ticket',
-                icon: <Edit />,
-                onClick: () => handleOpenEdit(false),
-            },
-            {
-                id: 'delete',
-                label: 'Delete Ticket',
-                icon: <Delete />,
-                onClick: () => handleDelete(),
-            },
-        );
-    } else if (perm === 2) {
-        menuItems.push({
+    const menuItems = [
+        {
+            id: 'edit',
+            label: 'Edit Ticket',
+            icon: <Edit />,
+            onClick: () => handleOpenEdit(),
+            display: Boolean((perm ?? 0) >= 3),
+        },
+        {
+            id: 'delete',
+            label: 'Delete Ticket',
+            icon: <Delete />,
+            onClick: () => handleDelete(),
+            display: Boolean((perm ?? 0) >= 3),
+        },
+        {
             id: 'status',
             label: 'Update Status',
             icon: <Speed />,
-            onClick: () => handleOpenEdit(true),
-        });
-    }
-    if (perm === 4) {
-        menuItems.push({
+            onClick: () => handleOpenEdit(),
+            display: perm === 2,
+        },
+        {
             id: 'move',
             label: 'Move Ticket',
             icon: <DriveFileMove />,
             onClick: () => setIsMoveOpen(true),
-        });
-    }
+            display: perm === 4,
+        },
+    ];
 
     return (
         <MainLayout>
             <TicketContentCard>
                 <FlexHeader>
-                    <Stack>
+                    <TitleWrapper>
                         <Typography
                             variant="overline"
                             color="primary"
                             sx={{ lineHeight: 1 }}
                         >
-                            {d.key}
+                            {d.jira_key}
                         </Typography>
-                        <TruncatedTitle variant="h4">{d.title}</TruncatedTitle>
-                    </Stack>
+                        <TruncatedTitle variant="h4" noWrap title={d.title}>
+                            {d.title}
+                        </TruncatedTitle>
+                    </TitleWrapper>
 
                     {d.is_active && (
                         <Stack direction="row" spacing={1} alignItems="center">
@@ -190,9 +223,16 @@ export const TicketDashboardContainer = () => {
                         </Typography>
                         <UserInfo>
                             <Person fontSize="inherit" />
-                            <Typography variant="body2" noWrap>
-                                {d.assignee || 'Unassigned'}
-                            </Typography>
+                            <Tooltip title={d.assignee_email || 'Unassigned'}>
+                                <Typography
+                                    variant="body2"
+                                    noWrap
+                                    overflow={'hidden'}
+                                    textOverflow={'ellipsis'}
+                                >
+                                    {d.assignee_name || 'Unassigned'}
+                                </Typography>
+                            </Tooltip>
                         </UserInfo>
                     </MetaItem>
 
@@ -202,9 +242,16 @@ export const TicketDashboardContainer = () => {
                         </Typography>
                         <UserInfo>
                             <Person fontSize="inherit" />
-                            <Typography variant="body2" noWrap>
-                                {d.reporter}
-                            </Typography>
+                            <Tooltip title={d.reporter_email}>
+                                <Typography
+                                    variant="body2"
+                                    noWrap
+                                    overflow={'hidden'}
+                                    textOverflow={'ellipsis'}
+                                >
+                                    {d.reporter_name}
+                                </Typography>
+                            </Tooltip>
                         </UserInfo>
                     </MetaItem>
 
@@ -219,13 +266,22 @@ export const TicketDashboardContainer = () => {
                         >
                             <Speed
                                 fontSize="inherit"
-                                color={TICKET_SEVERITY_MAP[d.severity][1]}
+                                color={
+                                    d.severity
+                                        ? TICKET_SEVERITY_MAP[d.severity][1]
+                                        : 'primary'
+                                }
                             />
                             <Typography
-                                color={TICKET_SEVERITY_MAP[d.severity][1]}
+                                color={
+                                    d.severity
+                                        ? TICKET_SEVERITY_MAP[d.severity][1]
+                                        : 'primary'
+                                }
                                 variant="body2"
                             >
-                                {TICKET_SEVERITY_MAP[d.severity][0]}
+                                {d.severity &&
+                                    TICKET_SEVERITY_MAP[d.severity][0]}
                             </Typography>
                         </Stack>
                     </MetaItem>
@@ -238,8 +294,8 @@ export const TicketDashboardContainer = () => {
                             <AccessAlarm fontSize="inherit" />
                             <Typography variant="body2" noWrap>
                                 {d.deadline
-                                    ? formatDateTime(d.deadline).slice(0, 12)
-                                    : 'NA'}
+                                    ? formatDateTime(d.deadline, false)
+                                    : 'N/A'}
                             </Typography>
                         </UserInfo>
                     </MetaItem>
@@ -251,7 +307,22 @@ export const TicketDashboardContainer = () => {
                     <Typography variant="subtitle2" gutterBottom>
                         Description
                     </Typography>
-                    <BodyText variant="body1">{d.description}</BodyText>
+                    <BodyText
+                        ref={descriptionRef}
+                        variant="body1"
+                        isExpanded={isExpanded}
+                    >
+                        {d.description || 'No description provided.'}
+                    </BodyText>
+                    {needsShowMore && (
+                        <StyledShowMoreButton
+                            size="small"
+                            onClick={() => setIsExpanded(!isExpanded)}
+                            disableRipple
+                        >
+                            {isExpanded ? 'Show less' : 'Show more'}
+                        </StyledShowMoreButton>
+                    )}
                 </Box>
             </TicketContentCard>
 
@@ -260,24 +331,8 @@ export const TicketDashboardContainer = () => {
             </CommentSection>
 
             <TicketEditForm
-                isStatusOnly={isStatusOnly}
                 open={isEditOpen}
                 onClose={() => setIsEditOpen(false)}
-                ticket={d}
-                memberOptions={
-                    (
-                        membersData as {
-                            id: string;
-                            member: UserData;
-                            role: number;
-                        }[]
-                    )
-                        .filter((m) => m.member.id !== currentUserId)
-                        .map((m) => ({
-                            LABEL: `${m.member.first_name} ${m.member.last_name} - (${m.member.email})`,
-                            VALUE: m.member.id,
-                        })) || [{ LABEL: 'No Members to Assign', VALUE: null }]
-                }
             />
 
             <MoveTicketContainer

@@ -6,4 +6,7 @@ export interface ModalFormProps {
     isLoading: boolean;
     children: React.ReactNode;
     submitLabel?: string;
+    infoTooltipText?: string;
+    infoLink?: string;
+    showSubmit?: boolean;
 }

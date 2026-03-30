@@ -138,13 +138,22 @@ export const ChartFilter = ({
                             </MenuItem>
 
                             {users.map((user) => (
-                                <MenuItem key={user.id} value={user.id}>
+                                <MenuItem
+                                    key={user.id}
+                                    value={user.id}
+                                    title={user.email}
+                                >
                                     <Checkbox
                                         checked={filters.selectedUserIds?.includes(
                                             user.id,
                                         )}
                                     />
-                                    <ListItemText primary={user.name} />
+                                    <ListItemText
+                                        primary={user.name}
+                                        slotProps={{
+                                            primary: { noWrap: true },
+                                        }}
+                                    />
                                 </MenuItem>
                             ))}
                         </Select>
@@ -152,11 +161,11 @@ export const ChartFilter = ({
                 )}
 
                 <FilterFormControl size="small">
-                    <InputLabel id="date-filter">Date Range</InputLabel>
+                    <InputLabel id="date-filter">Deadline Range</InputLabel>
                     <Select
                         labelId="date-filter"
                         value={filters.dateRangeType}
-                        label="Date Range"
+                        label="Deadline Range"
                         onChange={handleDateRangeTypeChange}
                     >
                         <MenuItem value="week">Current Week</MenuItem>

@@ -17,7 +17,6 @@ export interface PaginationMeta<T> {
 }
 
 /** * PAGINATED RESPONSE
- * Matches the 'metadata' key we used in StandardResultsSetPagination
  */
 export interface PaginatedResponse<T> extends Omit<ApiResponse<T>, 'data'> {
     data: PaginationMeta<T>;
@@ -28,7 +27,7 @@ export interface PaginatedResponse<T> extends Omit<ApiResponse<T>, 'data'> {
 export interface ApiError {
     detail?: string;
     code?: string;
-    [key: string]: string[] | string;
+    [key: string]: string[] | string | undefined;
 }
 
 /** * BASE INTERFACES
@@ -41,8 +40,8 @@ export interface UserData {
     phone: string | null;
     date_of_birth: string | null;
     designation: string;
-    can_edit: boolean;
-    jiraID?: string;
+    can_edit?: boolean;
+    jira_id?: string;
     jira_access_token?: string;
 }
 
@@ -53,8 +52,8 @@ export interface LoginSignupRefreshResponse {
 }
 
 export interface UserRegistrationData
-    extends Omit<UserData, 'id' | 'is_owner'> {
-    jiraID: string;
+    extends Omit<UserData, 'id' | 'can_edit'> {
+    jira_id: string;
     jira_access_token: string;
     password: string;
     confirm_password: string;
@@ -71,15 +70,14 @@ export interface GenerateEmailLinkData {
 
 export interface VerifyLinkData {
     email: string;
-    token: string;
 }
 
 export interface UpdateUserData {
-    first_name: string;
-    last_name: string;
-    phone: string | null;
-    date_of_birth: string | null | undefined;
-    designation: string | number;
+    first_name?: string;
+    last_name?: string;
+    phone?: string | null;
+    date_of_birth?: string | null;
+    designation?: string | number;
 }
 
 export interface ProjectCreateData {
@@ -110,7 +108,7 @@ export interface ProjectListData {
     limit: number;
     offset: number;
     ordering: string | undefined;
-    filter: Record<string, string> | undefined;
+    filter: object | undefined;
 }
 
 export interface ProjectMemberData {
@@ -118,7 +116,7 @@ export interface ProjectMemberData {
     limit?: number;
     offset?: number;
     ordering?: string | undefined;
-    filter?: Record<string, string> | undefined;
+    filter?: object | undefined;
 }
 
 export interface ProjectMemberResponse {
@@ -134,14 +132,19 @@ export interface TicketCreateData {
     project_id: string;
     severity: number;
     assignee?: string;
-    deadline?: string;
+    deadline?: string | null;
 }
 
-export interface TicketCreateResponse extends TicketCreateData {
+export interface TicketCreateResponse
+    extends Omit<TicketCreateData, 'assignee'> {
     id: string;
     jira_key: string;
     key: string;
-    reporter: string;
+    reporter_email: string;
+    reporter_name: string;
+    assignee_id: string;
+    assignee_email: string;
+    assignee_name: string;
     is_subscribed: boolean;
     is_active: boolean;
     project: string;
@@ -153,7 +156,7 @@ export interface TicketListData {
     limit: number;
     offset: number;
     ordering: string | undefined;
-    filter: Record<string, string | number> | undefined;
+    filter: object | undefined;
 }
 
 export interface TicketDeleteData {
@@ -224,4 +227,16 @@ export interface ProjectSummaryResponse {
     ticket_status?: TicketStatusSummary;
     ticket_severity?: TicketSeveritySummary;
     deadline_chart?: DeadlineSummaryItem[];
+}
+
+export interface JiraTicketOption {
+    jira_id: string;
+    jira_key: string;
+    title: string;
+    description: string;
+}
+
+export interface PaginatedJiraResponse {
+    results: JiraTicketOption[];
+    nextPageToken: string | null;
 }

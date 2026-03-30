@@ -21,7 +21,9 @@ export const TransferOwnershipFormContainer = ({
     });
     useEffect(() => {
         if (!open) reset();
-    }, [open, reset]);
+        if (open && projectMemberOptions.length > 0)
+            reset({ newOwnerId: projectMemberOptions[0].VALUE });
+    }, [open, reset, projectMemberOptions]);
 
     const handleFormSubmit = async (data: { newOwnerId: string }) => {
         await onSubmit(data);
@@ -35,25 +37,30 @@ export const TransferOwnershipFormContainer = ({
             onClose={onClose}
             isLoading={isLoading}
             submitLabel={OWNERSHIP_TRANSFER_FORM_CONFIG.SUBMIT_LABEL}
+            showSubmit={projectMemberOptions.length > 0}
         >
             <form
                 id={OWNERSHIP_TRANSFER_FORM_CONFIG.ID}
                 onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)}
             >
-                <Stack spacing={3}>
-                    <Typography variant="body1">
-                        As the project owner, you must transfer ownership to
-                        another member before leaving.
-                    </Typography>
-                    <FormField
-                        name="newOwnerId"
-                        label="Select New Owner"
-                        type="select"
-                        control={control}
-                        editStatus={true}
-                        options={projectMemberOptions}
-                    />
-                </Stack>
+                {projectMemberOptions.length > 0 ? (
+                    <Stack spacing={3}>
+                        <Typography variant="body1">
+                            As the project owner, you must transfer ownership to
+                            another member before leaving.
+                        </Typography>
+                        <FormField
+                            name="newOwnerId"
+                            label="Select New Owner"
+                            type="select"
+                            control={control}
+                            editStatus={true}
+                            options={projectMemberOptions}
+                        />
+                    </Stack>
+                ) : (
+                    <>No Other Project Member to transfer ownership</>
+                )}
             </form>
         </ModalForm>
     );

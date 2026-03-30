@@ -2,16 +2,18 @@ import { useEffect } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { CircularProgress, Stack, Typography } from '@mui/material';
+import { ErrorOutline } from '@mui/icons-material';
+import { Button, CircularProgress, Stack, Typography } from '@mui/material';
 
 import { PRIVATE_PATHS } from '@constant';
 import { useRejectInviteMutation } from '@service';
+import { getErrorMessage } from '@utils';
 
 export const RejectInvitePage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
 
-    const [rejectInvite, { isLoading, isSuccess, isError }] =
+    const [rejectInvite, { isLoading, isSuccess, isError, error }] =
         useRejectInviteMutation();
 
     useEffect(() => {
@@ -45,10 +47,21 @@ export const RejectInvitePage = () => {
             )}
 
             {isError && !isSuccess && (
-                <Typography color="error">
-                    Failed to decline invitation. The link may have expired or
-                    already been processed.
-                </Typography>
+                <>
+                    <ErrorOutline color="error" sx={{ fontSize: 60 }} />
+                    <Typography color="error" variant="h6" align="center">
+                        {getErrorMessage(
+                            error,
+                            'Failed to decline invitation. The link may have expired or already been processed.',
+                        )}
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        onClick={() => void navigate(PRIVATE_PATHS.DASHBOARD)}
+                    >
+                        Return to Dashboard
+                    </Button>
+                </>
             )}
         </Stack>
     );

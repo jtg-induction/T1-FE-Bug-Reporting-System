@@ -6,7 +6,11 @@ import { useAppDispatch } from 'redux/store';
 import { Stack } from '@mui/material';
 
 import { FormField, ModalForm } from '@components';
-import { TICKET_SEVERITY_OPTIONS, TICKET_STATUS_OPTIONS } from '@constant';
+import {
+    PRIVATE_PATHS,
+    TICKET_SEVERITY_OPTIONS,
+    TICKET_STATUS_OPTIONS,
+} from '@constant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { INITIAL_TICKET_DATA, TicketFormValues, ticketSchema } from '@schemas';
 import { useCreateTicketMutation, useGetProjectMembersQuery } from '@service';
@@ -33,7 +37,7 @@ export const TicketFormContainer = ({
         { VALUE: '', LABEL: 'Unassigned' },
         ...(members?.results?.map((user) => ({
             VALUE: user.member.id,
-            LABEL: `${user.member.first_name} ${user.member.last_name}`,
+            LABEL: `${user.member.first_name} ${user.member.last_name} (${user.member.email})`,
         })) || []),
     ];
 
@@ -44,21 +48,22 @@ export const TicketFormContainer = ({
 
     const handleFormSubmit = async (data: TicketFormValues) => {
         if (!id) return;
-        try {
-            await createTicket({
-                ...data,
-                project_id: id,
-            }).unwrap();
-            onClose();
-            reset();
-        } catch {
-            dispatch(
-                showSnackbar({
-                    message: 'Ticket Creation Failed',
-                    severity: 'error',
-                }),
-            );
-        }
+        const response = await createTicket({
+            ...data,
+            project_id: id,
+        }).unwrap();
+        const newTicketId = response?.data?.id;
+        dispatch(
+            showSnackbar({
+                message: 'Ticket Created Successfully',
+                severity: 'success',
+                actionLabel: `[${response?.data?.jira_key}]`,
+                actionUrl: `${PRIVATE_PATHS.PROJECTS}${id}/tickets/${newTicketId}`,
+            }),
+        );
+
+        onClose();
+        reset();
     };
 
     const handleClose = () => {
@@ -82,13 +87,13 @@ export const TicketFormContainer = ({
                 <Stack spacing={3} sx={{ mt: 1 }}>
                     <FormField
                         name="title"
-                        label="Title"
+                        label="Title *"
                         control={control}
                         editStatus={true}
                     />
                     <FormField
                         name="description"
-                        label="Description"
+                        label="Description *"
                         control={control}
                         editStatus={true}
                         multiline
@@ -97,6 +102,7 @@ export const TicketFormContainer = ({
 
                     <Stack direction="row" spacing={2}>
                         <FormField
+                            required
                             name="status"
                             label="Status"
                             type="select"
@@ -106,6 +112,7 @@ export const TicketFormContainer = ({
                             fullWidth
                         />
                         <FormField
+                            required
                             name="severity"
                             label="Severity"
                             type="select"

@@ -7,12 +7,17 @@ import { NotFoundPage } from '@pages/NotFoundPage';
 
 import { privateRoutes } from './private';
 import { publicRoutes } from './public';
+
 export const router = createBrowserRouter([
     {
         element: <Layout />,
         errorElement: <ErrorPage />,
         children: [
-            ...publicRoutes,
+            {
+                element: <ProtectedRoute isPublicRoute />,
+                children: [...publicRoutes],
+            },
+
             {
                 element: <ProtectedRoute />,
                 children: [...privateRoutes],

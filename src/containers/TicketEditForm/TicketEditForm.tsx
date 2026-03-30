@@ -10,6 +10,7 @@ import { Stack } from '@mui/material';
 import { FormField, ModalForm } from '@components';
 import { TICKET_SEVERITY_OPTIONS, TICKET_STATUS_OPTIONS } from '@constant';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { skipToken } from '@reduxjs/toolkit/query';
 import { INITIAL_TICKET_DATA, TicketFormValues, ticketSchema } from '@schemas';
 import {
     useGetProjectMembersQuery,
@@ -31,20 +32,11 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
         { skip: !projectId || !ticketId },
     );
     const { data: usersResponse } = useGetProjectMembersQuery(
-        { projectId: projectId! },
-        { skip: !projectId },
+        projectId ? { projectId: projectId } : skipToken,
     );
     const [updateTicket, { isLoading: isUpdating }] = useUpdateTicketMutation();
     const ticket = ticketData?.data;
     const members = usersResponse?.data;
-    const perm = ticket?.permission_class;
-    const userOptions = [
-        { VALUE: '', LABEL: 'Unassigned' },
-        ...(members?.results?.map((user) => ({
-            VALUE: user.member.id,
-            LABEL: `${user.member.first_name} ${user.member.last_name}`,
-        })) || []),
-    ];
 
     const {
         control,
@@ -58,9 +50,27 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
 
     useEffect(() => {
         if (ticket && open) {
-            reset(ticket);
+            const mappedValues = {
+                ...ticket,
+                assignee: ticket.assignee_id ?? '',
+                deadline: ticket.deadline
+                    ? ticket.deadline.split('T')[0]
+                    : null,
+            };
+            reset(mappedValues);
         }
     }, [ticket, reset, open]);
+
+    if (!ticket || !members) return null;
+
+    const perm = ticket.permission_class;
+    const userOptions = [
+        { VALUE: '', LABEL: 'Unassigned' },
+        ...(members?.results?.map((user) => ({
+            VALUE: user.member.id,
+            LABEL: `${user.member.first_name} ${user.member.last_name}`,
+        })) || []),
+    ];
 
     const handleFormSubmit = async (data: TicketFormValues) => {
         const dirtyPayload = Object.keys(dirtyFields).reduce((acc, key) => {
@@ -111,13 +121,13 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
                         <>
                             <FormField
                                 name="title"
-                                label="Title"
+                                label="Title *"
                                 control={control}
                                 editStatus={true}
                             />
                             <FormField
                                 name="description"
-                                label="Description"
+                                label="Description *"
                                 control={control}
                                 editStatus={true}
                                 multiline
@@ -130,7 +140,7 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
                         {perm >= 2 && (
                             <FormField
                                 name="status"
-                                label="Status"
+                                label="Status *"
                                 type="select"
                                 control={control}
                                 editStatus={true}
@@ -147,7 +157,7 @@ export const TicketEditForm = ({ open, onClose }: TicketFormContainerProps) => {
                         {perm >= 3 && (
                             <FormField
                                 name="severity"
-                                label="Severity"
+                                label="Severity *"
                                 type="select"
                                 control={control}
                                 editStatus={true}
