@@ -1,5 +1,8 @@
-import { Alert, Snackbar } from '@mui/material';
+import { Link } from 'react-router-dom';
 
+import { Snackbar } from '@mui/material';
+
+import { StyledActionButton, StyledAlert } from './Snackbar.styles';
 import { CustomSnackbarProps } from './Snackbar.types';
 
 export const CustomSnackbar = ({
@@ -9,6 +12,8 @@ export const CustomSnackbar = ({
     onClose,
     autoHideDuration = 4000,
     anchorOrigin = { vertical: 'bottom', horizontal: 'center' },
+    actionLabel,
+    actionUrl,
 }: CustomSnackbarProps) => (
     <Snackbar
         open={open}
@@ -16,16 +21,24 @@ export const CustomSnackbar = ({
         onClose={onClose}
         anchorOrigin={anchorOrigin}
     >
-        <Alert
+        <StyledAlert
             onClose={onClose}
             severity={severity}
             variant="filled"
-            sx={(theme) => ({
-                width: '100%',
-                minWidth: theme.typography.pxToRem(300),
-            })}
+            action={
+                actionLabel && actionUrl ? (
+                    <StyledActionButton
+                        size="small"
+                        component={Link}
+                        to={actionUrl}
+                        onClick={onClose}
+                    >
+                        {actionLabel}
+                    </StyledActionButton>
+                ) : undefined
+            }
         >
             {message}
-        </Alert>
+        </StyledAlert>
     </Snackbar>
 );

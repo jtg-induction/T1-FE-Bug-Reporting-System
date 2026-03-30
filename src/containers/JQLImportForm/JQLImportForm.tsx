@@ -36,9 +36,8 @@ export const JQLImportContainer = ({
     const [initialState, setInitialState] = useState(true);
     const [ticketsList, setTicketsList] = useState<TicketOption[]>([]);
     const [nextToken, setNextToken] = useState<string | null>(null);
-    const [selectedTicket, setSelectedTicket] = useState<TicketOption | null>(
-        null,
-    );
+
+    const [selectedTickets, setSelectedTickets] = useState<TicketOption[]>([]);
 
     const [getJQLTickets, { isLoading: isFetchingTickets }] =
         useGetJQLTicketsMutation();
@@ -68,7 +67,7 @@ export const JQLImportContainer = ({
                 setTicketsList((prev) => [...prev, ...newTickets]);
             } else {
                 setTicketsList(newTickets);
-                setSelectedTicket(null);
+                setSelectedTickets([]);
             }
 
             setNextToken(newNextToken);
@@ -87,13 +86,16 @@ export const JQLImportContainer = ({
     };
 
     const handleImport = async () => {
-        if (!projectId || !selectedTicket) return;
+        if (!projectId || selectedTickets.length === 0) return;
+
+        const jiraKeysArray = selectedTickets.map((ticket) => ticket.jira_key);
 
         await importTicket({
             projectId: projectId,
-            data: { jira_key: selectedTicket.jira_key },
+            data: { jira_keys: jiraKeysArray },
         }).unwrap();
 
+        setSelectedTickets([]);
         onClose();
     };
 
@@ -118,8 +120,12 @@ export const JQLImportContainer = ({
             infoLink={EXTERNAL_URLS.JQL_GUIDE}
             formId="jql-import-form"
             isLoading={isImporting}
-            showSubmit={!initialState && ticketsList.length > 0}
-            submitLabel="Import Selected"
+            showSubmit={
+                !initialState &&
+                ticketsList.length > 0 &&
+                selectedTickets.length > 0
+            }
+            submitLabel={`Import Selected (${selectedTickets.length})`}
         >
             <Box
                 component="form"
@@ -151,12 +157,14 @@ export const JQLImportContainer = ({
 
                 {initialState ? null : ticketsList.length > 0 ? (
                     <Autocomplete
+                        multiple
+                        disableCloseOnSelect
                         options={ticketsList}
                         getOptionLabel={(option) =>
                             `[${option.jira_key}] ${option.title}`
                         }
-                        value={selectedTicket}
-                        onChange={(_, newValue) => setSelectedTicket(newValue)}
+                        value={selectedTickets}
+                        onChange={(_, newValue) => setSelectedTickets(newValue)}
                         isOptionEqualToValue={(option, value) =>
                             option.jira_key === value.jira_key
                         }
@@ -169,7 +177,7 @@ export const JQLImportContainer = ({
                         renderInput={({ InputProps, ...params }) => (
                             <TextField
                                 {...params}
-                                label="Select Ticket to Import"
+                                label="Select Tickets to Import"
                                 placeholder={'Search loaded tickets...'}
                                 slotProps={{
                                     input: {

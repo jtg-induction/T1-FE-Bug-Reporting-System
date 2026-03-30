@@ -148,7 +148,7 @@ export const ticketApi = baseApi.injectEndpoints({
         }),
         importTicket: builder.mutation<
             ApiResponse<TicketCreateResponse>,
-            { projectId: string; data: Record<'jira_key', string> }
+            { projectId: string; data: Record<'jira_keys', string[]> }
         >({
             query: ({ projectId, data }) => ({
                 url: `${API_PATHS.PROJECTS}${projectId}${API_PATHS.TICKETS}import-ticket/`,

@@ -25,6 +25,8 @@ export const Layout = () => {
                 open={snackbar.open}
                 message={snackbar.message}
                 severity={snackbar.severity}
+                actionLabel={snackbar.actionLabel}
+                actionUrl={snackbar.actionUrl}
                 onClose={() => dispatch(hideSnackbar())}
             />
         </Box>

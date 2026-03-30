@@ -4,8 +4,10 @@ import { VALIDATION_REGEX } from '@constant';
 
 export const signupSchema = z
     .object({
-        firstName: z.string().min(2, 'First name cannot be a single character'),
-        lastName: z.string().min(2, 'Last name cannot be a single character'),
+        firstName: z
+            .string()
+            .min(2, 'First name must be at least 2 characters'),
+        lastName: z.string().min(2, 'Last name must be at least 2 characters'),
         dateOfBirth: z.string().optional(),
         phone: z
             .string()

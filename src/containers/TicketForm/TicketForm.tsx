@@ -6,7 +6,11 @@ import { useAppDispatch } from 'redux/store';
 import { Stack } from '@mui/material';
 
 import { FormField, ModalForm } from '@components';
-import { TICKET_SEVERITY_OPTIONS, TICKET_STATUS_OPTIONS } from '@constant';
+import {
+    PRIVATE_PATHS,
+    TICKET_SEVERITY_OPTIONS,
+    TICKET_STATUS_OPTIONS,
+} from '@constant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { INITIAL_TICKET_DATA, TicketFormValues, ticketSchema } from '@schemas';
 import { useCreateTicketMutation, useGetProjectMembersQuery } from '@service';
@@ -44,21 +48,22 @@ export const TicketFormContainer = ({
 
     const handleFormSubmit = async (data: TicketFormValues) => {
         if (!id) return;
-        try {
-            await createTicket({
-                ...data,
-                project_id: id,
-            }).unwrap();
-            onClose();
-            reset();
-        } catch {
-            dispatch(
-                showSnackbar({
-                    message: 'Ticket Creation Failed',
-                    severity: 'error',
-                }),
-            );
-        }
+        const response = await createTicket({
+            ...data,
+            project_id: id,
+        }).unwrap();
+        const newTicketId = response?.data?.id;
+        dispatch(
+            showSnackbar({
+                message: 'Ticket Created Successfully',
+                severity: 'success',
+                actionLabel: `[${response?.data?.jira_key}]`,
+                actionUrl: `${PRIVATE_PATHS.PROJECTS}${id}/tickets/${newTicketId}`,
+            }),
+        );
+
+        onClose();
+        reset();
     };
 
     const handleClose = () => {

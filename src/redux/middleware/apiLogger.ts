@@ -28,7 +28,13 @@ interface ActionMeta {
     };
 }
 
-const IGNORED_ENDPOINTS = ['acceptInvite', 'rejectInvite'];
+const IGNORED_ENDPOINTS = [
+    'acceptInvite',
+    'rejectInvite',
+    'login',
+    'signup',
+    'logoutUser',
+];
 
 export const apiLogger: Middleware = (api) => (next) => (action: unknown) => {
     const actionWithMeta = action as { meta?: ActionMeta };
