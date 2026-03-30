@@ -2,16 +2,18 @@ import { useEffect } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { CheckCircleOutline } from '@mui/icons-material';
-import { CircularProgress, Stack, Typography } from '@mui/material';
+import { CheckCircleOutline, ErrorOutline } from '@mui/icons-material';
+import { Button, CircularProgress, Stack, Typography } from '@mui/material';
 
 import { PRIVATE_PATHS } from '@constant';
 import { useAcceptInviteMutation } from '@service';
+import { getErrorMessage } from '@utils';
 
 export const AcceptInvitePage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [acceptInvite, { isLoading, isSuccess, isError }] =
+
+    const [acceptInvite, { isLoading, isSuccess, isError, error }] =
         useAcceptInviteMutation();
 
     useEffect(() => {
@@ -43,7 +45,7 @@ export const AcceptInvitePage = () => {
             )}
             {isSuccess && (
                 <>
-                    <CheckCircleOutline color="success" fontSize="medium" />
+                    <CheckCircleOutline color="success" sx={{ fontSize: 60 }} />
                     <Typography variant="h4">Invitation Accepted!</Typography>
                     <Typography color="text.secondary">
                         Redirecting to your project dashboard ...
@@ -51,9 +53,21 @@ export const AcceptInvitePage = () => {
                 </>
             )}
             {isError && !isSuccess && (
-                <Typography color="error">
-                    Failed to accept invitation. The link may have expired.
-                </Typography>
+                <>
+                    <ErrorOutline color="error" sx={{ fontSize: 60 }} />
+                    <Typography color="error" variant="h6" align="center">
+                        {getErrorMessage(
+                            error,
+                            'Failed to accept invitation. The link may have expired.',
+                        )}
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        onClick={() => void navigate(PRIVATE_PATHS.DASHBOARD)}
+                    >
+                        Return to Dashboard
+                    </Button>
+                </>
             )}
         </Stack>
     );

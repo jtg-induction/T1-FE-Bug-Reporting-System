@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Navigate, useParams } from 'react-router-dom';
 import { showSnackbar } from 'redux/features/profileSlice';
@@ -74,6 +74,9 @@ export const TicketDashboardContainer = () => {
     const [isExpanded, setIsExpanded] = useState(false);
     const dispatch = useAppDispatch();
 
+    const descriptionRef = useRef<HTMLElement>(null);
+    const [needsShowMore, setNeedsShowMore] = useState(false);
+
     const d = ticket?.data;
 
     useEffect(() => {
@@ -84,6 +87,20 @@ export const TicketDashboardContainer = () => {
         };
     }, [d]);
 
+    useEffect(() => {
+        const el = descriptionRef.current;
+        if (!el) return;
+
+        const observer = new ResizeObserver(() => {
+            if (!isExpanded) {
+                setNeedsShowMore(el.scrollHeight > el.clientHeight);
+            }
+        });
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [d?.description, isExpanded]);
+
     if (isLoading) return <>Loading...</>;
     if (isError || !d) return <Pages.NotFoundPage />;
     if (isDeleting) return <>Deleting...</>;
@@ -91,7 +108,6 @@ export const TicketDashboardContainer = () => {
 
     const perm = d.permission_class;
     const isActive = d.is_active;
-    const isLongDescription = d.description.length > 150;
 
     const handleOpenEdit = () => {
         setIsEditOpen(true);
@@ -291,10 +307,14 @@ export const TicketDashboardContainer = () => {
                     <Typography variant="subtitle2" gutterBottom>
                         Description
                     </Typography>
-                    <BodyText variant="body1" isExpanded={isExpanded}>
-                        {d.description}
+                    <BodyText
+                        ref={descriptionRef}
+                        variant="body1"
+                        isExpanded={isExpanded}
+                    >
+                        {d.description || 'No description provided.'}
                     </BodyText>
-                    {isLongDescription && (
+                    {needsShowMore && (
                         <StyledShowMoreButton
                             size="small"
                             onClick={() => setIsExpanded(!isExpanded)}

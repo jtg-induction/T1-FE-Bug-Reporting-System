@@ -53,7 +53,6 @@ export const StyledDescriptionWrapper = styled(Box)(
         marginBottom: pxToRem(24),
     }),
 );
-
 export const StyledDescriptionText = styled(Typography, {
     shouldForwardProp: (prop) => prop !== 'isExpanded',
 })<{ isExpanded: boolean }>(
@@ -66,7 +65,7 @@ export const StyledDescriptionText = styled(Typography, {
     }) => ({
         lineHeight: 1.6,
         color: palette.text.secondary,
-        ...(!isExpanded ? lineClamp(1) : {}),
+        ...(!isExpanded ? lineClamp(3) : {}),
     }),
 );
 

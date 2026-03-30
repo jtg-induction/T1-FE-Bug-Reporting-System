@@ -24,10 +24,20 @@ interface FulfilledPayload {
 interface ActionMeta {
     arg?: {
         type?: string;
+        endpointName?: string;
     };
 }
 
+const IGNORED_ENDPOINTS = ['acceptInvite', 'rejectInvite'];
+
 export const apiLogger: Middleware = (api) => (next) => (action: unknown) => {
+    const actionWithMeta = action as { meta?: ActionMeta };
+    const endpointName = actionWithMeta?.meta?.arg?.endpointName;
+
+    if (endpointName && IGNORED_ENDPOINTS.includes(endpointName)) {
+        return next(action);
+    }
+
     if (isRejectedWithValue(action)) {
         const rejectedAction = action as { payload?: RejectedPayload };
         const payload = rejectedAction.payload;

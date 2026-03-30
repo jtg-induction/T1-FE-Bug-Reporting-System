@@ -41,7 +41,7 @@ export interface UserData {
     date_of_birth: string | null;
     designation: string;
     can_edit?: boolean;
-    jiraID?: string;
+    jira_id?: string;
     jira_access_token?: string;
 }
 
@@ -53,7 +53,7 @@ export interface LoginSignupRefreshResponse {
 
 export interface UserRegistrationData
     extends Omit<UserData, 'id' | 'can_edit'> {
-    jiraID: string;
+    jira_id: string;
     jira_access_token: string;
     password: string;
     confirm_password: string;

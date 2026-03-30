@@ -68,7 +68,7 @@ export const SignupCompleteContainer = () => {
                 date_of_birth: data.dateOfBirth || null,
                 phone: data.phone || null,
                 designation: data.designation,
-                jiraID: data.jiraId,
+                jira_id: data.jiraId,
                 jira_access_token: data.jiraAccessToken,
                 password: data.password,
                 confirm_password: data.confirmPassword,

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useNavigate, useParams } from 'react-router-dom';
 import { showSnackbar } from 'redux/features/profileSlice';
@@ -66,7 +66,6 @@ export const ProjectDetailContainer = ({
 }: ProjectDetailProps) => {
     const { id: projectId } = useParams<{ id: string }>();
     const navigate = useNavigate();
-
     const dispatch = useAppDispatch();
 
     const { data: members } = useGetProjectMembersQuery(
@@ -88,6 +87,9 @@ export const ProjectDetailContainer = ({
     const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [openImport, setOpenImport] = useState(false);
+
+    const descriptionRef = useRef<HTMLElement>(null);
+    const [needsShowMore, setNeedsShowMore] = useState(false);
 
     const projectMembersData = members?.data.results ?? [];
 
@@ -123,7 +125,24 @@ export const ProjectDetailContainer = ({
         return () => {
             document.title = PROJECT_TITLE;
         };
-    }, []);
+    }, [projectData]);
+
+    const descriptionText =
+        projectData?.description || 'No description provided.';
+
+    useEffect(() => {
+        const el = descriptionRef.current;
+        if (!el) return;
+
+        const observer = new ResizeObserver(() => {
+            if (!isExpanded) {
+                setNeedsShowMore(el.scrollHeight > el.clientHeight);
+            }
+        });
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [descriptionText, isExpanded]);
 
     const handleEditSubmit = async (data: ProjectUpdateFormData) => {
         await updateProject({
@@ -156,7 +175,7 @@ export const ProjectDetailContainer = ({
         if (isOwner) {
             setOpenLeaveDialog(true);
         } else {
-            executeLeaveProject();
+            void executeLeaveProject();
         }
     };
 
@@ -197,10 +216,6 @@ export const ProjectDetailContainer = ({
     };
 
     if (!projectData) return null;
-
-    const descriptionText =
-        projectData.description || 'No description provided.';
-    const isLongDescription = descriptionText.length > 150;
 
     const menuOptions: ActionMenuItem[] = [
         {
@@ -282,12 +297,13 @@ export const ProjectDetailContainer = ({
                     <StyledDetailsCard>
                         <StyledDescriptionWrapper>
                             <StyledDescriptionText
+                                ref={descriptionRef}
                                 variant="body1"
                                 isExpanded={isExpanded}
                             >
                                 {descriptionText}
                             </StyledDescriptionText>
-                            {isLongDescription && (
+                            {needsShowMore && (
                                 <StyledShowMoreButton
                                     size="small"
                                     onClick={() => setIsExpanded(!isExpanded)}

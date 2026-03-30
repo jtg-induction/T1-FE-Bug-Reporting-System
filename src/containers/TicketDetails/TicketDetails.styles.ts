@@ -125,7 +125,7 @@ export const BodyText = styled(Typography, {
         },
     }) => ({
         color: palette.text.secondary,
-        ...(!isExpanded ? lineClamp(1) : {}),
+        ...(!isExpanded ? lineClamp(3) : {}),
     }),
 );
 

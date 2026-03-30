@@ -64,7 +64,7 @@ export const ProfileFormContainer = ({
                 date_of_birth: activeUser.date_of_birth ?? null,
                 phone: activeUser.phone || '',
                 designation: activeUser.designation || '',
-                jiraID: activeUser.jiraID || '',
+                jira_id: activeUser.jira_id || '',
                 jira_access_token: activeUser.jira_access_token || '',
             });
             dispatch(resetCancelTrigger());
@@ -213,7 +213,7 @@ export const ProfileFormContainer = ({
                                     spacing={4}
                                 >
                                     <FormField
-                                        name="jiraID"
+                                        name="jira_id"
                                         label="Jira ID"
                                         control={control}
                                         editStatus={editStatus}
